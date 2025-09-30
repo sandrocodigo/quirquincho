@@ -1,0 +1,109 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Egreso </h2>
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Sucursal</mat-label>
+        <mat-select formControlName="sucursal">
+          @for (item of listaSucursales; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+        @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
+          <mat-error>
+            Se requiere la Sucursal
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="tipo">
+          @for (item of listaTipos; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+        @if (registroControl && r.tipo.errors && r.tipo.errors.required) {
+          <mat-error>
+            Se requiere el tipo de Egreso
+          </mat-error>
+        }
+      </mat-form-field>
+      <!--         <div class="flex items-center mx-2">
+      <ng-select [items]="listaClientes" bindLabel="dato" bindValue="id" appendTo="body"
+        formControlName="clienteId" placeholder="Buscar Cliente por empresa o nombre..." class="w-full">
+      </ng-select>
+      <button class="text-secondary" mat-icon-button type="button" (click)="nuevoCliente()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <mat-error *ngIf="registroControl && r.clienteId.errors && r.clienteId.errors.required">
+      Se requiere el Cliente
+    </mat-error>
+    <br> -->
+    <!--         <mat-form-field class="flex-auto w-full">
+    <mat-label>Forma de Pago</mat-label>
+    <mat-select formControlName="formaPago">
+      <mat-option *ngFor="let item of listaFormas" [value]="item">
+        {{item}}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="registroControl && r.formaPago.errors && r.formaPago.errors.required">
+      Se requiere la Forma de Pago
+    </mat-error>
+  </mat-form-field>
+  <div class="flex">
+    <div class="w-1/2 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>% de Descuento</mat-label>
+        <input matInput placeholder="Porcentaje de Descuento" formControlName="porcentajeDescuento">
+        <mat-error
+          *ngIf="registroControl && r.porcentajeDescuento.errors && r.porcentajeDescuento.errors.required">
+          Se requieren
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="w-1/2 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>% de Impuesto</mat-label>
+        <input matInput placeholder="Porcentaje de Descuento" formControlName="porcentajeImpuesto">
+        <mat-error
+          *ngIf="registroControl && r.porcentajeImpuesto.errors && r.porcentajeImpuesto.errors.required">
+          Se requieren
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div> -->
+  <mat-form-field class="flex-auto w-full">
+    <mat-label>Descricion</mat-label>
+    <input name="descripcion" matInput placeholder="Descripcion" formControlName="descripcion">
+    <!--             <mat-error *ngIf="registroControl && r.descripcion.errors && r.descripcion.errors.required">
+    Se requieren la descripcion
+  </mat-error> -->
+</mat-form-field>
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/3 px-2">
+  </div>
+  <div class="w-full md:w-1/3 px-2">
+  </div>
+  <div class="w-full md:w-1/3 px-2">
+  </div>
+</div>
+<!--         <ng-select [items]="listaOrdenes" bindLabel="dato" bindValue="id" appendTo="body" formControlName="ordenId"
+placeholder="Buscar Orden por codigo/interno/placa..." class="w-full">
+</ng-select>
+<br>
+  -->
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button color="primary" mat-flat-button type="submit" [disabled]="boton">Aceptar</button>
+</mat-dialog-actions>
+</form>
+}

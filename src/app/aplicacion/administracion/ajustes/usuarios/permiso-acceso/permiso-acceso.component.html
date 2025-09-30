@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Editar Permisos</h2>
+<mat-divider></mat-divider>
+<form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+  <mat-dialog-content>
+    <mat-selection-list>
+      @for (acceso of listaAccesos; track acceso) {
+        <mat-list-option [value]="acceso" [selected]="acceso.selected"
+          (click)="toggleAcceso(acceso)">
+          <mat-icon matListItemIcon>{{acceso.icon}}</mat-icon>
+          <div matListItemTitle>{{acceso.label}} @if (acceso.nav) {
+            <span class="text-xs">[Principal]</span>
+          }</div>
+          <!-- {{acceso.label}} -->
+        </mat-list-option>
+      }
+    </mat-selection-list>
+  </mat-dialog-content>
+  <mat-divider></mat-divider>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+    <button mat-flat-button color="primary" type="submit">Aceptar</button>
+  </mat-dialog-actions>
+</form>
+
+

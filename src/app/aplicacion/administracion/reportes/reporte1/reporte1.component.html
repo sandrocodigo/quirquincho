@@ -1,0 +1,135 @@
+<!-- <div class="flex items-center justify-between py-4">
+<h1 class="text-3xl font-semibold dark:text-white">1. Inventario</h1>
+<button (click)="imprimir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz"
+  type="button">
+  <mat-icon>print</mat-icon>
+</button>
+<button color="wanr" mat-mini-fab matTooltip="Imprimir" (click)="exportarJsonAExcel()" type="button">
+  <mat-icon>table_rows</mat-icon>
+</button>
+</div> -->
+
+
+
+
+<div class="flex items-center justify-between">
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      1. Inventario
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Detalle de Salida</p>
+  </div>
+  <div class="ml-auto">
+
+    <button  (click)="imprimir()" class="ml-1 mr-1" color="primary" mat-mini-fab
+      matTooltip="Mas Egresos" type="button">
+      <mat-icon>print</mat-icon>
+    </button>
+
+    <button (click)="exportarJson()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+      type="button">
+      <mat-icon>table_rows</mat-icon>
+    </button>
+
+  </div>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/4 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal</mat-label>
+          <mat-select formControlName="sucursal">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of listaSucursales; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/4 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>TIPO</mat-label>
+          <mat-select formControlName="tipo">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of tipos; track item) {
+              <mat-option [value]="item">
+                {{item}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/4 px-2">
+        <!--             <mat-form-field class="flex-auto w-full">
+        <mat-label>PUBLICADO</mat-label>
+        <mat-select formControlName="publicado">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> PUBLICADO </mat-option>
+          <mat-option value="false"> PENDIENTE </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <!--             <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Limite</mat-label>
+      <mat-select formControlName="limite">
+        <mat-option *ngFor="let item of limites" [value]="item.id">
+          {{item.descripcion}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+  </div>
+</div>
+</form>
+}
+
+<div class="table-container">
+  <table class="tabla-estilizada" #tabla>
+    <thead>
+      <tr>
+        <th colspan="2">INVENTARIO FISICO</th>
+        <th>{{fechaHoy| date:'short'}}</th>
+        <th colspan="2">{{b.sucursal.value}}</th>
+      </tr>
+      <tr>
+        <th>CODIGO</th>
+        <th>DESCRIPCION</th>
+        <th>SALDO TOTAL</th>
+        <th>CANTIDAD FISICO</th>
+        <th>P.V.</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item; let ultimo = $last) {
+        <tr>
+          <td style="text-align:start">
+            {{item.codigo}}
+          </td>
+          <td style="text-align:start">{{item.descripcion}}</td>
+          <td style="text-align:start">{{item.cantidadSaldoTotal}}</td>
+          <td style="text-align:center"></td>
+          <td style="text-align:center"></td>
+        </tr>
+      }
+    </tbody>
+    <!--         <tfoot *ngIf="totales">
+    <tr>
+      <th>{{lista.length}}</th>
+      <th>USUARIO</th>
+      <th>TURNO</th>
+      <th>DISP.</th>
+      <th>PROD.</th>
+      <th>INICIO</th>
+      <th>FIN</th>
+      <th style="text-align:end">{{totales?.litros}}</th>
+      <th style="text-align:end">{{totales.dinero | number:'1.2-2': 'EN'}}</th>
+      <th style="text-align:end"></th>
+    </tr>
+  </tfoot> -->
+</table>
+</div>

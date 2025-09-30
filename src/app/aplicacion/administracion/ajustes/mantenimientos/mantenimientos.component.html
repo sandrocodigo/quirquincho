@@ -1,0 +1,115 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1 class="titulo"> Mantenimientos </h1>
+    <p class="subtitulo">Tipos de Mantenimientos</p>
+  </div>
+  <div class="ml-auto">
+    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div class="bg-transparent flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+    <div
+      class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-4 flex items-center w-full mr-2">
+      <mat-icon>search</mat-icon>
+      <input (keyup)="applyFilter($event)"
+        class="px-4 py-3 border-0 outline-none w-full bg-transparent  dark:text-white" placeholder="Buscar...">
+    </div>
+  </div>
+</div>
+
+<div class="table-container mat-elevation-z2">
+  <table mat-table [dataSource]="dataSource" matSort class="w-full dark:!bg-gray-800">
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:!text-white"> ID </th>
+      <td mat-cell *matCellDef="let element" class="dark:!text-white">
+        {{ element.id }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tipo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:!text-white"> TIPO </th>
+      <td mat-cell *matCellDef="let element">
+        <span class="text-xs px-2 py-1 rounded-full capitalize text-white" [ngClass]="{
+                    'bg-green-500': element.tipo === 'PREVENTIVO',
+                    'bg-red-500': element.tipo === 'CORRECTIVO',
+                    'bg-yellow-500': element.tipo === 'PREDICTIVO'
+                    }">
+          {{ element.tipo }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:!text-white"> DESCRIPCION </th>
+      <td mat-cell *matCellDef="let element" class="dark:!text-white">
+        {{ element.descripcion }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="frecuencia">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:!text-white"> FRECUENCIA </th>
+      <td mat-cell *matCellDef="let element" [class.text-green-500]="element.frecuencia"
+        [class.text-red-500]="!element.frecuencia">
+        <span [class.bg-green-100]="element.frecuencia" [class.bg-red-100]="!element.frecuencia"
+          class="px-2 capitalize inline-flex text-xs leading-5 font-semibold rounded-full">
+          {{ element.frecuencia?'si':'no' }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="kilometraje">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:!text-white"> KILOMETRAJE </th>
+      <td mat-cell *matCellDef="let element" [class.text-green-500]="element.kilometraje"
+        [class.text-red-500]="!element.kilometraje">
+        <span [class.bg-green-100]="element.kilometraje" [class.bg-red-100]="!element.kilometraje"
+          class="px-2 capitalize inline-flex text-xs leading-5 font-semibold rounded-full">
+          {{ element.kilometraje?'si':'no' }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="opciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+      <td mat-cell *matCellDef="let element">
+
+        <div class="text-right">
+
+          <!--
+          <a [routerLink]="'detalle/'+ element.id" matTooltip="Detalle Avanzado de Producto"
+            class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+            Detalle
+          </a> -->
+          <!--
+          <button *ngIf="!element.finalizado" mat-icon-button type="button" (click)="eliminar(element)"
+            matTooltip="Eliminar">
+            <mat-icon color="warn">delete</mat-icon>
+          </button> -->
+
+          @if (!element.adminSuper) {
+          <button mat-icon-button type="button" (click)="editar(element)" matTooltip="Editar">
+            <mat-icon class="!text-blue-500">edit</mat-icon>
+          </button>
+          }
+
+
+        </div>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+</div>
+
+
+<!-- <p>mantenimientos works!</p>
+
+
+<button (click)="migrarMantenimientos()">Migrar</button> -->

@@ -1,0 +1,182 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Producto </h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="flex-auto w-full">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="tipo">
+              @for (item of tipos; track item) {
+                <mat-option [value]="item">
+                  {{item}}
+                </mat-option>
+              }
+            </mat-select>
+            @if (registroControl && r.tipo.errors && r.tipo.errors.required) {
+              <mat-error>
+                Se requiere el tipo de Producto
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="flex-auto w-full">
+            <mat-label>Codigo de Barra</mat-label>
+            <input name="codigoBarra" matInput placeholder="Codigo" formControlName="codigoBarra">
+            @if (registroControl && r.codigoBarra.errors && r.codigoBarra.errors.required) {
+              <mat-error>
+                Se require el Codigo de Barra
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="flex items-center mx-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Proveedor</mat-label>
+          <mat-select formControlName="proveedor">
+            @for (item of listaProveedores; track item) {
+              <mat-option [value]="item.empresa">
+                {{item.empresa}}
+              </mat-option>
+            }
+          </mat-select>
+          @if (registroControl && r.proveedor.errors && r.proveedor.errors.required) {
+            <mat-error>
+              Se requiere
+            </mat-error>
+          }
+        </mat-form-field>
+        <button class="text-secondary" mat-icon-button type="button" (click)="nuevoProveedor()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="w-full">
+            <mat-label>Código de Proveedor</mat-label>
+            <input matInput placeholder="Código de Proveedor" formControlName="proveedorCodigo">
+            @if (registroControl && r.proveedorCodigo.errors?.required) {
+              <mat-error>
+                Se requiere el código
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="flex-auto w-full">
+            <mat-label>Cantidad Minimo</mat-label>
+            <input name="minimo" matInput placeholder="Cant. Minimo" formControlName="minimo">
+            @if (registroControl && r.minimo.errors && r.minimo.errors.required) {
+              <mat-error>
+                Se requiere
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <!--
+      <div class="flex items-center">
+        <div class="flex-grow border-t border-gray-300"></div>
+        <span class="px-4 text-gray-600">Electrisolar</span>
+        <div class="flex-grow border-t border-gray-300"></div>
+      </div> -->
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+          <div class="flex items-center mx-2">
+            <mat-form-field class="flex-auto w-full">
+              <mat-label>Categoria</mat-label>
+              <mat-select formControlName="categoria">
+                @for (item of listaCategorias; track item) {
+                  <mat-option [value]="item.descripcion">
+                    {{item.descripcion}}
+                  </mat-option>
+                }
+              </mat-select>
+              @if (registroControl && r.categoria.errors && r.categoria.errors.required) {
+                <mat-error>
+                  Se requiere la categoria
+                </mat-error>
+              }
+            </mat-form-field>
+            <button class="text-secondary" mat-icon-button type="button" (click)="nuevoCantegoria()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+          <div class="flex items-center mx-2">
+            <mat-form-field class="flex-auto w-full">
+              <mat-label>Fabricante</mat-label>
+              <mat-select formControlName="fabricante">
+                @for (item of listaFabricantes; track item) {
+                  <mat-option [value]="item.descripcion">
+                    {{item.descripcion}}
+                  </mat-option>
+                }
+              </mat-select>
+              @if (registroControl && r.fabricante.errors && r.fabricante.errors.required) {
+                <mat-error>
+                  Se requiere la Fabricante
+                </mat-error>
+              }
+            </mat-form-field>
+            <button class="text-secondary" mat-icon-button type="button" (click)="nuevoFabricante()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-3/10 px-2">
+          <mat-form-field class="w-full">
+            <mat-label>Código</mat-label>
+            <input name="codigo" matInput placeholder="Código" formControlName="codigo">
+            @if (registroControl && r.codigo.errors?.required) {
+              <mat-error>
+                Se requiere el código
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="w-full md:w-7/10 px-2">
+          <mat-form-field class="w-full">
+            <mat-label>Descripción</mat-label>
+            <input name="descripcion" matInput placeholder="Descripción" formControlName="descripcion">
+            @if (registroControl && r.descripcion.errors?.required) {
+              <mat-error>
+                Se requiere la descripción
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/3 px-2">
+          <mat-slide-toggle formControlName="activo">Activo</mat-slide-toggle>
+        </div>
+        <div class="w-full md:w-1/3 px-2">
+          <mat-slide-toggle formControlName="favorito">Favorito</mat-slide-toggle>
+        </div>
+        <div class="w-full md:w-1/3 px-2">
+          <mat-slide-toggle formControlName="publicado">Plublicado</mat-slide-toggle>
+        </div>
+      </div>
+      @if (r.tipo.value=='SERVICIO') {
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Precio Servicio</mat-label>
+          <input matInput placeholder="Precio Servicio" formControlName="precioServicio">
+        </mat-form-field>
+      }
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button">Cancelar</button>
+      <button color="primary" mat-flat-button type="submit" [disabled]="boton">Aceptar</button>
+    </mat-dialog-actions>
+  </form>
+}

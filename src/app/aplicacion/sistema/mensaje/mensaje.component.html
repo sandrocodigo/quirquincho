@@ -1,0 +1,23 @@
+<h2 mat-dialog-title> {{titulo}}</h2>
+
+<mat-divider></mat-divider>
+
+<div mat-dialog-content>
+  <h2>{{mensaje}}</h2>
+  @if (nota) {
+    <span style="color:red; font-size:10px">
+      Nota: {{nota}}
+    </span>
+  }
+</div>
+
+<mat-divider></mat-divider>
+
+<div mat-dialog-actions align="center">
+  <button mat-raised-button color="primary" (click)="onCancelar()">
+    <mat-icon>close</mat-icon> Cerrar
+  </button>
+  <!--     <button mat-raised-button color="warn" (click)="onConfirmar()">
+  <mat-icon>done</mat-icon> Si
+</button> -->
+</div>

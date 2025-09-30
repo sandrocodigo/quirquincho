@@ -1,0 +1,282 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">Vehiculos</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Gestion de Buses, Camiones y otros</p>
+  </div>
+  <div class="ml-auto">
+
+    <!--       <button (click)="filtros()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Filtros"
+    type="button">
+    <mat-icon>{{filtro?'filter_list_off':'filter_list'}}</mat-icon>
+  </button>
+
+  <button (click)="obtenerConsulta()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Actualizar"
+    type="button">
+    <mat-icon>update</mat-icon>
+  </button> -->
+
+  <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+    type="button">
+    <mat-icon>add</mat-icon>
+  </button>
+
+</div>
+</div>
+
+
+<!-- <div class="flex items-center justify-between py-4">
+<h1 class="text-3xl font-semibold dark:text-white">Vehiculos</h1>
+<button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
+  <mat-icon>add</mat-icon>
+</button>
+</div>
+-->
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/3 px-2">
+        <!--             <mat-form-field class="flex-auto w-full">
+        <mat-label>EMPRESA</mat-label>
+        <mat-select formControlName="empresa">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option *ngFor="let item of empresas" [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>ACTIVO</mat-label>
+        <mat-select formControlName="activo">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> ACTIVOS </mat-option>
+          <mat-option value="false"> PASIVOS </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field appearance="fill" style="width:100%">
+        <mat-label>Limite</mat-label>
+        <mat-select formControlName="limite">
+          @for (item of limites; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
+}
+
+
+<div class="bg-app-bar flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+    <div class="bg-foreground rounded-full border px-4 flex items-center w-full mr-2">
+      <mat-icon class=" dark:text-white">search</mat-icon>
+      <input (keyup)="aplicarFiltro($event)" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+        placeholder="Buscar...">
+    </div>
+  </div>
+</div>
+
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+  <table class="min-w-full text-sm text-left dark:text-white dark:bg-slate-800">
+    <thead class="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-gray-200">
+      <tr>
+        <th class="px-4 py-2">Número</th>
+        <th class="px-4 py-2">Placa</th>
+        <th class="px-4 py-2">Clasificación</th>
+        <th class="px-4 py-2">Detalles</th>
+        <th class="px-4 py-2">Activo</th>
+        <th class="px-4 py-2 text-right">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item) {
+        <tr
+          class="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700">
+          <td class="px-4 py-2 font-semibold text-red-600 dark:text-red-400">
+            <span class="font-semibold px-2 py-1 rounded-full bg-red-500 text-white"> {{ item.numero }}</span>
+          </td>
+          <td class="px-4 py-2">
+            <div class="font-semibold">{{ item.placa }}</div>
+            <span class="font-semibold px-2 py-1 rounded-full bg-blue-500 text-white"> {{ item.interno }}</span>
+            <div class="text-xs text-gray-500 dark:text-gray-300">Ejes: {{ item.ejes }}
+            </div>
+          </td>
+          <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+            Tipo: {{ item.tipo }}<br>
+            Marca: {{ item.marca }}<br>
+            Modelo: {{ item.modelo }}<br>
+            Butacas: {{ item.butacas }}
+          </td>
+          <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+            Carrocería: {{ item.carroceria }}<br>
+            Chasis: {{ item.chasis }}<br>
+            Motor: {{ item.motor }}<br>
+            Registro: {{ item.fechaRegistro?.toDate() | date:'short' }}
+          </td>
+          <td class="px-4 py-2">
+                    <span [ngClass]="{
+              'bg-green-500': item.activo,
+              'bg-red-500': !item.activo
+            }" class="text-white text-xs px-2 py-1 rounded-full">
+              {{ item.activo ? 'ACTIVO' : 'PASIVO' }}
+            </span>
+          </td>
+          <td class="px-4 py-2 text-right space-x-2">
+            <a [routerLink]="'detalle/'+ item.id" matTooltip="Detalle"
+              class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+              Detalle
+            </a>
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              ....Que deseas?
+              <button mat-menu-item (click)="editar(item)">
+                <mat-icon>edit</mat-icon>
+                <span>Editar</span>
+              </button>
+              <button mat-menu-item (click)="eliminar(item)">
+                <mat-icon>delete</mat-icon>
+                <span>Elminar</span>
+              </button>
+            </mat-menu>
+            <!--                     <button (click)="editar(item)" class="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-slate-700">
+            <mat-icon class="text-blue-600 dark:text-blue-400">edit</mat-icon>
+          </button>
+          <button (click)="eliminar(item)" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-slate-700">
+            <mat-icon class="text-red-600 dark:text-red-400">delete</mat-icon>
+          </button> -->
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+</div>
+
+
+
+<!-- <div
+class="table-container mat-elevation-z2 dark:bg-slate-900 dark:border dark:border-slate-700 rounded-lg overflow-hidden">
+
+
+<table mat-table [dataSource]="dataSource" matSort class="w-full dark:bg-gray-800 dark:text-white">
+
+
+  <ng-container matColumnDef="numero">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class=" dark:bg-gray-800 dark:text-white"> Numero
+    </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      <span class="font-semibold px-2 py-1 rounded-full bg-red-500 text-white"> {{ element.numero }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="placa">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Placa </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      <span class="font-semibold"> {{ element.placa }}</span><br>
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Int. {{element.interno}}
+      </span><br>
+
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Ejes: {{element.ejes}}
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="modelo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Clasificacion</th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Tipo: {{element.tipo}}
+      </span><br>
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Marca: {{element.marca}}
+      </span><br>
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Modelo: {{element.modelo}}
+      </span><br>
+
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Butacas: {{element.butacas}}
+      </span><br>
+
+
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="conductor">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+
+
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Carroceria: {{element.carroceria}}
+      </span><br>
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Chasis: {{element.chasis}}
+      </span><br>
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Motor: {{element.motor}}
+      </span><br>
+      <span class="italic text-xs text-gray-600 dark:text-gray-300">
+        Registro: {{element.fechaRegistro?.toDate() | date:'short'}}
+      </span>
+
+
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="activo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Activo </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+                <span class="text-sx px-2 py-1 rounded-full capitalize text-white" [ngClass]="{
+                    'bg-green-500': element.activo === true,
+                    'bg-red-500': element.activo === false,
+                }">
+        {{ element.activo?'ACTIVO':'PASIVO'}}
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="opciones">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="text-right">
+        <button (click)="editar(element)" mat-icon-button type="button" color="accent">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+</div> -->
+
+
+
+
+<!--                 <span class="italic text-xs text-gray-600 dark:text-gray-300">
+Usuario:
+</span>
+
+<span class="italic text-xs text-green-600 dark:text-green-500">
+  {{element.conductorEmail}}
+</span> -->
+<!--
+                               <span class="text-xs px-2 py-1 rounded-full capitalize text-white" [ngClass]="{
+                    'bg-slate-500': element.producto === '91',
+                    'bg-yellow-500': element.producto === '95',
+                    'bg-green-500': element.producto === 'DIESEL'
+                }">
+  {{ element.producto }}
+</span> -->

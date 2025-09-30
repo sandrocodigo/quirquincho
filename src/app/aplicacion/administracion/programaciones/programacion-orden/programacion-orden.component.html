@@ -1,0 +1,187 @@
+<h2 mat-dialog-title>Generar Orden de Mantenimiento</h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup && data && r) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup" #aForm>
+    <mat-dialog-content>
+      <div class="flex">
+        <div class="w-1/3 px-2">
+          <span class="italic text-xs text-gray-600 dark:text-gray-300">Interno: </span>
+          <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.vehiculoInterno.value}}</span>
+        </div>
+        <div class="w-1/3 px-2">
+          <span class="italic text-xs text-gray-600 dark:text-gray-300">Placa: </span>
+          <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.vehiculoPlaca.value}}</span>
+        </div>
+        <div class="w-1/3 px-2">
+          <span class="italic text-xs text-gray-600 dark:text-gray-300">Numero: </span>
+          <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.vehiculoNumero.value}}</span>
+        </div>
+      </div>
+      <div class="flex">
+        <div class="w-1/4 px-2">
+          <span class="italic text-xs text-gray-600 dark:text-gray-300">Tipo: </span>
+          <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.mantenimientoTipo.value}}</span>
+        </div>
+        <div class="w-3/4 px-2">
+          <span class="italic text-xs text-gray-600 dark:text-gray-300">Descripcion: </span>
+          <span
+          class="italic text-xs text-blue-600 dark:text-gray-300">{{r.mantenimientoDescripcion.value}}</span>
+        </div>
+      </div>
+      <!--        <div class="flex">
+      <div class="w-1/2 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Frecuencia: </span>
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.mantenimientoFrecuencia.value}}</span>
+      </div>
+      <div class="w-1/2 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Kilometraje: </span>
+        <span
+        class="italic text-xs text-blue-600 dark:text-gray-300">{{r.mantenimientoKilometraje.value}}</span>
+      </div>
+    </div>  -->
+    <div class="flex">
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Kilometraje: </span>
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.programacionKilometraje.value}}</span>
+      </div>
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Inicio: </span>
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.programacionKilometrajeInicio.value}}
+        Km.</span>
+      </div>
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Proximo: </span>
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.programacionKilometrajeProximo.value}}
+        Km.</span>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Frecuencia: </span>
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.programacionFrecuencia.value}}</span>
+      </div>
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Fecha Inicio: </span>
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.programacionFechaInicio.value |
+        date}}</span>
+      </div>
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-gray-600 dark:text-gray-300">Proximo: </span>
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">{{r.programacionFechaProximo.value |
+        date}}</span>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal</mat-label>
+          <mat-select formControlName="sucursal">
+            @for (item of listaSucursales; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+          @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
+            <mat-error>
+              Se requiere la Sucursal
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Codigo de Orden</mat-label>
+          <mat-select formControlName="codigo">
+            <mat-option [value]="'nuevo'">
+              Generar nuevo Codigo de Orden
+            </mat-option>
+            @for (item of listaOrdenes; track item) {
+              <mat-option [value]="item.codigo">
+                {{item.codigo}} : {{item.fechaEntrada | date}}
+              </mat-option>
+            }
+          </mat-select>
+          @if (registroControl && r.codigo.errors && r.codigo.errors.required) {
+            <mat-error>
+              Se requiere la Orden
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">Taller</span>
+        <input type="text" formControlName="taller" placeholder="Taller"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+      </div>
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">Kilometraje Actual</span>
+        <input type="text" formControlName="kilometrajeActual" placeholder="Kilometraje Actual"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+      </div>
+      <div class="w-1/3 px-2">
+        <span class="italic text-xs text-blue-600 dark:text-gray-300">Kilometraje Posterior</span>
+        <input type="text" formControlName="kilometrajeProximo" placeholder="Kilometraje Proximo"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+      </div>
+    </div>
+    <br>
+      <div class="flex">
+        <div class="w-1/2 px-2">
+          <span class="italic text-xs text-orange-500 dark:text-gray-300"> Fecha Entrada</span>
+          <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white w-full" id="fechaInicio"
+            name="fechaEntrada" formControlName="fechaEntrada">
+          @if (registroControl && r.fechaEntrada.errors && r.fechaEntrada.errors.required) {
+            <span
+              class="italic text-xs text-red-600 dark:text-gray-300">
+              Se requiere fecha de Entrada
+            </span>
+          }
+        </div>
+        <div class="w-1/2 px-2">
+          <span class="italic text-xs text-green-600 dark:text-gray-300"> Fecha Salida </span>
+          <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white w-full" id="fechaSalida"
+            name="fechaSalida" formControlName="fechaSalida">
+          @if (registroControl && r.fechaSalida.errors && r.fechaSalida.errors.required) {
+            <span
+              class="italic text-xs text-red-600 dark:text-gray-300">
+              Se requiere fecha de Salida
+            </span>
+          }
+        </div>
+      </div>
+      <br>
+        <span class="italic text-xs text-orange-500 dark:text-gray-300">Causa</span>
+        <input type="text" formControlName="causa" placeholder="Causa"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+        @if (registroControl && r.causa.errors && r.causa.errors.required) {
+          <span
+            class="italic text-xs text-red-600 dark:text-gray-300">
+            Se requiere la causa
+          </span>
+        }
+        <br>
+          <span class="italic text-xs text-orange-500 dark:text-gray-300">Observaciones</span>
+          <input type="text" formControlName="observaciones" placeholder="Observaciones"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          <br>
+            @if (ordenExistente) {
+              <p class="text-red-500">
+                Ya existe un orden vigente: {{ordenExistente.orden}}
+              </p>
+            }
+            <br>
+            </mat-dialog-content>
+            <mat-divider></mat-divider>
+            <mat-dialog-actions align="end">
+              <button mat-button mat-dialog-close type="button">Cancelar</button>
+              @if (!ordenExistente) {
+                <button color="primary" mat-flat-button type="submit"> Aceptar</button>
+              }
+            </mat-dialog-actions>
+          </form>
+        }

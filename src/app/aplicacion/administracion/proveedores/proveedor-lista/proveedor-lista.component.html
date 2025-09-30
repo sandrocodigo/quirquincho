@@ -1,0 +1,61 @@
+<div class="flex items-center justify-between py-4">
+    <h1 class="text-3xl font-semibold dark:text-white">Proveedores</h1>
+    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz"
+        type="button">
+        <mat-icon>add</mat-icon>
+    </button>
+</div>
+
+<div class="bg-app-bar flex px-1 h-20 items-center">
+    <div class="flex-auto flex m-0">
+        <div class="bg-foreground rounded-full border px-4 flex items-center w-full mr-2">
+            <mat-icon>search</mat-icon>
+            <input (keyup)="applyFilter($event)"
+                class="px-4 py-3 border-0 outline-none w-full bg-transparent dark:bg-gray-800 dark:text-white"
+                placeholder="Buscar...">
+        </div>
+    </div>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="w-full dark:bg-gray-800">
+    <ng-container matColumnDef="empresa">
+        <th mat-header-cell *matHeaderCellDef class="dark:text-white px-4 py-2">Proveedor</th>
+        <td mat-cell *matCellDef="let element" class="dark:text-gray-300 px-4 py-2">
+
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/3 px-2">
+                    Empresa<br>
+                    {{element.empresa}}
+                </div>
+                <div class="w-full md:w-1/3 px-2">
+                    Resposable<br>
+                    {{element.responsable}}
+                </div>
+                <div class="w-full md:w-1/3 px-2">
+                    {{element.telefono}}<br>
+                    <p class="text-emerald-600">{{element.email}}</p>
+                </div>
+            </div>
+
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="opciones">
+        <th mat-header-cell *matHeaderCellDef class="text-right dark:text-white px-4 py-2"></th>
+        <td mat-cell *matCellDef="let element" class="text-right dark:text-gray-300 px-4 py-2">
+            <div class="flex justify-end space-x-2">
+
+           <button mat-icon-button type="button" (click)="editar(element)">
+            <mat-icon color="accent">edit</mat-icon>
+          </button> 
+<!-- 
+                <a mat-flat-button [routerLink]="'detalle/' + element.id">Detalles</a> -->
+
+            </div>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="dark:bg-gray-900"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        class="dark:bg-gray-800 dark:hover:bg-gray-700"></tr>
+</table>

@@ -1,0 +1,175 @@
+<div class="flex items-center justify-between py-4">
+  <h1 class="text-3xl font-semibold dark:text-white">Plan de Pagos</h1>
+
+  @if (usuario && usuarioDatos && usuarioDatos.adminSuper) {
+    <button (click)="nuevo()" class="ml-1 mr-1"
+      color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
+      <mat-icon>add</mat-icon>
+    </button>
+  }
+</div>
+
+
+<div class="bg-app-bar flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+    <div class="bg-foreground rounded-full border px-4 flex items-center w-3/4 mr-2">
+      <mat-icon>search</mat-icon>
+      <input (keyup)="applyFilter($event)" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+        placeholder="Buscar...">
+    </div>
+  </div>
+</div>
+
+<!-- <form *ngIf="buscadorFormGroup" [formGroup]="buscadorFormGroup" (ngSubmit)="buscar()">
+<div class="bg-app-bar flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+
+    <div class="bg-foreground rounded-full border px-4 flex items-center w-3/4 mr-2">
+      <mat-icon>search</mat-icon>
+      <input formControlName="buscador"  (keyup)="applyFilter($event)" class="px-4 py-3 border-0 outline-none w-full bg-transparent" placeholder="Buscar...">
+    </div>
+
+    <div class="bg-foreground rounded-full border px-4 flex items-center w-1/4 hidden md:inline">
+      <input type="number" formControlName="limite"
+        class="px-4 py-3 border-0 outline-none w-full bg-transparent">
+    </div>
+  </div>
+
+  <button mat-raised-button color="bg-accent" type="submit">
+    <mat-icon>search</mat-icon> <span class="hidden md:inline">Buscar</span>
+  </button>
+</div>
+</form> -->
+
+
+@if (listaPendientes && listaPendientes.length> 0) {
+  <div class="bg-red-500 text-white p-4 rounded-lg">
+    <p>Pagos Pendientes:</p>
+    <ul>
+      @for (item of listaPendientes; track item) {
+        <li>
+          Gestion: {{item.gestion}}, Mes: {{item.mes}}, Monto: {{item.monto}} USD,
+          Fecha limite: {{item.fechaLimite | date}}
+        </li>
+      }
+    </ul>
+  </div>
+}
+
+
+<div style="overflow: auto; max-height: 500px;">
+  <table mat-table [dataSource]="dataSource" class="w-full dark:bg-slate-900 dark:text-white">
+
+    <ng-container matColumnDef="gestion">
+      <th mat-header-cell *matHeaderCellDef> Gestion</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.gestion}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="mes">
+      <th mat-header-cell *matHeaderCellDef> Mes </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.mes}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="monto">
+      <th mat-header-cell *matHeaderCellDef> Monto </th>
+      <td mat-cell *matCellDef="let element">
+        Bs. {{element.monto}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaLimite">
+      <th mat-header-cell *matHeaderCellDef> Limite </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaLimite | date}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef> Descripcion </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.descripcion}}<!--  <br>
+        {{element.comprobante}} -->
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pagado">
+      <th mat-header-cell *matHeaderCellDef> pagado </th>
+      <td mat-cell *matCellDef="let element" [class.text-green-500]="element.pagado"
+        [class.text-red-500]="!element.pagado">
+        <span [class.bg-green-100]="element.pagado" [class.bg-red-100]="!element.pagado"
+          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+          {{element.pagado? 'PAGADO':'PENDIENTE'}}
+        </span>
+        {{element.pagadoFechaHora?.toDate() | date:'short' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="opciones">
+      <th mat-header-cell *matHeaderCellDef class="text-right">
+      </th>
+      <td mat-cell *matCellDef="let element">
+
+        @if (!element.pagado) {
+          <button mat-icon-button type="button" color="primary" (click)="paypal(element)"
+            matTooltip="Pagar con Paypal">
+            <mat-icon>payments</mat-icon>
+          </button>
+        }
+
+        @if (!element.pagado) {
+          <button mat-icon-button type="button" color="accent" (click)="subir(element)"
+            matTooltip="Registrar Transferencia Bancaria">
+            <mat-icon>upload</mat-icon>
+          </button>
+        }
+
+        @if (element.pagado && element.comprobante) {
+          <a target="_blank" [href]="element.comprobante"
+            [download]="element.descripcion">
+            <mat-icon class="text-green-500">download</mat-icon>
+          </a>
+        }
+
+
+        <!--                 <button mat-icon-button type="button" color="primary" (click)="pagar(element)">
+        <mat-icon>vpn_key</mat-icon>
+      </button> -->
+
+
+
+      <!--                 <button mat-icon-button type="button" color="warn" (click)="eliminar(element)">
+      <mat-icon>delete</mat-icon>
+    </button>
+    -->
+
+    <!--                 <button mat-icon-button type="button" color="primary" (click)="cambiarMonto(element)">
+    <mat-icon>update</mat-icon>
+  </button> -->
+
+  @if (!element.pagado && usuario && usuarioDatos && usuarioDatos.adminSuper) {
+    <button mat-icon-button
+      type="button" color="primary" (click)="editar(element)">
+      <mat-icon>edit</mat-icon>
+    </button>
+  }
+
+  @if (!element.pagado && element.comprobante && !element.pagado && usuario && usuarioDatos && usuarioDatos.adminSuper) {
+    <button mat-icon-button
+      type="button" color="primary" (click)="aprobar(element)" matTooltip="Aprobar pago">
+      <mat-icon>done_all</mat-icon>
+    </button>
+  }
+
+</td>
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+
+</div>

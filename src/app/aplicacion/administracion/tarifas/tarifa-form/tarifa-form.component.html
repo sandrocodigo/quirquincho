@@ -1,0 +1,100 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Tarifa</h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup" #aForm>
+    <mat-dialog-content>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Origen</mat-label>
+        <input name="origen" matInput placeholder="Origen" formControlName="origen">
+        @if (registroControl && r.origen.errors && r.origen.errors.required) {
+          <mat-error>
+            Se requieren el origen
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Destino</mat-label>
+        <input name="destino" matInput placeholder="Destino" formControlName="destino">
+        @if (registroControl && r.destino.errors && r.destino.errors.required) {
+          <mat-error>
+            Se requieren el Destino
+          </mat-error>
+        }
+      </mat-form-field>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="w-full">
+            <mat-label>Precio 1</mat-label>
+            <input matInput placeholder="Precio 1" formControlName="precio1">
+            <mat-hint>Precio regular</mat-hint>
+            @if (registroControl && r.precio1.errors?.required) {
+              <mat-error>Requerido</mat-error>
+            }
+            @if (registroControl && r.precio1.errors?.min) {
+              <mat-error>Debe ser mayor o igual a 0</mat-error>
+            }
+            @if (registroControl && r.precio1.errors?.pattern) {
+              <mat-error>Solo se permiten números</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="w-full">
+            <mat-label>Precio 2</mat-label>
+            <input matInput placeholder="Precio 2" formControlName="precio2">
+            <mat-hint>Precio madrugada</mat-hint>
+            @if (registroControl && r.precio2.errors?.required) {
+              <mat-error>Requerido</mat-error>
+            }
+            @if (registroControl && r.precio2.errors?.min) {
+              <mat-error>Debe ser mayor o igual a 0</mat-error>
+            }
+            @if (registroControl && r.precio2.errors?.pattern) {
+              <mat-error>Solo se permiten números</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="w-full">
+            <mat-label>Precio 3</mat-label>
+            <input matInput placeholder="Precio 3" formControlName="precio3">
+            <mat-hint>Precio noche</mat-hint>
+            @if (registroControl && r.precio3.errors?.required) {
+              <mat-error>Requerido</mat-error>
+            }
+            @if (registroControl && r.precio3.errors?.min) {
+              <mat-error>Debe ser mayor o igual a 0</mat-error>
+            }
+            @if (registroControl && r.precio3.errors?.pattern) {
+              <mat-error>Solo se permiten números</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+        </div>
+      </div>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions class="flex items-center justify-between w-full">
+      <!-- Toggle alineado a la izquierda -->
+      <div class="flex-1">
+        <mat-slide-toggle formControlName="activo">Activo</mat-slide-toggle>
+      </div>
+      <!-- Botones alineados a la derecha -->
+      <div class="flex space-x-4">
+        <button mat-button mat-dialog-close type="button">Cancelar</button>
+        <button color="primary" mat-flat-button type="submit">Aceptar</button>
+      </div>
+    </mat-dialog-actions>
+  </form>
+}

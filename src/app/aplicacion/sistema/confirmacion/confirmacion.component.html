@@ -1,0 +1,42 @@
+<h2 mat-dialog-title class="text-xl font-bold text-gray-800 dark:text-gray-200">
+  {{ titulo }}
+</h2>
+<mat-divider></mat-divider>
+
+<div mat-dialog-content class="py-4">
+  <h2 class="text-lg text-gray-700 dark:text-gray-300">{{ mensaje }}</h2>
+
+  @if (nota) {
+    <span class="block mt-2 text-xs text-red-500 font-semibold">
+      Nota: {{ nota }}
+    </span>
+  }
+</div>
+
+<mat-divider></mat-divider>
+
+<div mat-dialog-actions>
+  <div class="flex w-full mt-4 space-x-4">
+    <!-- Botón cancelar -->
+    <button
+      (click)="onCancelar()"
+    class="w-1/2 px-6 py-4 text-xl font-bold rounded-xl shadow-lg 
+           bg-red-600 hover:bg-red-700 active:bg-red-800 text-white 
+           flex items-center justify-center gap-3 transition transform hover:scale-105"
+      >
+      <span class="material-icons !text-3xl">close</span>
+      NO
+    </button>
+
+    <!-- Botón confirmar -->
+    <button
+      (click)="onConfirmar()"
+    class="w-1/2 px-6 py-4 text-xl font-bold rounded-xl shadow-lg 
+           bg-green-600 hover:bg-green-700 active:bg-green-800 text-white 
+           flex items-center justify-center gap-3 transition transform hover:scale-105"
+      >
+      <span class="material-icons !text-3xl">done</span>
+      SÍ
+    </button>
+  </div>
+</div>

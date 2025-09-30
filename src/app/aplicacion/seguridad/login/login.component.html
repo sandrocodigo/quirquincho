@@ -1,0 +1,140 @@
+<section class="h-full gradient-form bg-gray-200 md:h-screen dark:bg-gray-900 dark:border-gray-700">
+  <div class="py-12 px-6 h-full">
+    <div class="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
+      <div class="xl:w-10/12">
+
+        <div class="block bg-white shadow-lg rounded-lg dark:bg-gray-800 dark:border-gray-700">
+          <div class="lg:flex lg:flex-wrap g-0">
+
+            <!-- ESTILOS -->
+            <div class="lg:w-6/12 px-4 md:px-0">
+              <div class="md:p-12 md:mx-6">
+                <div class="text-center">
+                  <p class="mb-4"><b>Grupo Empresarial Quirquincho</b></p>
+                  <img class="mx-auto w-48 lg:w-45 mb-8 rounded-xl shadow-md"
+                    src="logo/quirquincho.jpg" alt="logo" />
+                  <h4 class="text-xl font-semibold mt-1 mb-2 pb-1 dark:text-white">Login</h4>
+                </div>
+
+                @if (registroFormGroup) {
+                  <form [formGroup]="registroFormGroup" (ngSubmit)="onSubmit()">
+                    <div class="mb-4">
+                      <mat-form-field class="w-full">
+                        <mat-label>Email</mat-label>
+                        <input matInput placeholder="Ejemplo: email@gmail.com"
+                          formControlName="email" type="email" [required]="true">
+                        <mat-icon matSuffix>email</mat-icon>
+                        @if (registroFormGroup.get('email')!.hasError('required')) {
+                          <mat-error>
+                            Es necesario su correo
+                          </mat-error>
+                        }
+                        @if (registroFormGroup.get('email')!.hasError('email')) {
+                          <mat-error>
+                            Es necesario un correo valido
+                          </mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+                    <div class="mb-4">
+                      <mat-form-field class="w-full">
+                        <mat-label>Password</mat-label>
+                        <!-- Cambiar el tipo de input dinámicamente según el estado de `showPassword` -->
+                        <input matInput placeholder="Password" formControlName="password"
+                          [type]="showPassword ? 'text' : 'password'" [required]="true">
+                        <button mat-icon-button matSuffix type="button"
+                          (click)="togglePasswordVisibility()"
+                          aria-label="Toggle password visibility">
+                          <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility'
+                          }}</mat-icon>
+                        </button>
+                        @if (registroFormGroup.get('password')!.hasError('required')) {
+                          <mat-error>
+                            Es necesario su password
+                          </mat-error>
+                        }
+                        @if (registroFormGroup.get('password')!.hasError('minlength')) {
+                          <mat-error>
+                            Debe ser mayor a 6 caracteres
+                          </mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+                    <div class="text-center pt-1 mb-12 pb-1">
+                      <button type="submit"
+                        class="inline-block px-6 py-4 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full mb-3"
+                                            data-mdb-ripple="true" data-mdb-ripple-color="light" style="
+                                          background: linear-gradient(
+                                            to right,
+                                            #e7d105,
+                                            #e08105,
+                                            #da4703,
+                                            #aa0e03
+                                          );
+                                        ">
+                        Ingresar
+                      </button>
+                      <br><br>
+                      <button (click)="loginGoogle()" type="button"
+                        class="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2">
+                        <svg class="w-4 h-4 mr-2 -ml-1" aria-hidden="true" focusable="false"
+                          data-prefix="fab" data-icon="google" role="img"
+                          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                          <path fill="currentColor"
+                            d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z">
+                          </path>
+                        </svg>
+                        Inicia sesión con Google
+                      </button>
+                      <br>
+                        <a class="text-gray-500" routerLink="/recuperacion">
+                          ¿Has olvidado tu contraseña?
+                        </a>
+                      </div>
+                    </form>
+                  }
+
+
+                  <div class="flex items-center justify-between pb-6">
+                    <p class="mb-0 mr-2">¿No tienes una cuenta?</p>
+                    <button routerLink="/registro"
+                      class="inline-block px-6 py-2 border-2 border-red-600 text-red-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                      data-mdb-ripple="true" data-mdb-ripple-color="light">
+                      Registro
+                    </button>
+                  </div>
+
+
+                </div>
+              </div>
+                        <div class="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none" style=" background: linear-gradient(to right,
+                            #038c18,
+                            #069136,
+                            #046518,
+                            #021b06);">
+                <div class="text-white px-4 py-6 md:p-12 md:mx-6">
+                  <h4 class="text-xl mb-6">Grupo Empresarial Quirquincho</h4>
+                  <p class="text-sm" style="text-align: justify;">
+                    Grupo Empresarial Quirquincho es un grupo boliviano dedicado al transporte
+                    internacional de pasajeros, con más de 15 años de experiencia conectando Bolivia y
+                    Argentina. Fundada en 2005 en Oruro por don René Cáceres Choque (QEPD), la empresa
+                    ha crecido y evolucionado, consolidándose como un referente en el sector del
+                    transporte. ​
+
+                    ​
+
+                    ​La visión de don René Cáceres Choque llevó a la creación de Autobuses Quirquincho
+                    en 2005, con el objetivo de ofrecer un servicio de transporte seguro y de calidad
+                    entre Bolivia y Argentina. A lo largo de los años, la empresa ha invertido en la
+                    renovación y modernización de su flota, introduciendo unidades de última generación
+                    como los buses Marcopolo G8, para garantizar la comodidad y seguridad de nuestros
+                    pasajeros.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

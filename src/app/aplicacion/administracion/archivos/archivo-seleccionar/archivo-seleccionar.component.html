@@ -1,0 +1,62 @@
+<h2 mat-dialog-title> Seleccionar Archivo </h2>
+
+<mat-dialog-content>
+
+  <div class="flex items-center">
+    <h2 class="flex-auto m-0 headline font-bold">
+      Si desea agregar mas foto, presione el boton 👉🏻
+    </h2>
+    <button class="ltr:ml-1 rtl:mr-1 flex-none" color="primary" mat-mini-fab matTooltip="Agregar Fotos"
+      type="button" (click)="nuevo()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <div class="flex flex-wrap justify-center">
+
+    @for (item of lista; track item) {
+      <div class="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3">
+        <div class="bg-white rounded-lg shadow-lg p-4 h-72">
+          <!-- <h3 class="text-xs font-semibold truncate w-32">{{ item.nombre }}</h3> -->
+          <h3 class="text-xs font-semibold ">{{ item.nombre }}</h3>
+          <p class="text-xs">{{ item.fechaRegistro.toDate() | date:'short' }}</p>
+          <!-- Condición para imágenes -->
+          <div class="w-full h-32">
+            @if (item.clase === 'image') {
+              <img [src]="item.url" alt="Place image title"
+                class="object-cover h-full w-full">
+            }
+            @if (item.clase !== 'image') {
+              <div class="flex justify-center">
+                @if (item.extencion === 'pdf') {
+                  <mat-icon>picture_as_pdf</mat-icon>
+                }
+                @if (item.extencion === 'xls') {
+                  <mat-icon>table_view</mat-icon>
+                }
+                <!-- Agregar más condiciones aquí -->
+              </div>
+            }
+          </div>
+          <div class="flex justify-between mt-4">
+            <span class="text-sm">{{ (item.tamano / (1024 * 1024)) | number: '1.2-2' }} MB</span>
+            <a target="_blank" [href]="item.url" [download]="item.nombre">
+              <mat-icon>download</mat-icon>
+            </a>
+          </div>
+          <!-- Botón de eliminar -->
+          <div class="flex justify-end mt-4">
+            <button mat-raised-button color="warn" (click)="seleccionar(item)">
+              <mat-icon>done</mat-icon> Seleccionar
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+</mat-dialog-content>
+
+<div mat-dialog-actions class="justify-end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+</div>

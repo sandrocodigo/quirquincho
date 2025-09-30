@@ -1,0 +1,26 @@
+@if (producto) {
+  <h2 mat-dialog-title>{{producto.descripcion}}</h2>
+}
+
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+
+  <div #tabla class="text-center">
+
+    @if (producto) {
+      <h3 style="margin-bottom: 0.2rem;">
+        <strong>{{ producto.descripcion }}</strong>
+      </h3>
+    }
+    <svg #barcode></svg>
+
+  </div>
+</mat-dialog-content>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button (click)="imprimir()" mat-button type="button" color="primary">Imprimir</button>
+</mat-dialog-actions>

@@ -1,1 +1,61 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@import "@ng-select/ng-select/themes/default.theme.css";
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@layer components {
+  .titulo {
+    @apply text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text;
+  }
+  .subtitulo {
+    @apply text-sm text-gray-500 dark:text-gray-300;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  /* Agrega desplazamiento horizontal */
+}
+
+.example-container {
+  height: 450px;
+  overflow: auto;
+}
+
+/* FECHA */
+input[type="date"] {
+  /*  width: 100%; */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #2ecc40;
+}
+
+.mat-mdc-table {
+  width: 100%;
+
+  .mat-mdc-row:nth-child(even) {
+    background-color: var(--mat-sys-surface-container-low);
+  }
+
+  .mat-mdc-row:nth-child(odd) {
+    background-color: var(--mat-sys-surface);
+  }
+
+  /* Ajuste opcional: al pasar el mouse */
+  .mat-mdc-row:hover {
+    background-color: var(--mat-sys-surface-container-high);
+  }
+}

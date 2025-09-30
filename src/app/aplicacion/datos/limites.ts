@@ -1,0 +1,17 @@
+export const limites = [
+    { id: 1, descripcion: '1' },
+    { id: 2, descripcion: '2' },
+    { id: 3, descripcion: '3' },
+    { id: 9, descripcion: '9' },
+    { id: 10, descripcion: '10' },
+    { id: 18, descripcion: '18' },
+    { id: 30, descripcion: '30' },
+    { id: 50, descripcion: '50' },
+    { id: 60, descripcion: '60' },
+    { id: 90, descripcion: '90' },
+    { id: 100, descripcion: '100' },
+    { id: 200, descripcion: '200' },
+    { id: 500, descripcion: '500' },
+    { id: 1000, descripcion: '1000' },
+    { id: 2000, descripcion: 'TODO' },
+];

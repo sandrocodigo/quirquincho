@@ -1,0 +1,26 @@
+<div
+    class="flex flex-wrap items-center bg-gradient-to-r from-lime-500 via-lime-850 to-lime-950 text-white rounded-lg lg:rounded-r-lg p-4">
+    <h2 class="flex-auto m-0 text-white text-xl ">
+        Ajustes
+    </h2>
+    <div class="w-full flex flex-wrap space-x-4 space-y-2 mt-2 sm:space-y-0">
+
+
+
+        <a [routerLink]="'usuarios'" class="flex items-center text-white hover:text-gray-300">
+            <span class="material-icons">people</span>
+            <span class="ml-1">Usuario</span>
+        </a>
+
+        <a [routerLink]="'planes'" class="flex items-center text-white hover:text-gray-300">
+            <span class="material-icons">currency_exchange</span>
+            <span class="ml-1">Plan</span>
+        </a>
+
+        <a [routerLink]="'mantenimientos'" class="flex items-center text-white hover:text-gray-300">
+            <span class="material-icons">handyman</span>
+            <span class="ml-1">Mantenimiento</span>
+        </a>
+    </div>
+</div>
+<router-outlet></router-outlet>

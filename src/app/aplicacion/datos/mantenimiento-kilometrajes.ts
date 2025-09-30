@@ -1,0 +1,16 @@
+export const mantenimientoKilometrajes = [
+    { id: 1000, descripcion: '1000' },
+    { id: 2000, descripcion: '2000' },
+    { id: 3000, descripcion: '3000' },
+    { id: 4000, descripcion: '4000' },
+    { id: 5000, descripcion: '5000' },
+    { id: 10000, descripcion: '10000' },
+    { id: 20000, descripcion: '20000' },
+    { id: 25000, descripcion: '25000' },
+    { id: 30000, descripcion: '30000' },
+    { id: 40000, descripcion: '40000' },
+    { id: 50000, descripcion: '50000' },
+    { id: 80000, descripcion: '80000' },
+    { id: 100000, descripcion: '100000' },
+    { id: 150000, descripcion: '150000' },
+];

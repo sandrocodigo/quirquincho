@@ -1,0 +1,87 @@
+<div class="flex items-center mx-2">
+  <h2 class="flex-auto m-0 headline">
+    Ingresos: @if (producto) {
+    <span>{{producto.codigo}}, {{producto.descripcion}}
+    </span>
+  }
+</h2>
+<button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+  <mat-icon>close</mat-icon>
+</button>
+</div>
+
+<mat-divider></mat-divider>
+
+<!-- CUERPO -->
+<div style="overflow: auto; max-height: 400px;">
+
+  <table mat-table [dataSource]="dataSource" class=" w-full">
+
+    <ng-container matColumnDef="fecha">
+      <th mat-header-cell *matHeaderCellDef> FECHA </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fecha | date}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pc">
+      <th mat-header-cell *matHeaderCellDef> PC </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.pc}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pv">
+      <th mat-header-cell *matHeaderCellDef> PV </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.pv}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="cantidad">
+      <th mat-header-cell *matHeaderCellDef> CANTIDAD </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.cantidad}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="cantidadSaldo">
+      <th mat-header-cell *matHeaderCellDef> SALDO </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.cantidadSaldo}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="opciones">
+      <th mat-header-cell *matHeaderCellDef class="text-right">
+      </th>
+      <td mat-cell *matCellDef="let element" class="text-right">
+        <!--
+        <button mat-icon-button type="button" color="warn" (click)="masIngresos(element)">
+          <mat-icon>menu_open</mat-icon>
+        </button>
+        -->
+        @if (element.finalizado) {
+          <button mat-raised-button color="bg-accent" type="button" (click)="seleccionarIngreso(element)">
+            <mat-icon>done</mat-icon> <span>Seleccionar</span>
+          </button>
+        }
+
+        @if (!element.finalizado) {
+          <span class="text-orange-600">Pendiente</span>
+        }
+
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+</div>
+
+<mat-dialog-actions align="end">
+
+  <span class="text-gray-500"> Seleccione un ingreso realizado anteriormente</span>
+  <!--  <buttonmat-button mat-dialog-close type="button">Listo</button> -->
+</mat-dialog-actions>

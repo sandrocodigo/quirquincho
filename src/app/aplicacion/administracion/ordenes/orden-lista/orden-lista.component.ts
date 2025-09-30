@@ -1,0 +1,269 @@
+import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Title } from '@angular/platform-browser';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
+import { SpinnerService } from '../../../sistema/spinner/spinner.service';
+
+// MATERIAL
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatMenuModule } from '@angular/material/menu';
+
+
+import { RouterModule } from '@angular/router';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+
+import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
+import { AuthService } from '../../../servicios/auth.service';
+import { limites } from '../../../datos/limites';
+
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ProgramacionService } from '../../../servicios/programacion.service';
+import { VehiculoService } from '../../../servicios/vehiculo.service';
+import { OrdenFormComponent } from '../orden-form/orden-form.component';
+import { OrdenService } from '../../../servicios/orden.service';
+
+@Component({
+  selector: 'app-orden-lista',
+  templateUrl: './orden-lista.component.html',
+  styleUrl: './orden-lista.component.scss',
+  standalone: true,
+  imports: [
+    CommonModule, RouterModule,
+    FormsModule, ReactiveFormsModule,
+
+    // MATERIAL
+    MatIconModule,
+    MatDividerModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatTableModule,
+    MatSortModule,
+    //MatTooltip,
+    MatMenuModule,
+    NgSelectComponent
+  ],
+})
+export class OrdenListaComponent {
+  buscadorFormGroup: FormGroup;
+  buscadorControl = false;
+
+  tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
+  limites = limites;
+
+  filtro = false;
+
+  usuario: any | null = null;
+
+  listaCategorias: any;
+
+  lista: any[] = [];
+  listaOriginal: any[] = [];
+
+  listaVehiculos: any = [];
+
+  constructor(
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private snackbar: MatSnackBar,
+    private cargando: SpinnerService,
+    private authServicio: AuthService,
+    private titleService: Title,
+    private vehiculoServicio: VehiculoService,
+    private breakpointObserver: BreakpointObserver,
+    private ordenServicio: OrdenService,
+    private pServicio: ProgramacionService,
+
+  ) {
+
+    this.authServicio.user$.subscribe((user) => {
+      if (user) { this.usuario = user; }
+    });
+
+    this.buscadorFormGroup = this.fb.group({
+      vehiculoId: ['TODOS'],
+      activo: ['true'],
+      // tipo: ['TODOS'],
+      //publicado: ['TODOS'],
+      //categoria: ['TODOS'],
+      limite: [500],
+    });
+    //this.obtenerConsulta();
+    this.establecerSuscripcionForm();
+
+
+  }
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Ordenes');
+
+    this.breakpointObserver.observe(['(max-width: 768px)']).subscribe(result => {
+      this.filtro = !result.matches;
+      // console.log('Filtro:', this.filtro); // `true` si la pantalla es menor o igual a 768px
+    });
+
+    this.obtenerVehiculos()
+  }
+
+  ngAfterViewInit() { }
+
+  get b(): any { return this.buscadorFormGroup.controls; }
+
+  establecerSuscripcionForm() {
+
+    this.b.vehiculoId.valueChanges.subscribe((val: any) => {
+      this.obtenerConsulta();
+    });
+    this.b.activo.valueChanges.subscribe((val: any) => {
+      this.obtenerConsulta();
+    });
+    this.b.limite.valueChanges.subscribe((val: any) => {
+      this.obtenerConsulta();
+    });
+  }
+
+  obtenerVehiculos(): void {
+    this.cargando.show();
+    this.vehiculoServicio.obtenerTodosActivos().then(res => {
+
+      this.listaVehiculos = [
+        { id: 'TODOS', dato: 'TODOS' },
+        ...res.map((res: any) => {
+          res.dato = res.interno + ' - ' + res.placa;
+          return res;
+        })
+      ];
+      // this.listaVehiculos = res;
+      console.log('VEHICULOS', res);
+      this.cargando.hide();
+    });
+  }
+
+  // OBTENER CATEGORIAS
+  /*   obtenerCategorias() {
+      this.pcServicio.obtenerTodos().then((data: any) => {
+        this.listaCategorias = data;
+      })
+    } */
+
+  obtenerConsulta(): void {
+    this.cargando.show();
+    this.ordenServicio.obtenerConsulta(this.buscadorFormGroup.getRawValue()).then((respuesta: any) => {
+      console.log('CONSULTA: ', respuesta);
+
+      const hoy = new Date(); // Fecha actual sin horas
+
+      const resultados = respuesta.map((item: any) => {
+        const fechaProximo = new Date(item.fechaProximo);
+        // Limpiar hora para comparación justa
+        const diffTime = fechaProximo.setHours(0, 0, 0, 0) - hoy.setHours(0, 0, 0, 0);
+        const diasFaltantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // milisegundos a días
+
+        item.faltaDias = diasFaltantes;
+        return item;
+      });
+
+      const resultadosOrdenados = resultados.sort((a: any, b: any) => b.numero - a.numero);
+
+      this.lista = resultadosOrdenados;
+      this.listaOriginal = [...resultadosOrdenados];
+
+      this.cargando.hide();
+    });
+  }
+
+
+  nuevo() {
+    const dialogRef = this.dialog.open(OrdenFormComponent, {
+      width: '800px',
+      data: {
+        nuevo: true,
+        id: null,
+        objeto: null
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.obtenerConsulta();
+      }
+    });
+  }
+
+  editar(fila: any) {
+    const dialogRef = this.dialog.open(OrdenFormComponent, {
+      width: '800px',
+      data: {
+        nuevo: false,
+        id: fila.id,
+        objeto: fila
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.obtenerConsulta();
+      }
+    });
+  }
+
+  eliminar(fila: any) {
+    const dialogRef = this.dialog.open(ConfirmacionComponent, {
+      width: '400px',
+      data: {
+        titulo: 'Eliminar Orden',
+        mensaje: '¿Esta seguro de realizar esta accion?',
+        nota: '...'
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.cargando.show();
+        this.ordenServicio.editar(fila.id, { activo: false, usuarioElimina: this.usuario.email }).then(result => {
+          this.pServicio.editar(fila.programacionId, { ordenId: null }).then(res => {
+            this.cargando.hide();
+            this.snackbar.open('Eliminado...', 'OK', { duration: 10000 });
+            this.obtenerConsulta();
+          });
+        })
+      }
+    });
+  }
+
+  filtros() {
+    this.filtro = !this.filtro;
+  }
+
+
+  aplicarFiltro(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+
+    if (!filterValue.trim()) {
+      // Si el filtro está vacío, restaura la lista original
+      this.lista = [...this.listaOriginal];
+    } else {
+      // Filtra la lista
+      this.lista = this.buscarEnJson(this.listaOriginal, filterValue);
+    }
+  }
+
+  buscarEnJson(jsonData: any[], searchTerm: string): any[] {
+    const lowerSearchTerm = searchTerm.trim().toLowerCase();
+
+    return jsonData.filter(item =>
+      Object.values(item).some(value =>
+        (value ?? '').toString().toLowerCase().includes(lowerSearchTerm)
+      )
+    );
+  }
+}

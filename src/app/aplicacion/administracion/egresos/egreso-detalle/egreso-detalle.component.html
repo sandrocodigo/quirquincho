@@ -1,0 +1,361 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 inline-block text-transparent bg-clip-text">
+      Egreso - @if (egreso) {<span>{{ egreso.codigo }}</span>}
+
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Detalle de Venta</p>
+  </div>
+  <div class="ml-auto">
+
+    <button [routerLink]="'/administracion/egresos'" class="ml-1 mr-1" color="primary" mat-mini-fab
+      matTooltip="Mas Egresos" type="button">
+      <mat-icon>list</mat-icon>
+    </button>
+
+    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" matFab extended matTooltip="Adicionar" type="button">
+      <mat-icon>add</mat-icon> Nuevo
+    </button>
+
+  </div>
+</div>
+
+@if (egreso) {
+<div
+  class="bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200 p-4 rounded-lg shadow-lg flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
+
+
+  <div class="flex items-center space-x-2">
+    <span class="material-icons text-green-500">home</span>
+    <span>{{ egreso.sucursal }}</span>
+  </div>
+
+  <div class="flex items-center space-x-2 border-l">
+    <span class="material-icons text-yellow-500">update</span>
+    <span>{{ egreso.tipo }}</span>
+  </div>
+
+  <!-- Información del cliente -->
+  <div class="flex items-center space-x-2 border-l">
+    <!-- Empresa -->
+    <span class="material-icons text-blue-500">business</span>
+    <span class="font-medium">{{ egreso.clienteEmpresa }} - {{ egreso.clienteResponsable }}</span>
+  </div>
+
+  <div class="flex items-center space-x-2 flex-1 border-l">
+    <span class="material-icons text-purple-500">description</span>
+    <span>{{ egreso.descripcion }}</span>
+  </div>
+
+  <div class="flex items-center px-4 py-2 md:ml-auto">
+    <!--     <mat-slide-toggle [(ngModel)]="qr" name="qr" (change)="onQrChange($event)" [disabled]="egreso?.finalizado === true">
+      Pagará con QR
+    </mat-slide-toggle> -->
+  </div>
+  <div class="flex items-center px-4 py-2 md:ml-auto">
+    <!--     <mat-slide-toggle [(ngModel)]="parraLlevar" name="parraLlevar" [disabled]="egreso?.finalizado === true"
+      (change)="onLLevarChange($event)">
+      Para LLevar
+    </mat-slide-toggle> -->
+  </div>
+
+  <!-- Botón de Editar -->
+  @if (!egreso.finalizado && !egreso.traspaso) {
+  <button (click)="editarEgreso()" [disabled]="egreso.tipo === 'MANTENIMIENTO'"
+    class="flex items-center text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg shadow-lg transition duration-200 md:ml-auto disabled:opacity-50 disabled:cursor-not-allowed">
+    <span class="material-icons mr-1">edit</span>
+    Editar
+  </button>
+  }
+  @if (!egreso.finalizado && egreso.traspaso) {
+  <button (click)="editarTraspaso(egreso)"
+    class="flex items-center text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg shadow-lg transition duration-200 md:ml-auto disabled:opacity-50 disabled:cursor-not-allowed">
+    <span class="material-icons mr-1">edit</span>
+    Editar
+  </button>
+  }
+</div>
+}
+
+<div class="container mx-auto mt-2 p-4 md:p-0 dark:bg-gray-800 dark:text-white">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+    <!-- Cart Items -->
+    <div class="col-span-3 bg-white p-4 rounded shadow-md dark:bg-gray-700 dark:text-white">
+
+      @if (egreso && !egreso.finalizado && listaProductos) {
+      <br>
+
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/3 px-2">
+          @if (buscadorFormGroup) {
+          <form [formGroup]="buscadorFormGroup" (ngSubmit)="egresarConCodigoDeBarra()" class="flex-grow" #aForm>
+            <div class="flex h-10 items-center px-1 bg-app-bar">
+              <div class="flex-grow flex m-0">
+                <div class="flex items-center mr-2 px-2 border rounded-full bg-foreground w-full">
+                  <mat-icon>search</mat-icon>
+                  <input formControlName="codigoBarra" name="codigoBarra"
+                    class="w-full px-2 py-3 border-0 outline-none bg-transparent" placeholder="Codigo de Barra...">
+                </div>
+              </div>
+            </div>
+          </form>
+          }
+        </div>
+        <div class="w-full md:w-2/3 px-2">
+          @if (productoFormGroup) {
+          <form (ngSubmit)="onSeleccionar()" [formGroup]="productoFormGroup" #aFormSeleccionar>
+            <ng-select [items]="listaProductos" bindLabel="dato" bindValue="id" appendTo="body"
+              formControlName="productoId" name="productoId" #productoSelect
+              placeholder="Buscar producto por codigo o descripcion..." panelClass="pos-ngselect">
+            </ng-select>
+          </form>
+          }
+        </div>
+      </div> 
+
+      <br>
+
+      }
+
+      @for (item of detalle; track $index) {
+      <div class="flex flex-col md:flex-row items-center gap-2 p-2 border-b hover:bg-gray-100 dark:hover:bg-gray-500">
+
+        <div class="flex flex-grow gap-4 items-center">
+          <div class="w-16 h-24" (click)="fotos(item.producto)">
+            <img
+              [src]="item.productoFotosUrl && item.productoFotosUrl.length > 0 ? item.productoFotosUrl[0].url : 'assets/imagenes/sinfoto.png'"
+              alt="Imagen del producto" class="w-full h-auto object-cover rounded-md cursor-pointer">
+          </div>
+          <div class="flex flex-col justify-between">
+            <span class="text-[10px]">{{item.productoCodigo}}</span>
+            <span class="text-sm font-bold">{{item.productoDescripcion}}</span>
+            <!--  <span class="text-xs text-red-500">{{item.productoBarra}} </span> -->
+            <span class="text-xs italic text-orange-600 dark:text-orange-300">{{item.detalle}}</span>
+          </div>
+        </div>
+
+
+
+        @if (egreso && !egreso.finalizado) {
+        <div class="flex flex-row md:flex-col items-center gap-2">
+          <!-- Botón SUMAR -->
+          <button mat-icon-button type="button" (click)="sumar(item)" [disabled]="item.cantidad >= item.cantidadSaldo">
+            <mat-icon class="!text-green-500">add_circle</mat-icon>
+          </button>
+
+          <!-- Botón RESTAR -->
+          <button mat-icon-button type="button" (click)="restar(item)" [disabled]="item.cantidad <= 1">
+            <mat-icon class="!text-red-500">remove_circle</mat-icon>
+          </button>
+        </div>
+        }
+
+
+        <div class="flex flex-row justify-between items-center gap-2">
+
+          <div class="flex flex-col items-center justify-center w-16">
+            <span class="text-lg font-semibold">
+              {{item.cantidad}}
+
+              @if (egreso && !egreso.finalizado) {
+              <span style="font-size:10px"> / {{item.cantidadSaldo}} </span>
+              }
+
+            </span>
+          </div>
+
+          <div class="text-right">
+            <p class="text-xs text-gray-400">P. Venta</p>
+            <span class="text-sm font-semibold">{{item.pv | number:'1.2-2'}}</span>
+          </div>
+
+          <div class="text-right">
+            <p class="text-xs text-gray-400">Sub total</p>
+            <span class="text-sm font-semibold">{{item.subtotal | number:'1.2-2'}}</span>
+          </div>
+        </div>
+
+        @if (egreso && !egreso.finalizado) {
+        <div class="flex flex-row md:flex-col items-center gap-2">
+          <button mat-icon-button type="button" (click)="editar(item)">
+            <mat-icon class="!text-green-500">edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="eliminar(item)">
+            <mat-icon class="!text-red-500">delete</mat-icon>
+          </button>
+        </div>
+        }
+
+      </div>
+
+      }
+
+      @if (egreso) {
+      <div class="mt-4 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+        <p class="flex items-center gap-1">
+          <span class="font-medium text-gray-500 dark:text-gray-300">Creado por</span>
+          <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.registroUsuario }}</span>
+          <span class="text-gray-400">a las</span>
+          <span>{{ egreso.registroFecha?.toDate() | date:'short' }}</span>
+        </p>
+
+        <p class="flex items-center gap-1">
+          <span class="font-medium text-gray-500 dark:text-gray-300">Actualizado por</span>
+          <span class="font-semibold text-yellow-600 dark:text-yellow-400">{{ egreso.edicionUsuario }}</span>
+          <span class="text-gray-400">a las</span>
+          <span>{{ egreso.edicionFecha?.toDate() | date:'short' }}</span>
+        </p>
+
+        @if (egreso.finalizado) {
+        <p class="flex items-center gap-1">
+          <span class="font-medium text-gray-500 dark:text-gray-300">Finalizado por</span>
+          <span class="font-semibold text-red-600 dark:text-red-400">{{ egreso.finalizadoUsuario }}</span>
+          <span class="text-gray-400">a las</span>
+          <span>{{ egreso.finalizadoFecha?.toDate() | date:'short' }}</span>
+        </p>
+        }
+
+        @if (egreso.pagado) {
+        <p class="flex items-center gap-1">
+          <span class="font-medium text-gray-500 dark:text-gray-300">Cobrado por</span>
+          <span class="font-semibold text-green-600 dark:text-green-400">{{ egreso.pagadoUsuario }}</span>
+          <span class="text-gray-400">a las</span>
+          <span>{{ egreso.pagadoFecha?.toDate() | date:'short' }}</span>
+        </p>
+        }
+
+        @if (egreso && egreso.traspaso) {
+        <div class="mt-4 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Sucursal Origen</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.sucursal }}</span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Sucursal Destino</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.sucursalDestino }}</span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoInterno }} - {{
+              egreso.vehiculoPlaca }}</span>
+          </p>
+
+        </div>
+        }
+
+
+        @if (egreso && egreso.ordenCodigo) {
+        <div class="mt-4 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Orden</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.ordenCodigo }}</span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Mantenimiento Tipo</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.mantenimientoTipo }}</span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Mantenimiento Descripion</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.mantenimientoDescripcion }}</span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo Interno</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoInterno }}</span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo Placa</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoPlaca }}</span>
+          </p>
+
+        </div>
+        }
+
+      </div>
+
+      @if (!egreso.finalizado && listaProductos) {
+      <!-- <button matButton="elevated" (click)="openBottomSheet()">Productos Favoritos</button> -->
+      <button matButton="elevated" (click)="obtenerProductos()">Recargar Productos</button>
+      }
+      }
+
+    </div>
+
+    <!-- Order Summary -->
+    @if ( egreso && detalle) {
+    <div class="col-span-1 bg-white p-4 rounded shadow-md dark:bg-gray-700 dark:text-white">
+      <h1 class="text-2xl font-semibold border-b pb-4">Resumen</h1>
+
+      <div class="flex justify-between mt-4 text-sm font-semibold">
+        <span class="uppercase">{{detalle.length}} Items</span>
+        <span>{{total | number:'1.2-2': 'EN'}}</span>
+      </div>
+
+      <div class="flex justify-between mt-2 text-sm font-semibold">
+        <span class="uppercase">Descuento {{egreso.porcentajeDescuento}}%</span>
+        <span>{{descuento | number:'1.2-2': 'EN'}}</span>
+      </div>
+
+      <div class="flex justify-between mt-2 text-sm font-semibold">
+        <span class="uppercase">SUB TOTAL</span>
+        <span>{{nuevoTotal | number:'1.2-2': 'EN'}}</span>
+      </div>
+
+      <div class="flex justify-between mt-2 text-sm font-semibold">
+        <span class="uppercase">I.T.B.M.S. {{egreso.porcentajeImpuesto}}%</span>
+        <span>{{itbms | number:'1.2-2': 'EN'}}</span>
+      </div>
+
+      <div class="border-t mt-4 pt-4">
+        <div class="flex justify-between py-2 text-3xl font-semibold uppercase">
+          <span>Total</span>
+          <span>{{totalGeneral | number:'1.2-2': 'EN'}}</span>
+        </div>
+
+        @if (!egreso.finalizado) {
+
+        <button (click)="finalizar()" [disabled]="!detalle || detalle.length === 0" class="w-full flex items-center justify-center gap-3 
+         bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-400 
+         px-6 py-4 text-lg font-bold text-white uppercase 
+         rounded-xl mt-4 shadow-md transition transform hover:scale-105 disabled:cursor-not-allowed">
+          <mat-icon class="!text-2xl">check_circle</mat-icon>
+          Finalizar
+        </button>
+
+
+        } @else {
+        <button (click)="imprimir()"
+          class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
+          <mat-icon>print</mat-icon>
+          Imprimir
+        </button>
+        <!--         <button (click)="imprime()"
+          class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
+          <mat-icon>print</mat-icon>
+          Imprimir Ticket
+        </button> -->
+        }
+
+        <!--         @if (egreso.finalizado && !egreso.pagado && egreso.tipo !== 'AJUSTE') {
+        <button (click)="cobrar()"
+          class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-800 p-2 text-sm text-white uppercase rounded mt-2">
+          <mat-icon>point_of_sale</mat-icon>
+          Cobrar
+        </button>
+        } -->
+
+      </div>
+    </div>
+    }
+
+  </div>
+</div>

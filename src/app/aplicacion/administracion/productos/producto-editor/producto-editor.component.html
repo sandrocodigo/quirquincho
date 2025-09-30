@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Producto </h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <!--
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Detalle</mat-label>
+        <textarea matInput placeholder="Detalle" formControlName="detalle"></textarea>
+        <mat-error *ngIf="registroControl && r.detalle.errors">
+          <mat-error *ngIf="r.detalle.errors.required">
+            Se requiere la detalle del tramite
+          </mat-error>
+        </mat-error>
+      </mat-form-field> -->
+      <!-- Campo de Detalle con Editor Quill -->
+      <!--         <mat-form-field class="flex-auto w-full">
+      <mat-label>Detalle</mat-label>
+      <quill-editor formControlName="detalle"></quill-editor>
+      <mat-error *ngIf="registroControl && r.detalle.errors">
+        <mat-error *ngIf="r.detalle.errors.required">
+          Se requiere la detalle del tramite
+        </mat-error>
+      </mat-error>
+    </mat-form-field> -->
+    <quill-editor formControlName="detalle"></quill-editor>
+  </mat-dialog-content>
+  <mat-divider></mat-divider>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+    <button color="primary" mat-flat-button type="submit" [disabled]="boton">Aceptar</button>
+  </mat-dialog-actions>
+</form>
+}

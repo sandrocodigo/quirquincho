@@ -1,0 +1,101 @@
+<div class="flex items-center justify-between py-4">
+  <h1 class="text-3xl font-semibold dark:text-white">Clientes</h1>
+  <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+    type="button">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/3 px-2">
+        <!--             <mat-form-field class="flex-auto w-full">
+        <mat-label>EMPRESA</mat-label>
+        <mat-select formControlName="empresa">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option *ngFor="let item of empresas" [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>ACTIVO</mat-label>
+        <mat-select formControlName="activo">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> ACTIVOS </mat-option>
+          <mat-option value="false"> PASIVOS </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field appearance="fill" style="width:100%">
+        <mat-label>Limite</mat-label>
+        <mat-select formControlName="limite">
+          @for (item of limites; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
+}
+
+
+<table mat-table [dataSource]="dataSource" class="w-full dark:bg-gray-800">
+  <ng-container matColumnDef="empresa">
+    <th mat-header-cell *matHeaderCellDef class="dark:text-white px-4 py-2">
+      <div class="bg-app-bar flex px-1 h-20 items-center">
+        <div class="flex-auto flex m-0">
+          <div class="bg-foreground rounded-full border px-4 flex items-center w-full mr-2">
+            <mat-icon>search</mat-icon>
+            <input (keyup)="applyFilter($event)"
+              class="px-4 py-3 border-0 outline-none w-full bg-transparent dark:bg-slate-900 dark:text-white"
+              placeholder="Buscar en esta lista...">
+          </div>
+        </div>
+      </div>
+    </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-gray-300 px-4 py-2">
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/3 px-2">
+          <p class="italic text-xs text-gray-600 dark:text-gray-300">Empresa, {{element.numero}}</p>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white">{{element.empresa}}</p>
+        </div>
+        <div class="w-full md:w-1/3 px-2">
+          <p class="italic text-xs text-gray-600 dark:text-gray-300">Resposable</p>
+          <p class="text-sm text-gray-900 dark:text-white">{{element.responsable}}</p>
+        </div>
+        <div class="w-full md:w-1/3 px-2">
+          <p class="italic text-xs font-semibold text-gray-600 dark:text-gray-300">{{element.telefono}}</p>
+          <p class="text-sm text-emerald-600 dark:text-emerald-600">{{element.email}}</p>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="opciones">
+    <th mat-header-cell *matHeaderCellDef class="text-right dark:text-white px-4 py-2"></th>
+    <td mat-cell *matCellDef="let element" class="text-right dark:text-gray-300 px-4 py-2">
+      <div class="flex justify-end space-x-2">
+
+        <button mat-icon-button type="button" (click)="editar(element)">
+          <mat-icon color="accent">edit</mat-icon>
+        </button>
+
+        <!--
+        <a mat-flat-button [routerLink]="'detalle/' + element.id">Detalles</a> -->
+
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns" class="dark:bg-gray-900"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+  class="dark:bg-gray-800 dark:hover:bg-gray-700"></tr>
+</table>

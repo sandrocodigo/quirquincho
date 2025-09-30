@@ -1,0 +1,241 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+
+// Tema base claro (por defecto)
+$light-base: (
+  color: (
+    primary: mat.$orange-palette,
+    tertiary: mat.$blue-palette
+  ),
+  typography: Roboto,
+  density: 0
+);
+
+// Tema DARK base (misma paleta; si quieres cambiarla en dark, ver más abajo)
+$dark-base: (
+  color: (
+    primary: mat.$orange-palette,
+    tertiary: mat.$blue-palette
+  ),
+  typography: Roboto,
+  density: 0
+);
+
+/* -------------------- THEME SLOTS POR CLASE -------------------- */
+/* Orange (default) */
+:root,
+body.theme-orange {
+  @include mat.theme($light-base);
+}
+body.dark.theme-orange {
+  color-scheme: dark;
+  @include mat.theme($dark-base);
+}
+
+/* Cyan (merge profundo del submapa color) */
+$cyan-light: map.merge(
+  $light-base,
+  (
+    color: map.merge(
+        map.get($light-base, color),
+        (
+          primary: mat.$cyan-palette,
+          tertiary: mat.$blue-palette
+        )
+      )
+  )
+);
+
+$cyan-dark: map.merge(
+  $dark-base,
+  (
+    color: map.merge(
+        map.get($dark-base, color),
+        (
+          primary: mat.$cyan-palette,
+          tertiary: mat.$blue-palette
+        )
+      )
+  )
+);
+
+body.theme-cyan {
+  @include mat.theme($cyan-light);
+}
+body.dark.theme-cyan {
+  color-scheme: dark;
+  @include mat.theme($cyan-dark);
+}
+
+/* Violet (igual patrón de merge profundo) */
+$violet-light: map.merge(
+  $light-base,
+  (
+    color: map.merge(
+        map.get($light-base, color),
+        (
+          primary: mat.$violet-palette,
+          tertiary: mat.$blue-palette
+        )
+      )
+  )
+);
+
+$violet-dark: map.merge(
+  $dark-base,
+  (
+    color: map.merge(
+        map.get($dark-base, color),
+        (
+          primary: mat.$violet-palette,
+          tertiary: mat.$blue-palette
+        )
+      )
+  )
+);
+
+body.theme-violet {
+  @include mat.theme($violet-light);
+}
+body.dark.theme-violet {
+  color-scheme: dark;
+  @include mat.theme($violet-dark);
+}
+
+
+/* Magenta */
+$magenta-light: map.merge(
+  $light-base,
+  (
+    color: map.merge(
+      map.get($light-base, color),
+      (
+        primary: mat.$magenta-palette,
+        tertiary: mat.$blue-palette
+      )
+    )
+  )
+);
+
+$magenta-dark: map.merge(
+  $dark-base,
+  (
+    color: map.merge(
+      map.get($dark-base, color),
+      (
+        primary: mat.$magenta-palette,
+        tertiary: mat.$blue-palette
+      )
+    )
+  )
+);
+
+body.theme-magenta {
+  @include mat.theme($magenta-light);
+}
+body.dark.theme-magenta {
+  color-scheme: dark;
+  @include mat.theme($magenta-dark);
+}
+
+/* Chartreuse */
+$chartreuse-light: map.merge(
+  $light-base,
+  (
+    color: map.merge(
+      map.get($light-base, color),
+      (
+        primary: mat.$chartreuse-palette,
+        tertiary: mat.$blue-palette
+      )
+    )
+  )
+);
+
+$chartreuse-dark: map.merge(
+  $dark-base,
+  (
+    color: map.merge(
+      map.get($dark-base, color),
+      (
+        primary: mat.$chartreuse-palette,
+        tertiary: mat.$blue-palette
+      )
+    )
+  )
+);
+
+body.theme-chartreuse {
+  @include mat.theme($chartreuse-light);
+}
+body.dark.theme-chartreuse {
+  color-scheme: dark;
+  @include mat.theme($chartreuse-dark);
+}
+
+/* Rose */
+$rose-light: map.merge(
+  $light-base,
+  (
+    color: map.merge(
+      map.get($light-base, color),
+      (
+        primary: mat.$rose-palette,
+        tertiary: mat.$blue-palette
+      )
+    )
+  )
+);
+
+$rose-dark: map.merge(
+  $dark-base,
+  (
+    color: map.merge(
+      map.get($dark-base, color),
+      (
+        primary: mat.$rose-palette,
+        tertiary: mat.$blue-palette
+      )
+    )
+  )
+);
+
+body.theme-rose {
+  @include mat.theme($rose-light);
+}
+body.dark.theme-rose {
+  color-scheme: dark;
+  @include mat.theme($rose-dark);
+}
+
+/* Sistema (fondo/texto global) */
+body {
+  margin: 0;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+/* Si usas Tailwind dark por clase: */
+body.dark {
+  color-scheme: dark;
+
+  /* Fondo y superficies principales */
+  --mat-sys-background: #dd310b; /* entre slate-950 y slate-900 */
+  --mat-sys-surface: #dc230b; /* slate-900 */
+
+  /* Contenedores por niveles (tablas, cards, toolbars, etc.) */
+  --mat-sys-surface-container-lowest: #0b1220; /* casi fondo */
+  --mat-sys-surface-container-low: #0f172a; /* slate-900 */
+  --mat-sys-surface-container: #111827; /* aprox gray-900 */
+  --mat-sys-surface-container-high: #162036; /* intermedio */
+  --mat-sys-surface-container-highest: #1e293b; /* slate-800 */
+
+  /* Texto y bordes */
+  --mat-sys-on-surface: #e2e8f0; /* slate-200 */
+  --mat-sys-on-surface-variant: #cbd5e1; /* slate-300 */
+  --mat-sys-outline: #334155; /* slate-700 */
+  --mat-sys-outline-variant: #1f2937; /* gray-800-ish */
+
+  /* (Opcional) Chips/badges suaves */
+  --mat-sys-surface-variant: #0f1a2b; /* leve contraste p/ filas alternas, etc. */
+}

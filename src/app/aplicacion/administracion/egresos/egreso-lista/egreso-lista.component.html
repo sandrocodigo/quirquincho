@@ -1,0 +1,272 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Egresos
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Salida de Productos</p>
+  </div>
+  <div class="ml-auto">
+    <button (click)="nuevoTraspaso()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Traspaso" type="button">
+      <mat-icon>swap_vert</mat-icon>
+    </button>
+    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>
+
+@if (buscadorFormGroup ) {
+<form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+  <div class="flex flex-wrap -mx-2">
+    <div class="w-full md:w-1/4 px-2">
+      <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaInicio" name="fechaInicio"
+        formControlName="fechaInicio">
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaFinal" name="fechaFinal"
+        formControlName="fechaFinal">
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Sucursal</mat-label>
+        <mat-select formControlName="sucursal">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          @for (item of listaSucursales; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Finalizado</mat-label>
+        <mat-select formControlName="finalizado">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> FINALIZADO </mat-option>
+          <mat-option value="false"> PENDIENTE </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
+}
+
+<div class="table-container mat-elevation-z2">
+  <table mat-table [dataSource]="dataSource" matSort class="w-full dark:bg-gray-800">
+
+    <ng-container matColumnDef="codigo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Codigo </th>
+      <td mat-cell *matCellDef="let element" [class.text-green-500]="element.finalizado"
+        [class.text-red-500]="!element.finalizado">
+        <span [class.bg-green-100]="element.finalizado" [class.bg-red-100]="!element.finalizado"
+          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+          {{ element.codigo }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!--         <ng-container matColumnDef="clienteEmpresa">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Cliente </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      <span class="headline font-bold"> {{ element.clienteEmpresa }} </span> <br>
+      <span class="text-red-800 text-sm">{{element.clienteResponsable}}</span><br>
+      {{element.fechaRegistro?.toDate() | date:'short'}}
+    </td>
+  </ng-container>
+  -->
+
+    <ng-container matColumnDef="sucursal">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Sucursal </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.sucursal }}<br>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tipo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.tipo }}<br>
+        {{element.fechaRegistro?.toDate() | date:'short'}}
+      </td>
+    </ng-container>
+
+
+    <!--         <ng-container matColumnDef="producto">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Producto </th>
+  <td mat-cell *matCellDef="let element">
+                <span class="text-xs px-2 py-1 rounded-full capitalize text-white" [ngClass]="{
+                    'bg-slate-500': element.producto === '91',
+                    'bg-yellow-500': element.producto === '95',
+                    'bg-green-500': element.producto === 'DIESEL'
+                }">
+      {{ element.producto }}
+    </span>
+  </td>
+</ng-container> -->
+
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripcion </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.descripcion }}
+        <div class="font-semibold">{{ element.mantenimientoDescripcion }}</div>
+        <div class="font-semibold">{{ element.vehiculoInterno }} - {{ element.vehiculoPlaca }}</div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Total </th>
+      <td mat-cell *matCellDef="let element">
+        <div class="text-right">
+          <span [class.text-blue-500]="element.finalizado" [class.text-orange-500]="!element.finalizado"
+            [class.bg-blue-100]="element.finalizado" [class.bg-orange-100]="!element.finalizado"
+            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+            {{ element.total | number:'1.2-2': 'EN'}}
+          </span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="opciones">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+      <td mat-cell *matCellDef="let element">
+
+
+
+        <div class="text-right">
+
+
+          <!--                     <a [routerLink]="'detalle/'+ element.id" matTooltip="Detalle, Agregrar/Quitar/Editar Items"
+      class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+      Detalle
+    </a>
+    -->
+
+
+          <a [routerLink]="'detalle/'+ element.id" matTooltip="Detalle, Agregrar/Quitar/Editar Items"
+            class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+            Detalle
+          </a>
+
+          @if (!element.finalizado) {
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Opciones">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          }
+
+          <!-- Menú de opciones -->
+          <mat-menu #menu="matMenu">
+
+            <!--                     <button mat-menu-item (click)="copiar(element)">
+      <mat-icon color="primary">file_copy</mat-icon>
+      <span>Copiar</span>
+    </button> -->
+
+            @if (!element.traspaso) {
+            <button [disabled]="element.tipo === 'MANTENIMIENTO'" mat-menu-item (click)="editar(element)">
+              <mat-icon color="accent">edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            }
+
+            @if (element.traspaso) {
+            <button mat-menu-item (click)="editarTraspaso(element)">
+              <mat-icon class="material-icon !text-green-600">edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            }
+
+            <!--                  <button *ngIf="!element.finalizado" mat-menu-item (click)="eliminar(element)">
+    <mat-icon color="warn">delete</mat-icon>
+    <span>Eliminar</span>
+  </button> -->
+          </mat-menu>
+
+          <!--
+class="bg-gray-200 p-2 rounded-full hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-300"
+<button mat-icon-button type="button" (click)="copiar(element)" matTooltip="Copiar">
+  <mat-icon color="primary">file_copy</mat-icon>
+</button>
+
+<button *ngIf="!element.finalizado" mat-icon-button type="button" (click)="eliminar(element)"
+  matTooltip="Eliminar">
+  <mat-icon color="warn">delete</mat-icon>
+</button>
+<button *ngIf="!element.finalizado" mat-icon-button type="button" (click)="editar(element)"
+  matTooltip="Editar">
+  <mat-icon color="accent">edit</mat-icon>
+</button> -->
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+</div>
+
+
+<!--
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase dark:text-gray-400">
+      <tr>
+        <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+          CODIGO
+        </th>
+        <th scope="col" class="px-6 py-3">
+          DESCRIPCION
+        </th>
+        <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+          TOTAL
+        </th>
+        <th scope="col" class="px-6 py-3">
+          FINALIZADO
+        </th>
+        <th scope="col" class="px-6 py-3">
+
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of lista" class="border-b border-gray-200 dark:border-gray-700">
+        <th scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+          <p class="text-xs mb-1">{{item.sucursal}}</p>
+          <p class="text-emerald-600">{{item.codigo}}</p>
+        </th>
+        <td class="px-6 py-4">
+          <p class="text-xs mb-1">{{item.tipo}}</p>
+          <p class="text-sm">{{item.descripcion}}</p>
+        </td>
+        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800 text-right">
+          {{item.total}}
+        </td>
+        <td class="px-6 py-4">
+          <mat-icon [style.color]="item.finalizado ? 'green' : 'red'">
+            {{item.finalizado ? 'done' : 'close'}}
+          </mat-icon>
+        </td>
+        <td class="px-6 py-4">
+          <button *ngIf="!item.finalizado" mat-icon-button type="button" color="accent"
+            (click)="editar(item)">
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button *ngIf="!item.finalizado" mat-icon-button type="button" color="warn" (click)="eliminar(item)">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+
+          <button [routerLink]="'detalle/'+ item.id"
+            class="bg-gradient-to-r from-black to-green-500 text-white rounded-md px-2 py-1 hover:bg-gray-800">
+            Detalle
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->

@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>Enviar Viaje por WhatsApp </h2>
+
+@if (viaje) {
+  <mat-dialog-content>
+    <!-- DATOS PARA COPIAR -->
+    <div>
+      <!-- Empresa -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-green-500">business</span>
+        <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Empresa: 😁</h4>
+        <p class="text-gray-800 dark:text-gray-100">{{ viaje.clienteEmpresa }}</p>
+      </div>
+      <!-- Responsable -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-blue-500">person</span>
+        <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Responsable:</h4>
+        <p class="text-gray-800 dark:text-gray-100">{{ viaje.clienteResponsable }}</p>
+      </div>
+      <!-- Teléfono -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-yellow-500">phone</span>
+        <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Teléfono:</h4>
+        <p class="text-gray-800 dark:text-gray-100">{{ viaje.clienteTelefono }}</p>
+      </div>
+      <div class="border-t border-gray-300 my-5"></div>
+      <!-- Vehículo -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-indigo-500">directions_car</span>
+        <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Vehículo:</h4>
+        <p class="text-gray-800 dark:text-gray-100">{{ viaje.vehiculoModelo }} ({{ viaje.vehiculoPlaca }})
+        </p>
+      </div>
+      <!-- Conductor -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-teal-500">badge</span>
+        <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Conductor:</h4>
+        <p class="text-gray-800 dark:text-gray-100">{{ viaje.conductor }}</p>
+      </div>
+      <!-- telefono -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-teal-500">phone</span>
+        <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Telefono:</h4>
+        <p class="text-gray-800 dark:text-gray-100">{{ viaje.conductorTelefono }}</p>
+      </div>
+      <!-- Email -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-teal-500">email</span>
+        <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Email:</h4>
+        <p class="text-gray-800 dark:text-gray-100">{{ viaje.conductorEmail }}</p>
+      </div>
+    </div>
+    <!-- BOTON DE COPIAR EN PORTAPAPELES ????? -->
+    <!-- BOTÓN DE COPIAR -->
+    <div class="mt-4 text-center">
+      <a (click)="enviarPorWhatsappWEB(viaje)"
+        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-300">
+        <span class="material-icons h-6 w-6 mr-2">phone</span>
+        WhatsApp WEB
+      </a>
+      <button mat-raised-button color="primary" (click)="copiarDatos()">
+        <mat-icon class="mr-2">content_copy</mat-icon>
+        Copiar Datos para enviar
+      </button>
+    </div>
+  </mat-dialog-content>
+}
+
+<mat-divider></mat-divider>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Listo</button>
+</mat-dialog-actions>

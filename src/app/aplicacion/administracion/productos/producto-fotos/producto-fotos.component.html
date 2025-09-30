@@ -1,0 +1,89 @@
+
+@if (producto) {
+  <h2 mat-dialog-title> Fotos: {{producto.descripcion}}</h2>
+}
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <button mat-button type="button" (click)="seleccionarFoto()">
+        <mat-icon>add</mat-icon> Adicionar Foto
+      </button>
+      <div class="flex flex-wrap justify-center">
+        <!-- Imagen Destacada -->
+        <div class="w-full p-4">
+          <div class="bg-white rounded-lg shadow-lg p-4 h-72">
+            @if (fotoSeleccionado) {
+              <img [src]="fotoSeleccionado.url" alt="Imagen destacada"
+                class="object-cover h-full w-full">
+            }
+          </div>
+        </div>
+        <!-- Miniaturas -->
+        <!--    <div class="flex space-x-4 p-4">
+        <div *ngFor="let item of fotos" class="cursor-pointer">
+          <img [src]="item.url" alt="Miniatura" class="object-cover h-24 w-24 border-2 border-transparent hover:border-blue-500" (click)="seleccionarImagen(item)">
+          <button mat-mini-fab color="warn" (click)="eliminar(item)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div> -->
+      <div class="flex space-x-4 p-4" cdkDropList (cdkDropListDropped)="drop($event)">
+        @for (item of fotos; track item) {
+          <div cdkDrag class="cursor-pointer">
+            <img [src]="item.url" alt="Miniatura"
+              class="object-cover h-24 w-24 border-2 border-transparent hover:border-blue-500"
+              (click)="seleccionarImagen(item)">
+            <button mat-mini-fab color="warn" (click)="eliminar(item)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-divider></mat-divider>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+    <button color="primary" mat-flat-button type="submit" [disabled]="boton">Aceptar</button>
+  </mat-dialog-actions>
+</form>
+}
+
+
+<!--
+
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/2 px-2">
+
+
+  </div>
+  <div class="w-full md:w-1/2 px-2">
+
+  </div>
+</div>
+
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-3/10 px-2">
+
+  </div>
+
+  <div class="w-full md:w-7/10 px-2">
+
+  </div>
+</div>
+
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/3 px-2">
+
+  </div>
+  <div class="w-full md:w-1/3 px-2">
+
+  </div>
+  <div class="w-full md:w-1/3 px-2">
+
+  </div>
+</div>
+-->

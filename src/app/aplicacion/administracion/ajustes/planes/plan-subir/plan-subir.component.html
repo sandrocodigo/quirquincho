@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Subir comprobante de Pago</h2>
+<mat-divider></mat-divider>
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <input type="file" (change)="onFileSelected($event)" placeholder="Seleccionar archivo" />
+      <!-- MOSTRAR AQUI TEMPORALMENTE ANTES DE GUARDAR ??-->
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Descripcion comprobante</mat-label>
+        <input matInput autocomplete="off" placeholder="Descripcion comprobante"
+          formControlName="comprobanteDescripcion">
+        @if (registroControl && r.comprobanteDescripcion.errors && r.comprobanteDescripcion.errors.required) {
+          <mat-error
+            >
+            Se requiere la Descripcion comprobante
+          </mat-error>
+        }
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button">Cancelar</button>
+      <button color="primary" mat-flat-button type="submit"> Aceptar</button>
+    </mat-dialog-actions>
+  </form>
+}

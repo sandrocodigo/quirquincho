@@ -1,0 +1,60 @@
+/* Clase de estilo para una tabla moderna y bonita */
+.tabla-estilizada {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.875rem;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Encabezado de la tabla */
+.tabla-estilizada thead {
+    background-color: #056f9d;
+    color: #fff;
+    text-align: left;
+}
+
+.tabla-estilizada tfoot {
+    background-color: #056f9d;
+    color: #fff;
+    text-align: left;
+}
+
+.tabla-estilizada th {
+    padding: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Cuerpo de la tabla */
+.tabla-estilizada td {
+    padding: 10px;
+    color: #333;
+}
+
+/* Filas alternas */
+.tabla-estilizada tbody tr:nth-child(odd) {
+    background-color: #e9ecef;
+}
+
+/* Filas al pasar el ratón */
+.tabla-estilizada tbody tr:hover {
+    background-color: #d6e4f0;
+    cursor: pointer;
+}
+
+/* Bordes de la tabla */
+.tabla-estilizada th,
+.tabla-estilizada td {
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Última fila sin borde */
+.tabla-estilizada tbody tr:last-child td {
+    border-bottom: none;
+}

@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Ingreso </h2>
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Sucursal</mat-label>
+        <mat-select formControlName="sucursal">
+          @for (item of listaSucursales; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+        @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
+          <mat-error>
+            Se requiere la Sucursal
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="tipo">
+          @for (item of listaTipos; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+        @if (registroControl && r.tipo.errors && r.tipo.errors.required) {
+          <mat-error>
+            Se requiere el tipo de Egreso
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Descripcion</mat-label>
+        <input name="descripcion" matInput placeholder="Descripcion" formControlName="descripcion">
+        @if (registroControl && r.descripcion.errors && r.descripcion.errors.required) {
+          <mat-error>
+            Se requieren la descripcion
+          </mat-error>
+        }
+      </mat-form-field>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/3 px-2">
+        </div>
+        <div class="w-full md:w-1/3 px-2">
+        </div>
+        <div class="w-full md:w-1/3 px-2">
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button">Cancelar</button>
+      <button color="primary" mat-flat-button type="submit" [disabled]="boton">Aceptar</button>
+    </mat-dialog-actions>
+  </form>
+}

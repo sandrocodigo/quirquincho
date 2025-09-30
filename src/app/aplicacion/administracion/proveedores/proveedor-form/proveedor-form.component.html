@@ -1,0 +1,81 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Proveedor </h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Locacion</mat-label>
+        <mat-select formControlName="locacion">
+          @for (item of locaciones; track item) {
+            <mat-option [value]="item">
+              {{item}}
+            </mat-option>
+          }
+        </mat-select>
+        @if (registroControl && r.locacion.errors && r.locacion.errors.required) {
+          <mat-error>
+            Se requiere
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Empresa</mat-label>
+        <input name="empresa" matInput placeholder="Empresa o Institucion" formControlName="empresa">
+        <mat-icon matSuffix>city</mat-icon>
+        <mat-hint>Empresa</mat-hint>
+        @if (registroControl && r.empresa.errors?.required) {
+          <mat-error>Requerido</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Responsable</mat-label>
+        <input name="responsable" matInput placeholder="Responsable" formControlName="responsable">
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-hint>Responsable</mat-hint>
+        @if (registroControl && r.responsable.errors?.required) {
+          <mat-error>Requerido</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Email</mat-label>
+        <input name="email" matInput placeholder="email" formControlName="email">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-hint>Correo Electronico</mat-hint>
+        @if (registroControl && r.email.errors?.required) {
+          <mat-error>Requerido</mat-error>
+        }
+        @if (registroControl && r.email.errors?.email) {
+          <mat-error>Incorrecto</mat-error>
+        }
+      </mat-form-field>
+      <br>
+        <mat-form-field class="w-full">
+          <mat-label>Telefono</mat-label>
+          <input name="telefono" matInput placeholder="telefono" formControlName="telefono">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-hint>Incluir codigo de are</mat-hint>
+          @if (registroControl && r.telefono.errors?.required) {
+            <mat-error>Requerido</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Descripcion</mat-label>
+          <textarea matInput placeholder="Descripcion de la Consecuencia" formControlName="descripcion"
+            cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="5">
+          </textarea>
+          @if (registroControl && r.descripcion.errors && r.descripcion.errors.required) {
+            <mat-error>
+              Se requiere la descripcion
+            </mat-error>
+          }
+        </mat-form-field>
+      </mat-dialog-content>
+      <mat-divider></mat-divider>
+      <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close type="button">Cancelar</button>
+        <button color="primary" mat-flat-button type="submit">Aceptar</button>
+      </mat-dialog-actions>
+    </form>
+  }

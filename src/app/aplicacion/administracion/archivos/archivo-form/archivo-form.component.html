@@ -1,0 +1,54 @@
+<!-- TITULO -->
+<div class="w-full">
+  <mat-form-field class="w-full">
+    <mat-label>Ubicación</mat-label>
+    <mat-select placeholder="Selecciona el trámite" [(ngModel)]="carpetaSeleccionado">
+      @for (item of carpetas; track item) {
+        <mat-option [value]="item.ubicacion">
+          {{item.descripcion}}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<mat-divider class="my-2"></mat-divider>
+
+<!-- CUERPO -->
+<div mat-dialog-content>
+
+  <div class="dropzone bg-gray-200 rounded-lg p-4 text-center cursor-pointer" (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()">
+    <p>Arrastra y suelta archivos aquí o haga clic para seleccionar archivos</p>
+    <input #fileInput type="file" multiple (change)="onFileSelected($event)" class="hidden" />
+  </div>
+
+  @for (fileUpload of filesUpload; track fileUpload) {
+    <div class="mt-4">
+      <div class="relative pt-1">
+        <div class="flex mb-2 items-center justify-between">
+          <span>
+            <strong>{{ fileUpload.file.name }}</strong>
+          </span>
+          <span class="text-right">
+            <small>{{fileUpload.progress}}%</small>
+          </span>
+        </div>
+        <div class="overflow-hidden h-4 mb-4 text-xs flex rounded bg-gray-300">
+          <div [ngStyle]="{'width': fileUpload.progress + '%'}"
+            class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500">
+            {{fileUpload.progress}}%
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<div mat-dialog-actions class="justify-end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+
+  <button cdkFocusInitial mat-button color="warn" (click)="onNoClick()" class="flex items-center">
+    <mat-icon>done</mat-icon> Aceptar
+  </button>
+</div>

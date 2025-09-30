@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Pagar con Paypal</h2>
+
+<!-- <form *ngIf="registroFormGroup" (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup" > -->
+
+<mat-dialog-content>
+
+  @if (plan) {
+    <p>{{plan.descripcion}}, {{plan.monto}} USD.</p>
+  }
+
+  <ngx-paypal [config]="payPalConfig"></ngx-paypal>
+
+
+  <!--         <mat-form-field class="flex-auto w-full">
+  <mat-label>Empresa o Institucion</mat-label>
+  <input matInput autocomplete="off" placeholder="Empresa" formControlName="empresa">
+  <mat-error *ngIf="registroControl && r.empresa.errors && r.empresa.errors.required">
+    Se requiere la Empresa o Institucion
+  </mat-error>
+</mat-form-field>
+
+<mat-form-field class="flex-auto w-full">
+  <mat-label>Descripcion del Proyecto</mat-label>
+  <input matInput autocomplete="off" placeholder="Descripcion" formControlName="descripcion">
+  <mat-error *ngIf="registroControl && r.descripcion.errors && r.descripcion.errors.required">
+    Se requiere la Descripcion
+  </mat-error>
+</mat-form-field>
+
+<mat-form-field class="flex-auto w-full">
+  <mat-label>Detalles, mas informacion (Opcional)</mat-label>
+  <input matInput autocomplete="off" placeholder="detalle" formControlName="detalle">
+</mat-form-field>
+-->
+</mat-dialog-content>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <!--  <button color="primary" mat-flat-button type="submit"> Aceptar</button> -->
+</mat-dialog-actions>
+<!-- </form> -->

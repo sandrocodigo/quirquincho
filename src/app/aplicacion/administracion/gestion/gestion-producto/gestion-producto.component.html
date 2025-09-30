@@ -1,0 +1,141 @@
+<div class="flex items-center justify-between py-4">
+  <h1 class="titulo">Gestion de Productos</h1>
+  <!--     <button   (click)="imprimir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz"
+  type="button">
+  <mat-icon>print</mat-icon>
+</button> -->
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>TIPO</mat-label>
+          <mat-select formControlName="tipo">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of tipos; track item) {
+              <mat-option [value]="item">
+                {{item}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="categoria">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of listaCategorias; track item) {
+              <mat-option [value]="item.descripcion">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>ACTIVO</mat-label>
+          <mat-select formControlName="activo">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            <mat-option value="true"> ACTIVOS </mat-option>
+            <mat-option value="false"> PASIVOS </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>PUBLICADO</mat-label>
+          <mat-select formControlName="publicado">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            <mat-option value="true"> PUBLICADO </mat-option>
+            <mat-option value="false"> PENDIENTE </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field appearance="fill" style="width:100%">
+          <mat-label>Limite</mat-label>
+          <mat-select formControlName="limite">
+            @for (item of limites; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <!--     <div class="bg-transparent flex px-1 h-20 items-center">
+    <div class="flex-auto flex m-0">
+      <div
+        class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-4 flex items-center w-full mr-2">
+        <mat-icon>search</mat-icon>
+        <input formControlName="descripcion"
+          class="px-4 py-3 border-0 outline-none w-full bg-transparent  dark:text-white"
+          placeholder="Buscar...">
+      </div>
+    </div>
+  </div>
+  <button type="submit" mat-raised-button color="primary" class="mt-2">
+    <mat-icon>search</mat-icon>
+    Buscar
+  </button> -->
+</form>
+}
+
+<div class="bg-transparent flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+    <div
+      class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-4 flex items-center w-full mr-2">
+      <mat-icon>search</mat-icon>
+      <input (keyup)="applyFilter($event)"
+        class="px-4 py-3 border-0 outline-none w-full bg-transparent  dark:text-white" placeholder="Buscar...">
+    </div>
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="tabla-estilizada" #tabla>
+    <thead>
+      <tr>
+        <th colspan="5">PRODUCTOS</th>
+        <th>{{fechaHoy| date}}</th>
+      </tr>
+      <tr>
+        <th>CODIGO</th>
+        <th>DESCRIPCION</th>
+        <th>CATEGORIA</th>
+        <th>FABRICANTE</th>
+        <th>BARRA</th>
+        <th>OPCIONES</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item; let ultimo = $last) {
+        <tr>
+          <td style="text-align:start">
+            {{item.codigo}}
+          </td>
+          <td style="text-align:start">{{item.descripcion}}</td>
+          <td style="text-align:start">{{item.categoria}}</td>
+          <td style="text-align:start">{{item.fabricante}}</td>
+          <td style="text-align:start">{{item.codigoBarra}}</td>
+          <td style="text-align:center">
+            <button mat-icon-button (click)="editar(item)" aria-label="Opciones">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="copiar(item)" aria-label="Opciones">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+            <button mat-icon-button (click)="eliminar(item)" aria-label="Opciones">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,104 @@
+<!-- <body class="bg-gray-100 dark:bg-slate-900 dark:text-white h-screen"
+style="background-image: url('imagenes/fondo.webp'); background-size: cover; background-attachment: fixed;"> -->
+
+<body class="bg-gray-100 dark:bg-slate-900 dark:text-white h-screen">
+
+  <!-- Capa de opacidad encima del fondo -->
+  <div class="absolute inset-0 bg-black/10 dark:bg-black/30 z-0"></div>
+
+  <div class="relative flex h-full z-10">
+
+    <!-- Botón flotante (menú móvil) -->
+    <button (click)="toggleMenu()"
+      class="fixed bottom-5 right-5 z-50 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition duration-300 md:hidden">
+      <span class="material-icons">{{ menuOpen ? 'close' : 'menu' }}</span>
+    </button>
+
+    <!-- Menú lateral -->
+    <nav [ngClass]="{'hidden': !menuOpen, 'block': menuOpen, 'md:block': true}" class="w-20 bg-white dark:bg-slate-950 border-r border-gray-200 dark:border-slate-800 shadow-sm
+                md:relative md:translate-x-0 transform transition-transform duration-300 ease-in-out z-50 h-full">
+
+      <div class="flex flex-col items-center mt-8 space-y-5">
+
+        @if (usuario) {
+        <button type="button" [matMenuTriggerFor]="menu"
+          class="flex text-sm bg-gray-800 rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600">
+          <span class="sr-only">Open user menu</span>
+          <img class="w-8 h-8 rounded-full" [src]="foto" [alt]="usuario.displayName ? usuario.displayName : 'Avatar'">
+        </button>
+        }
+
+        <!-- [routerLinkActiveOptions]="{ exact: true }" -->
+        @for (item of menuItems; track item; let i = $index) {
+        <a [routerLink]="item.link" routerLinkActive="active"
+          class="flex flex-col items-center justify-center w-full h-16 text-gray-700 hover:text-blue-500 dark:text-cyan-300 transition-all"
+          [ngClass]="item.color">
+          <!-- ↑ opcional: “stagger” con delay por índice -->
+          <span class="material-icons !text-4xl">{{ item.icon }}</span>
+          <span class="text-xs mt-1">{{ item.label }}</span>
+        </a>
+        }
+
+
+        <!--                 <div class="mt-10">
+        <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode($event)"></mat-slide-toggle>
+      </div> -->
+
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 p-6 overflow-y-auto backdrop-blur-sm bg-white/80 dark:bg-slate-900 rounded-l-3xl">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+  <mat-menu #menu="matMenu">
+    @if (usuario) {
+    <button mat-menu-item>
+      <mat-icon>person</mat-icon>
+      <span>{{usuario.email}}</span>
+    </button>
+    }
+
+    @for (item of menuItemsTodos; track item) {
+    <button [routerLink]="item.link" mat-menu-item>
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <span>{{ item.label }}</span>
+    </button>
+    }
+
+    <button mat-menu-item (click)="salir()">
+      <mat-icon>logout</mat-icon>
+      <span>Salir</span>
+    </button>
+
+    <mat-divider></mat-divider>
+    <div class="px-3 py-2">
+      <div class="text-xs mb-2 text-gray-600 dark:text-gray-300">Color principal</div>
+      <div class="flex gap-2">
+        <button mat-stroked-button (click)="setColorTheme('theme-orange')">Orange</button>
+        <button mat-stroked-button (click)="setColorTheme('theme-cyan')">Cyan</button>
+        <button mat-stroked-button (click)="setColorTheme('theme-violet')">Violet</button>
+
+      </div>
+      <div class="flex gap-2">
+        <button mat-stroked-button (click)="setColorTheme('theme-magenta')">Magenta</button>
+        <button mat-stroked-button (click)="setColorTheme('theme-chartreuse')">Chartreuse</button>
+        <button mat-stroked-button (click)="setColorTheme('theme-rose')">Rose</button>
+      </div>
+    </div>
+
+    <!-- Toggle Dark Mode -->
+    <div class="mt-6">
+      <div align="end">
+        <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode($event)">
+          <!-- <span class="text-xs text-gray-600 dark:text-gray-300">Modo oscuro</span> -->
+        </mat-slide-toggle>
+      </div>
+    </div>
+
+  </mat-menu>
+
+</body>

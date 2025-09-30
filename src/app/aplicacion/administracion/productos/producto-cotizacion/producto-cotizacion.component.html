@@ -1,0 +1,66 @@
+<div class="flex items-center mx-2">
+    <h2 class="flex-auto m-0 headline">
+        <div class="bg-foreground rounded-full border px-4 flex items-center w-4/4 mr-2">
+            <mat-icon>search</mat-icon>
+            <input (keyup)="applyFilter($event)" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+                placeholder="Buscar...">
+        </div>
+    </h2>
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<!-- CUERPO -->
+<mat-dialog-content>
+    <!-- CUERPO -->
+    <div style="overflow: auto; max-height: 400px;">
+        <table mat-table [dataSource]="dataSource" class=" w-full">
+
+            <ng-container matColumnDef="descripcion">
+                <th mat-header-cell *matHeaderCellDef> Descripcion </th>
+                <td mat-cell *matCellDef="let element">
+                    <p><b>{{element.codigo}}</b></p>
+                    <!-- <p *ngIf="element.Categoria" style="font-size:10px">{{element.Categoria.descripcion}}</p> -->
+                    {{element.descripcion}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="pv">
+                <th mat-header-cell *matHeaderCellDef> PV </th>
+                <td mat-cell *matCellDef="let element">
+                    {{element.precioVenta}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="cantidadSaldo">
+                <th mat-header-cell *matHeaderCellDef> SALDO </th>
+                <td mat-cell *matCellDef="let element">
+                    {{element.cantidadSaldoTotal}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="opciones">
+                <th mat-header-cell *matHeaderCellDef class="text-right">
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-raised-button type="button" color="warn" (click)="crearConIngreso(element)">
+                        <mat-icon>menu_open</mat-icon> Ingresos
+                    </button>
+                    <button mat-raised-button type="button" color="accent" (click)="crearConProducto(element)">
+                        <mat-icon>done</mat-icon> <span>Seleccionar</span>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <span class="text-gray-500"> Seleccione un producto... </span>
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+</mat-dialog-actions>

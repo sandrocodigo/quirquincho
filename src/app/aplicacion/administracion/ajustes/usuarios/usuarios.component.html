@@ -1,0 +1,122 @@
+<div class="flex items-center justify-between py-4">
+  <h1 class="titulo">
+    Usuarios
+  </h1>
+
+  <!--     <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+  type="button">
+  <mat-icon>add</mat-icon>
+</button> -->
+</div>
+
+<div class="bg-transparent flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+    <div
+      class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-4 flex items-center w-full mr-2">
+      <mat-icon>search</mat-icon>
+      <input (keyup)="applyFilter($event)"
+        class="px-4 py-3 border-0 outline-none w-full bg-transparent  dark:text-white" placeholder="Buscar...">
+    </div>
+  </div>
+</div>
+
+
+<div class="table-container mat-elevation-z2">
+  <table mat-table [dataSource]="dataSource" matSort class="w-full dark:bg-gray-800">
+
+    <!--         <ng-container matColumnDef="foto">
+    <th mat-header-cell *matHeaderCellDef class="dark:text-white"> Foto </th>
+    <td mat-cell *matCellDef="let element">
+      <img [src]="element.photoURL? element.photoURL : 'imagenes/sinfoto.png'" alt="Imagen de Usuario"
+        class="w-20 h-20 object-cover rounded-md cursor-pointer">
+    </td>
+  </ng-container> -->
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.email }}
+    </td>
+  </ng-container>
+
+
+
+  <ng-container matColumnDef="adminTipo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo Admin.</th>
+    <td mat-cell *matCellDef="let element">
+
+                <span class="text-xs px-2 py-1 rounded-full capitalize text-white" [ngClass]="{
+                    'bg-green-500': element.adminTipo === 'administrador',
+                    'bg-yellow-500': element.adminTipo === 'cliente',
+                    'bg-blue-500': element.adminTipo === 'conductor'
+                }">
+        {{ element.adminTipo }}
+      </span>
+
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="sucursal">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Sucursal </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.sucursal }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="activo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Activo </th>
+    <td mat-cell *matCellDef="let element" [class.text-green-500]="element.activo"
+      [class.text-red-500]="!element.activo">
+      <span [class.bg-green-100]="element.activo" [class.bg-red-100]="!element.activo"
+        class="px-2 capitalize inline-flex text-xs leading-5 font-semibold rounded-full">
+        {{ element.activo?'activo':'bloqueado' }}
+      </span>
+    </td>
+  </ng-container>
+
+
+
+
+  <ng-container matColumnDef="opciones">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+    <td mat-cell *matCellDef="let element">
+
+
+
+      <div class="text-right">
+
+        <!--
+        <a [routerLink]="'detalle/'+ element.id" matTooltip="Detalle Avanzado de Producto"
+          class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+          Detalle
+        </a> -->
+        <!--
+        <button *ngIf="!element.finalizado" mat-icon-button type="button" (click)="eliminar(element)"
+          matTooltip="Eliminar">
+          <mat-icon color="warn">delete</mat-icon>
+        </button> -->
+        @if (!element.adminSuper) {
+          <button mat-icon-button type="button" (click)="editar(element)"
+            matTooltip="Editar">
+            <mat-icon color="accent">edit</mat-icon>
+          </button>
+        }
+
+        <button mat-icon-button type="button" (click)="permisoAcceso(element)"
+          matTooltip="Permiso de Accesos">
+          <mat-icon color="accent">key</mat-icon>
+        </button>
+
+
+
+
+      </div>
+    </td>
+  </ng-container>
+
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+</div>

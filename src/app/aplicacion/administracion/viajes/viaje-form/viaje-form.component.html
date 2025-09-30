@@ -1,0 +1,180 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nueva':'Editar'}} Viaje </h2>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <!--         <mat-form-field>
+      <mat-label>Every 45 minutes</mat-label>
+      <input matInput [matTimepicker]="minutesPicker" formControlName="hora">
+      <mat-timepicker-toggle matIconSuffix [for]="minutesPicker" />
+      <mat-timepicker interval="5min" #minutesPicker />
+    </mat-form-field> -->
+    <!--         <mat-form-field class="flex-auto w-full">
+    <mat-label>Cliente</mat-label>
+    <mat-select formControlName="clienteId">
+      <mat-option *ngFor="let item of listaClientes" [value]="item.id">
+        {{item.empresa}}, {{item.responsable}}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="registroControl && r.clienteId.errors && r.clienteId.errors.required">
+      Se requiere el Cliente
+    </mat-error>
+  </mat-form-field> -->
+  <ng-select [items]="listaClientes" bindLabel="dato" bindValue="id" formControlName="clienteId" appendTo="body" placeholder="Buscar cliente o pasajero...">
+  </ng-select>
+  <mat-form-field class="flex-auto w-full">
+    <mat-label>Pasajero</mat-label>
+    <input name="clienteResponsable" matInput placeholder="Nombre pasajero"
+      formControlName="clienteResponsable">
+    @if (registroControl && r.clienteResponsable.errors && r.clienteResponsable.errors.required) {
+      <mat-error>
+        Se requieren el nombre del Pasajero
+      </mat-error>
+    }
+  </mat-form-field>
+  <!--         <mat-form-field class="flex-auto w-full">
+  <mat-label>Vehiculo</mat-label>
+  <mat-select formControlName="vehiculoId">
+    <mat-option *ngFor="let item of listaVehiculos" [value]="item.id">
+      {{item.numero}} : {{item.placa}}, {{item.conductor}}
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="registroControl && r.vehiculoId.errors && r.vehiculoId.errors.required">
+    Se requiere el Vehiculo
+  </mat-error>
+</mat-form-field> -->
+<ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId" appendTo="body" placeholder="Buscar vehiculo y conductor">
+</ng-select>
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/2 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Forma de Pago</mat-label>
+      <mat-select formControlName="formaPago">
+        @for (item of listaFormas; track item) {
+          <mat-option [value]="item">
+            {{item}}
+          </mat-option>
+        }
+      </mat-select>
+      @if (registroControl && r.formaPago.errors && r.formaPago.errors.required) {
+        <mat-error>
+          Se requiere la Forma de Pago
+        </mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="w-full md:w-1/2 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Parada</mat-label>
+      <mat-select formControlName="parada">
+        @for (item of listaParadas; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+        }
+      </mat-select>
+      @if (registroControl && r.parada.errors && r.parada.errors.required) {
+        <mat-error>
+          Se requiere la parada
+        </mat-error>
+      }
+    </mat-form-field>
+  </div>
+</div>
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/2 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Origen</mat-label>
+      <input name="origen" matInput placeholder="Origen" formControlName="origen">
+      @if (registroControl && r.origen.errors && r.origen.errors.required) {
+        <mat-error>
+          Se requieren el origen
+        </mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="w-full md:w-1/2 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Destino</mat-label>
+      <input name="destino" matInput placeholder="Destino" formControlName="destino">
+      @if (registroControl && r.destino.errors && r.destino.errors.required) {
+        <mat-error>
+          Se requieren el Destino
+        </mat-error>
+      }
+    </mat-form-field>
+  </div>
+</div>
+<!--         <div class="flex">
+<div class="w-1/2 px-2 text-center">
+</div>
+<div class="w-1/2 px-2 text-center">
+  <input formControlName="hora" type="time" id="appt" required />
+</div>
+</div>
+-->
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/3 px-2">
+    <input formControlName="fecha" type="date" id="appt" required />
+  </div>
+  <div class="w-full md:w-1/3 px-2">
+    <input formControlName="hora" type="time" id="appt" required />
+  </div>
+  <div class="w-full md:w-1/3 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Precio</mat-label>
+      <input name="precio" matInput placeholder="Precio" formControlName="precio">
+      @if (registroControl && r.precio.errors && r.precio.errors.required) {
+        <mat-error>
+          Se requieren el Precio
+        </mat-error>
+      }
+    </mat-form-field>
+  </div>
+</div>
+<mat-form-field class="flex-auto w-full">
+  <mat-label>Descricion y/o Nota</mat-label>
+  <input name="descripcion" matInput placeholder="Descripcion" formControlName="descripcion">
+  @if (registroControl && r.descripcion.errors && r.descripcion.errors.required) {
+    <mat-error>
+      Se requieren la descripcion
+    </mat-error>
+  }
+</mat-form-field>
+<!--
+<div class="flex">
+  <div class="w-1/2 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>% de Descuento</mat-label>
+      <input matInput placeholder="Porcentaje de Descuento" formControlName="porcentajeDescuento">
+      <mat-error
+        *ngIf="registroControl && r.porcentajeDescuento.errors && r.porcentajeDescuento.errors.required">
+        Se requieren
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="w-1/2 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>% de Impuesto</mat-label>
+      <input matInput placeholder="Porcentaje de Descuento" formControlName="porcentajeImpuesto">
+      <mat-error
+        *ngIf="registroControl && r.porcentajeImpuesto.errors && r.porcentajeImpuesto.errors.required">
+        Se requieren
+      </mat-error>
+    </mat-form-field>
+  </div>
+</div>
+-->
+<!--         <mat-form-field class="flex-auto w-full">
+<mat-label>Términos y Condiciones</mat-label>
+<textarea matInput placeholder="Términos y Condiciones" formControlName="terminos"></textarea>
+</mat-form-field>
+-->
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button color="primary" mat-flat-button type="submit">Aceptar</button>
+</mat-dialog-actions>
+</form>
+}

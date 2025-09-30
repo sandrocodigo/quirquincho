@@ -1,0 +1,110 @@
+<!-- <div class="flex items-center mx-2">
+<h2 class="flex-auto m-0 headline">
+  Editar Detalle de Egreso: <span *ngIf="detalle">{{detalle.productoDescripcion}}</span>
+</h2>
+<button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+  <mat-icon>close</mat-icon>
+</button>
+</div> -->
+
+<h2 mat-dialog-title>Editar detalle: @if (detalle) {
+  <span>{{detalle.productoDescripcion}}</span>
+}</h2>
+
+<mat-divider></mat-divider>
+
+<!-- FORM -->
+@if (registroFormGroup) {
+  <form [formGroup]="registroFormGroup" (ngSubmit)="onSubmit()">
+    <!-- CUERPO -->
+    <mat-dialog-content>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Mas detalle...</mat-label>
+        <input name="detalle" matInput placeholder="Mas detalles" formControlName="detalle">
+      </mat-form-field>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+          <mat-form-field class="flex-auto w-full">
+            <mat-label>Cantidad</mat-label>
+            <input matInput placeholder="Cantidad" formControlName="cantidad" [required]="true">
+            <mat-icon matSuffix>article</mat-icon>
+            @if (r.cantidad.invalid && (r.cantidad.dirty || r.cantidad.touched)) {
+              <mat-error>
+                @if (r.cantidad.errors.required) {
+                  <span>Se requiere</span>
+                }
+                @if (r.cantidad.errors.pattern) {
+                  <span>Por favor introduzca un número válido</span>
+                }
+                @if (r.cantidad.errors?.cantidadExcesiva) {
+                  <span>La cantidad exedida</span>
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="w-full md:w-1/2 px-2 text-right">
+          Disponible: @if (detalle) {
+          <span class="text-3xl text-green-500">{{detalle.cantidadSaldo}}</span>
+        }
+      </div>
+    </div>
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Precio Compra</mat-label>
+          <input matInput placeholder="Precio Compra" formControlName="pc" [required]="true"
+            pattern="^[0-9]*\.?[0-9]*$">
+          <mat-icon matSuffix>article</mat-icon>
+          @if (r.pc.invalid && (r.pc.dirty || r.pc.touched)) {
+            <mat-error>
+              @if (r.pc.errors.required) {
+                <span>Se requiere el precio de compra</span>
+              }
+              @if (r.pc.errors.pattern) {
+                <span>Por favor introduzca un número válido</span>
+              }
+              @if (r.pc.errors.min && r.pc.dirty) {
+                <span>El precio de compra debe ser
+                mayor o igual a 0</span>
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Precio Venta</mat-label>
+          <input matInput autocomplete="off" placeholder="Precio Venta" formControlName="pv" [required]="true"
+            pattern="^[0-9]*\.?[0-9]*$">
+          <mat-icon matSuffix>article</mat-icon>
+          @if (r.pv.invalid && (r.pv.dirty || r.pv.touched)) {
+            <mat-error>
+              @if (r.pv.errors.required) {
+                <span>Se requiere el precio de venta</span>
+              }
+              @if (r.pv.errors.pattern) {
+                <span>Por favor introduzca un número válido</span>
+              }
+              @if (r.pv.errors.min && r.pv.dirty) {
+                <span>El precio de venta debe ser mayor
+                o igual a 0</span>
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>SubTotal</mat-label>
+      <input matInput placeholder="Subtotal" formControlName="subtotal">
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-divider></mat-divider>
+  <!-- PIE -->
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+    <button color="primary" mat-flat-button type="submit">Aceptar</button>
+  </mat-dialog-actions>
+</form>
+}

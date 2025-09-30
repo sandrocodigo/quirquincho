@@ -1,0 +1,144 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h1 class="titulo">
+      5. Saldo Minimo
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Detalle de Salida</p>
+  </div>
+  <div class="ml-auto">
+
+    <button (click)="imprimir()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Mas Egresos"
+      type="button">
+      <mat-icon>print</mat-icon>
+    </button>
+
+    <button (click)="exportarJson()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+      type="button">
+      <mat-icon>table_rows</mat-icon>
+    </button>
+
+  </div>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/4 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal</mat-label>
+          <mat-select formControlName="sucursal">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of listaSucursales; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/4 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>TIPO</mat-label>
+          <mat-select formControlName="tipo">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of tipos; track item) {
+              <mat-option [value]="item">
+                {{item}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/4 px-2">
+        <!--             <mat-form-field class="flex-auto w-full">
+        <mat-label>PUBLICADO</mat-label>
+        <mat-select formControlName="publicado">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> PUBLICADO </mat-option>
+          <mat-option value="false"> PENDIENTE </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <!--             <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Limite</mat-label>
+      <mat-select formControlName="limite">
+        <mat-option *ngFor="let item of limites" [value]="item.id">
+          {{item.descripcion}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+  </div>
+</div>
+</form>
+}
+
+<div class="table-container">
+  <table class="tabla-estilizada" #tabla>
+    <thead>
+      <tr>
+        <th colspan="2">INVENTARIO FISICO</th>
+        <th>{{fechaHoy| date:'short'}}</th>
+        <th colspan="2">{{b.sucursal.value}}</th>
+      </tr>
+      <tr>
+        <th>CODIGO</th>
+        <th>DESCRIPCION</th>
+        <th>MINIMO</th>
+        <th>SALDO TOTAL</th>
+        <th>RESULTADO</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item; let ultimo = $last) {
+        <tr>
+          <td style="text-align:start">
+            {{item.codigo}}
+          </td>
+          <td style="text-align:start">{{item.descripcion}}</td>
+          <td style="text-align:start">{{item.minimo?item.minimo:0}}</td>
+          <td style="text-align:start">{{item.cantidadSaldoTotal}}</td>
+          <td style="text-align:center">
+            <!-- SIN MINIMO -->
+            @if (estadoInventario(item) === 'SIN_MINIMO') {
+              <span
+                class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700 border border-gray-300">
+                SIN MÍNIMO
+              </span>
+            }
+            <!-- PEDIR -->
+            @if (estadoInventario(item) === 'PEDIR') {
+              <span
+                class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700 border border-red-300">
+                PEDIR@if (faltante(item)> 0) {
+                <span> (faltan {{ faltante(item) }})</span>
+              }
+            </span>
+          }
+          <!-- TIENE -->
+          @if (estadoInventario(item) === 'TIENE') {
+            <span
+              class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 border border-green-300">
+              TIENE
+            </span>
+          }
+        </td>
+      </tr>
+    }
+  </tbody>
+  <!--         <tfoot *ngIf="totales">
+  <tr>
+    <th>{{lista.length}}</th>
+    <th>USUARIO</th>
+    <th>TURNO</th>
+    <th>DISP.</th>
+    <th>PROD.</th>
+    <th>INICIO</th>
+    <th>FIN</th>
+    <th style="text-align:end">{{totales?.litros}}</th>
+    <th style="text-align:end">{{totales.dinero | number:'1.2-2': 'EN'}}</th>
+    <th style="text-align:end"></th>
+  </tr>
+</tfoot> -->
+</table>
+</div>

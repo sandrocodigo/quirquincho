@@ -1,0 +1,130 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">Conductores</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Gestion de Conductores de Vehiculos</p>
+  </div>
+  <div class="ml-auto">
+    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+      type="button">
+      <mat-icon>add</mat-icon>
+    </button>
+
+  </div>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/3 px-2">
+        <!--             <mat-form-field class="flex-auto w-full">
+        <mat-label>EMPRESA</mat-label>
+        <mat-select formControlName="empresa">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option *ngFor="let item of empresas" [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>ACTIVO</mat-label>
+        <mat-select formControlName="activo">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> ACTIVOS </mat-option>
+          <mat-option value="false"> PASIVOS </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field appearance="fill" style="width:100%">
+        <mat-label>Limite</mat-label>
+        <mat-select formControlName="limite">
+          @for (item of limites; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
+}
+
+<div class="bg-app-bar flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+    <div class="bg-foreground rounded-full border px-4 flex items-center w-full mr-2">
+      <mat-icon class=" dark:text-white">search</mat-icon>
+      <input (keyup)="aplicarFiltro($event)" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+        placeholder="Buscar...">
+    </div>
+  </div>
+</div>
+
+
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+  <table class="min-w-full text-sm text-left dark:text-white dark:bg-slate-800">
+    <thead class="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-gray-200">
+      <tr>
+        <th class="px-4 py-2">Nombres</th>
+        <th class="px-4 py-2">Apellidos</th>
+        <th class="px-4 py-2">Licencia</th>
+        <th class="px-4 py-2">Categoria</th>
+        <th class="px-4 py-2">Activo</th>
+        <th class="px-4 py-2 text-right">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item) {
+        <tr
+          class="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700">
+          <td class="px-4 py-2 font-semibold">
+            {{ item.nombres }}
+          </td>
+          <td class="px-4 py-2">
+            {{ item.apellidos }}
+          </td>
+          <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+            {{ item.licenciaNumero }}
+          </td>
+          <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+            {{ item.licenciaCategoria }}
+          </td>
+          <td class="px-4 py-2">
+            <span [ngClass]="{ 'bg-green-500': item.activo, 'bg-red-500': !item.activo }"
+              class="text-white text-xs px-2 py-1 rounded-full">
+              {{ item.activo ? 'ACTIVO' : 'PASIVO' }}
+            </span>
+          </td>
+          <td class="px-4 py-2 text-right space-x-2">
+            <!--                 <a [routerLink]="'detalle/'+ item.id" matTooltip="Detalle"
+            class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+            Detalle
+          </a> -->
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            ....Que deseas?
+            <button mat-menu-item (click)="editar(item)">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="eliminar(item)">
+              <mat-icon>delete</mat-icon>
+              <span>Elminar</span>
+            </button>
+          </mat-menu>
+          <!--                     <button (click)="editar(item)" class="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-slate-700">
+          <mat-icon class="text-blue-600 dark:text-blue-400">edit</mat-icon>
+        </button>
+        <button (click)="eliminar(item)" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-slate-700">
+          <mat-icon class="text-red-600 dark:text-red-400">delete</mat-icon>
+        </button> -->
+      </td>
+    </tr>
+  }
+</tbody>
+</table>
+</div>

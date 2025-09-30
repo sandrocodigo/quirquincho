@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Plan</h2>
+<mat-divider></mat-divider>
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <div class="flex">
+        <div class="w-1/2 px-2">
+          <mat-form-field class="flex-auto w-full">
+            <mat-label>Gestion</mat-label>
+            <mat-select formControlName="gestion">
+              @for (item of gestiones; track item) {
+                <mat-option [value]="item">
+                  {{item}}
+                </mat-option>
+              }
+            </mat-select>
+            @if (registroControl && r.gestion.errors && r.gestion.errors.required) {
+              <mat-error>
+                Se requiere la gestion
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="w-1/2 px-2">
+          <mat-form-field class="flex-auto w-full">
+            <mat-label>Mes</mat-label>
+            <mat-select formControlName="mes">
+              @for (item of meses; track item) {
+                <mat-option [value]="item.id">
+                  {{item.descripcion}}
+                </mat-option>
+              }
+            </mat-select>
+            @if (registroControl && r.mes.errors && r.mes.errors.required) {
+              <mat-error>
+                Se requiere el Mes
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2 px-2">
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+        </div>
+      </div>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Descripcion del Proyecto</mat-label>
+        <input matInput autocomplete="off" placeholder="Descripcion" formControlName="descripcion">
+        @if (registroControl && r.descripcion.errors && r.descripcion.errors.required) {
+          <mat-error>
+            Se requiere la Descripcion
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Fecha Limite</mat-label>
+        <input matInput placeholder="Fecha Limite" formControlName="fechaLimite">
+      </mat-form-field>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Monto</mat-label>
+        <input matInput autocomplete="off" placeholder="Monto USD" formControlName="monto">
+        @if (registroControl && r.monto.errors && r.monto.errors.required) {
+          <mat-error>
+            Se requiere el Monto
+          </mat-error>
+        }
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button">Cancelar</button>
+      <button color="primary" mat-flat-button type="submit"> Aceptar</button>
+    </mat-dialog-actions>
+  </form>
+}

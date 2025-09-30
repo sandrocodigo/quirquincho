@@ -1,0 +1,170 @@
+<h5 mat-dialog-title>@if (producto) {
+  <span>{{producto.descripcion}}</span>
+}</h5>
+
+<!-- CUERPO -->
+<mat-dialog-content>
+
+  <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+    <thead class="bg-blue-500 text-white">
+      <tr>
+        <th colspan="7">KARDEX</th>
+      </tr>
+      <tr>
+        <th>SUCURSAL</th>
+        <th>FECHA</th>
+        <th>TIPO</th>
+        <th>MOTIVO</th>
+        <th>COD.</th>
+        <th>CANT.</th>
+        <th>ACUMUL.</th>
+      </tr>
+    </thead>
+    <tbody class="text-gray-700">
+      @for (item of listaKardex; track item) {
+        <tr class="bg-gray-100 hover:bg-gray-200">
+          <td>{{item.sucursal}}</td>
+          <td>{{item.fecha | date}}</td>
+          <td>{{item.tipo}}</td>
+          <td>{{item.motivo}}</td>
+          <td>{{item.codigo}}</td>
+          <td>{{item.cantidad}}</td>
+          <td>{{item.cantidadAcumulada}}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- <p>Saldo Total: <span *ngIf="producto">{{producto.cantidadSaldoTotal}}</span> </p> -->
+
+  <br>
+    <table class="min-w-full bg-white rounded-lg overflow-hidden">
+      <thead class="bg-green-500 text-white">
+        <tr>
+          <th colspan="8">INGRESOS</th>
+        </tr>
+        <tr>
+          <th>SUCURSAL</th>
+          <th>CODIGO</th>
+          <th>FECHA</th>
+          <th>P.V.</th>
+          <th>CANT.</th>
+          <th>SALDO</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-700">
+        @for (item of listaIngresos; track item) {
+          <tr class="bg-gray-100 hover:bg-gray-200">
+            <td>{{item.sucursal }}</td>
+            <td>{{item.ingresoCodigo }}</td>
+            <td>{{item.fecha | date}}</td>
+            <td class="text-right">{{item.pv}}</td>
+            <td class="text-right">{{item.cantidad}}</td>
+            <td class="text-right">{{item.cantidadSaldo}}</td>
+            <td>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
+                [class.bg-green-500]="item.finalizado" [class.bg-red-500]="!item.finalizado">
+                {{ item.finalizado?'Finalizado':'Pendiente' }}
+              </span>
+            </td>
+            <td>
+              <!--                     <button *ngIf="item.cantidadSaldo>0 && item.finalizado" mat-raised-button color="bg-accent"
+              type="button" (click)="asociar(item)">
+              <mat-icon>done</mat-icon> <span>Asociar</span>
+            </button> -->
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+
+  <br>
+    <table class="min-w-full bg-white rounded-lg overflow-hidden">
+      <thead class="bg-orange-500 text-white">
+        <tr>
+          <th colspan="8">EGRESOS</th>
+        </tr>
+        <tr>
+          <th>SUCURSAL</th>
+          <th>CODIGO</th>
+          <th>FECHA</th>
+          <th>P.V.</th>
+          <th>CANT.</th>
+          <th>SALDO</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-700">
+        @for (item of listaEgresos; track item) {
+          <tr class="bg-gray-100 hover:bg-gray-200">
+            <td>{{item.sucursal }}</td>
+            <td>{{item.ingresoCodigo }}</td>
+            <td>{{item.fecha | date}}</td>
+            <td class="text-right">{{item.pv}}</td>
+            <td class="text-right">{{item.cantidad}}</td>
+            <td class="text-right">{{item.cantidadSaldo}}</td>
+            <td>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
+                [class.bg-green-500]="item.finalizado" [class.bg-red-500]="!item.finalizado">
+                {{ item.finalizado?'Finalizado':'Pendiente' }}
+              </span>
+            </td>
+            <td>
+              <!--                     <button *ngIf="item.cantidadSaldo>0 && item.finalizado" mat-raised-button color="bg-accent"
+              type="button" (click)="asociar(item)">
+              <mat-icon>done</mat-icon> <span>Asociar</span>
+            </button> -->
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+
+  <!--
+  <br>
+    Egresos:
+    <ul *ngFor="let item of listaEgresos">
+      {{item.fecha}}-{{item.cantidad}}-{{item.cantidadSaldo}}
+    </ul> -->
+
+    <!--     <div style="overflow: auto; max-height: 400px;">
+    <table mat-table [dataSource]="dataSource" class=" w-full">
+
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef> PRODUCTO </th>
+        <td mat-cell *matCellDef="let element">
+          <p><b>{{element.codigo}}</b></p>
+          {{element.descripcion}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="opciones">
+        <th mat-header-cell *matHeaderCellDef class="text-right">
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button type="button" color="warn" (click)="crearConIngreso(element)">
+            <mat-icon>menu_open</mat-icon>
+          </button>
+          <button mat-raised-button color="bg-accent" type="button" (click)="crearConProducto(element)">
+            <mat-icon>done</mat-icon> <span>Seleccionar</span>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+  </div> -->
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cerrar</button>
+  <!-- <button mat-button mat-dialog-close type="button">Listo</button> -->
+</mat-dialog-actions>

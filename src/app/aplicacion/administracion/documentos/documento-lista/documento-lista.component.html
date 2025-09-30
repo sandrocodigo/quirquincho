@@ -1,0 +1,152 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1 class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Documentos
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Gestion de Polizas, Permisos y otros</p>
+  </div>
+  <div class="ml-auto">
+    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+      type="button">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/4 px-2">
+        <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId"
+          appendTo="body" placeholder="Placa de Vehiculo">
+        </ng-select>
+      </div>
+      <div class="w-full md:w-1/4 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>TIPO</mat-label>
+          <mat-select formControlName="tipo">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of listaTipos; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/4 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>ACTIVO</mat-label>
+          <mat-select formControlName="activo">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            <mat-option value="true"> ACTIVOS </mat-option>
+            <mat-option value="false"> PASIVOS </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/4 px-2">
+        <mat-form-field appearance="fill" style="width:100%">
+          <mat-label>Limite</mat-label>
+          <mat-select formControlName="limite">
+            @for (item of limites; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+}
+
+
+<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+  <table class="min-w-full text-sm text-left dark:text-white dark:bg-slate-800">
+    <thead class="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-gray-200">
+      <tr>
+        <th class="px-4 py-2">Interno</th>
+        <th class="px-4 py-2">Placa</th>
+        <th class="px-4 py-2">Documento</th>
+        <th class="px-4 py-2">Detalles</th>
+        <th class="px-4 py-2">Falta</th>
+        <th class="px-4 py-2 text-right">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item) {
+        <tr
+          class="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700">
+          <td class="px-4 py-2 font-semibold text-red-600 dark:text-red-400">
+            <span class="font-semibold px-2 py-1 rounded-full bg-red-500 text-white">
+              {{ item.vehiculoInterno }}
+            </span>
+          </td>
+          <td class="px-4 py-2">
+            <div class="font-semibold">{{ item.vehiculoPlaca }}</div>
+            <!--                     <span class="font-semibold px-2 py-1 rounded-full bg-blue-500 text-white"> {{ item.interno }}</span>
+            <div class="text-xs text-gray-500 dark:text-gray-300">Ejes: {{ item.ejes }}
+            </div> -->
+          </td>
+          <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+            Tipo: {{ item.documentoTipo }}<br>
+            Numero: {{ item.documentoNumero }}<br>
+            {{ item.descripcion }}<br>
+            Registro: {{ item.registroFecha?.toDate() | date:'short' }}
+          </td>
+          <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+            Frecuencia: {{ item.frecuencia }}<br>
+            Fecha Inicio: {{ item.fechaInicio | date}}<br>
+            Fecha Proximo: {{ item.fechaProximo | date }}<br>
+            <!--                     Kilometraje Inicio: {{ item.kilometrajeInicio}}<br>
+            Kilometraje Proximo: {{ item.kilometrajeProximo }}<br> -->
+          </td>
+          <td class="px-4 py-2">
+            {{ item.faltaDias}} dias<br>
+                    <span [ngClass]="{
+                      'bg-purple-800': item.faltaDias < 0, 
+                      'bg-red-500': item.faltaDias>= 0 && item.faltaDias < 10,
+                      'bg-orange-400': item.faltaDias>= 10 && item.faltaDias < 30,
+                      'bg-green-500': item.faltaDias>= 30
+                    }" class="text-white text-xs px-2 py-1 rounded-full">
+            {{ item.faltaDias < 0 ? 'VENCIDO' : 'EN TIEMPO' }} </span>
+            <br>
+              @if (item.ordenGenerado) {
+                <span class="text-xs text-green-500">Con Orden</span>
+              }
+            </td>
+            <td class="px-4 py-2 text-right space-x-2">
+              <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                ....Que deseas?
+                <button mat-menu-item (click)="editar(item)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Editar</span>
+                </button>
+                <!--                    <button mat-menu-item>
+                <mat-icon>calendar_month</mat-icon>
+                <span>Ver Proximos Mant.</span>
+              </button>
+              <button mat-menu-item (click)="orden(item)">
+                <mat-icon>engineering</mat-icon>
+                <span>Generar Orden</span>
+              </button> -->
+              <button mat-menu-item (click)="eliminar(item)">
+                <mat-icon>delete</mat-icon>
+                <span>Elminar</span>
+              </button>
+            </mat-menu>
+            <!--                     <button (click)="editar(item)" class="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-slate-700">
+            <mat-icon class="text-blue-600 dark:text-blue-400">edit</mat-icon>
+          </button>
+          <button (click)="eliminar(item)" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-slate-700">
+            <mat-icon class="text-red-600 dark:text-red-400">delete</mat-icon>
+          </button> -->
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+</div>

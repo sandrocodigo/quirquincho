@@ -1,0 +1,218 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1 class="titulo">Ordenes</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300"> Orden de Mantenimiento </p>
+  </div>
+  <div class="ml-auto">
+
+    <button (click)="imprimir()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Mas Egresos"
+      type="button">
+      <mat-icon>print</mat-icon>
+    </button>
+
+    <button (click)="exportarJson()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+      type="button">
+      <mat-icon>table_rows</mat-icon>
+    </button>
+
+  </div>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/5 px-2">
+        <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaInicio"
+          name="fechaInicio" formControlName="fechaInicio">
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaFinal" name="fechaFinal"
+          formControlName="fechaFinal">
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId"
+          appendTo="body" placeholder="Placa de Vehiculo">
+        </ng-select>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>FINALIZADO</mat-label>
+          <mat-select formControlName="finalizado">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            <mat-option value="true"> FINALIZADO </mat-option>
+            <mat-option value="false"> PENDIENTE </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal</mat-label>
+          <mat-select formControlName="sucursal">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of listaSucursales; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+}
+
+<!-- <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+<table class="min-w-full text-sm text-left dark:text-white dark:bg-slate-800">
+  <thead class="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-gray-200">
+    <tr>
+      <th class="px-4 py-2">Numero</th>
+      <th class="px-4 py-2">Codigo</th>
+      <th class="px-4 py-2">Vehiculo</th>
+      <th class="px-4 py-2">Mantenimiento</th>
+      <th class="px-4 py-2">Programacion</th>
+      <th class="px-4 py-2">Orden</th>
+      <th class="px-4 py-2">Finalizado</th>
+      <th class="px-4 py-2 text-right">Opciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of lista"
+      class="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700">
+
+      <td class="px-4 py-2 font-semibold text-red-600 dark:text-red-400">
+        <span class="font-semibold px-2 py-1 rounded-full bg-green-500 text-white">
+          {{ item.numero }}
+        </span>
+      </td>
+
+      <td class="px-4 py-2 font-semibold text-red-600 dark:text-red-400">
+        <span class="font-semibold px-2 py-1 rounded-full bg-blue-500 text-white">
+          {{ item.codigo }}
+        </span>
+      </td>
+
+      <td class="px-4 py-2 font-semibold text-blue-600 dark:text-gray-400">
+
+        <span class="font-semibold px-2 py-1 rounded-full bg-red-500 text-white">
+          {{ item.vehiculoInterno }}
+        </span>
+        <div class="font-semibold">{{ item.vehiculoPlaca }}</div>
+
+      </td>
+
+      <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+        Tipo: {{ item.mantenimientoTipo }}<br>
+        {{ item.mantenimientoDescripcion }}<br>
+        Frecuencia: {{ item.frecuencia }}<br>
+        Registro: {{ item.registroFecha?.toDate() | date:'short' }}
+      </td>
+      <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
+        Fecha Inicio: {{ item.programacionFechaInicio | date}}<br>
+        Fecha Proximo: {{ item.programacionFechaProximo | date }}<br>
+        Kilometraje Inicio: {{ item.programacionKilometrajeInicio}}<br>
+        Kilometraje Proximo: {{ item.programacionKilometrajeProximo }}<br>
+      </td>
+
+      <td class="px-4 py-2 text-xs">
+        Sucursal: {{ item.sucursal }}<br>
+        Taller: {{ item.taller }}<br>
+        Fecha Entrada: {{ item.fechaEntrada | date}}<br>
+        Fecha Salidad: {{ item.fechaSalida | date }}<br>
+        Kilometraje Actual: {{ item.kilometrajeActual}}<br>
+        Kilometraje Proximo: {{ item.kilometrajeProximo}}<br>
+      </td>
+
+      <td class="px-4 py-2 text-xs text-gray-100 dark:text-gray-300">
+        <span [class.bg-green-400]="item.finalizado" [class.bg-red-400]="!item.finalizado"
+          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+          {{item.finalizado? 'FINALIZADO':'PENDIENTE'}}
+        </span>
+      </td>
+
+      <td class="px-4 py-2 text-right space-x-2">
+
+        <a [routerLink]="'detalle/'+ item.id" matTooltip="Detalle, Agregrar/Quitar/Editar Items"
+          class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+          Detalle
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+-->
+
+<div class="table-container">
+  <table class="tabla-estilizada" #tabla>
+    <thead>
+      <tr>
+        <th colspan="9">REPORTE DE ORDEN DE MANTENIMIENTO</th>
+        <th>{{fechaHoy| date:'short'}}</th>
+        <th colspan="2">{{b.sucursal.value}}</th>
+      </tr>
+      <tr>
+        <th>N.</th>
+        <th>CODIGO</th>
+        <th>SUCURSAL <br> TALLER</th>
+        <th>INTERNO</th>
+        <th>PLACA</th>
+        <th>MANTENIMIENTO</th>
+        <th>ENTRADA</th>
+        <th>SALIDA</th>
+        <th>KM. ACTUAL</th>
+        <th>KM. PROXIMO</th>
+        <th>REGISTRO</th>
+        <th>REPUESTOS</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item; let ultimo = $last) {
+        <tr>
+          <td style="text-align:start"> {{item.numero}} </td>
+          <td style="text-align:start"> {{item.codigo}} </td>
+          <td style="text-align:start">
+            {{item.sucursal }} <br>
+            {{item.taller }}
+          </td>
+          <td style="text-align:start">{{item.vehiculoInterno }}</td>
+          <td style="text-align:start">{{item.vehiculoPlaca }}</td>
+          <td style="text-align:start">
+            {{item.mantenimientoTipo }} <br>
+            {{ item.mantenimientoDescripcion }}
+          </td>
+          <td style="text-align:center">{{ item.fechaEntrada | date}}</td>
+          <td style="text-align:center">{{ item.fechaSalida | date}}</td>
+          <td style="text-align:end">{{ item.kilometrajeActual}}</td>
+          <td style="text-align:end">{{ item.kilometrajeProximo}}</td>
+          <td style="text-align:center"> {{ item.registroFecha?.toDate() | date:'short' }} </td>
+          <td>
+            <ul class="list-disc list-inside space-y-0.5">
+              @for (repuesto of item.egresos; track repuesto) {
+                <li>
+                  <span class="font-medium">{{ repuesto.cantidad }}</span> ×
+                  <span class="text-sm">{{ repuesto.productoCodigo }} - {{ repuesto.productoDescripcion
+                  }}</span>
+                  <span class="text-gray-500 italic">({{ repuesto.pv | number: '1.2-2' }})</span>
+                </li>
+              }
+            </ul>
+          </td>
+        </tr>
+      }
+    </tbody>
+    <!--         <tfoot *ngIf="totales">
+    <tr>
+      <th>{{lista.length}}</th>
+      <th>USUARIO</th>
+      <th>TURNO</th>
+      <th>DISP.</th>
+      <th>PROD.</th>
+      <th>INICIO</th>
+      <th>FIN</th>
+      <th style="text-align:end">{{totales?.litros}}</th>
+      <th style="text-align:end">{{totales.dinero | number:'1.2-2': 'EN'}}</th>
+      <th style="text-align:end"></th>
+    </tr>
+  </tfoot> -->
+</table>
+</div>

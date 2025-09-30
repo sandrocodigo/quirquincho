@@ -1,0 +1,65 @@
+.table-ticket {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 8px;
+}
+
+.table-ticket,
+.table-ticket th,
+.table-ticket td {
+    border: 1px solid black;
+    text-align: left;
+    padding: 8px;
+}
+
+.table-ticket th {
+    background-color: #f2f2f2;
+}
+
+
+/* DISEÑO TICKET */
+.ticket {
+    font-family: 'Courier New', Courier, monospace;
+    width: 70mm;
+    max-width: 70mm;
+    margin: 0 auto;
+}
+
+.ticket-header {
+    text-align: center;
+    border-bottom: 1px dashed black;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+.ticket-info {
+    font-size: 12px;
+    line-height: 1.2em;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.ticket-body {
+    font-size: 10px;
+}
+
+.ticket-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ticket-body th,
+.ticket-body td {
+    text-align: left;
+    padding: 2px;
+    font-size: 10px;
+}
+
+.ticket-footer {
+    border-top: 1px dashed black;
+    margin-top: 10px;
+    text-align: right;
+    font-size: 12px;
+    padding-top: 5px;
+}

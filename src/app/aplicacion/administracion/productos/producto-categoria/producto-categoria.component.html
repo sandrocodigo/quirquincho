@@ -1,0 +1,42 @@
+<div class="flex items-center mx-2">
+  <h2 class="flex-auto m-0 headline">
+    @if (data) {
+      <span>{{data.nuevo?'Nuevo':'Editar'}}</span>
+      } Categoria de Producto
+    </h2>
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  @if (registroFormGroup) {
+    <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+      <mat-dialog-content>
+        <mat-form-field class="w-full">
+          <mat-label>Descripción</mat-label>
+          <input name="descripcion" matInput placeholder="Descripción" formControlName="descripcion">
+          @if (registroControl && r.descripcion.errors?.required) {
+            <mat-error>
+              Se requiere la descripción
+            </mat-error>
+          }
+        </mat-form-field>
+        <div class="flex flex-wrap -mx-2">
+          <div class="w-full md:w-1/3 px-2">
+            <mat-slide-toggle formControlName="activo">Activo</mat-slide-toggle>
+          </div>
+          <div class="w-full md:w-1/3 px-2">
+          </div>
+          <div class="w-full md:w-1/3 px-2">
+          </div>
+        </div>
+      </mat-dialog-content>
+      <mat-divider></mat-divider>
+      <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close type="button">Cancelar</button>
+        <button color="primary" mat-flat-button type="submit" [disabled]="boton">Aceptar</button>
+      </mat-dialog-actions>
+    </form>
+  }

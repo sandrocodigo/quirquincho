@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Editar Archivo </h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Nombre de Archivo</mat-label>
+        <input name="nombre" matInput placeholder="Nombre" formControlName="nombre">
+        @if (registroControl && r.nombre.errors && r.nombre.errors.required) {
+          <mat-error>
+            Se requieren el nombre
+          </mat-error>
+        }
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button">Cancelar</button>
+      <button color="primary" mat-flat-button type="submit">Aceptar</button>
+    </mat-dialog-actions>
+  </form>
+}

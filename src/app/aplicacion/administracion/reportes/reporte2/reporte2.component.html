@@ -1,0 +1,111 @@
+<div class="flex items-center justify-between py-4">
+  <h1 class="text-3xl font-semibold dark:text-white">2. Ingresos de Productos</h1>
+  <button (click)="imprimir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz"
+    type="button">
+    <mat-icon>print</mat-icon>
+  </button>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/4 px-2">
+        <!--             <mat-form-field class="flex-auto w-full">
+        <mat-label>EMPRESA</mat-label>
+        <mat-select formControlName="empresa">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option *ngFor="let item of empresas" [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>SALDO</mat-label>
+        <mat-select formControlName="saldo">
+          <mat-option value="TODOS">TODOS</mat-option>
+          <mat-option value="MAYOR_A_0">MAYOR A 0</mat-option>
+          <mat-option value="MENOR_A_0">MENOR A 0</mat-option>
+          <mat-option value="IGUAL_A_0">IGUAL A 0</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!--             <mat-form-field class="flex-auto w-full">
+      <mat-label>PUBLICADO</mat-label>
+      <mat-select formControlName="publicado">
+        <mat-option value="TODOS"> TODOS </mat-option>
+        <mat-option value="true"> PUBLICADO </mat-option>
+        <mat-option value="false"> PENDIENTE </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+  </div>
+  <div class="w-full md:w-1/4 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="finalizado">
+        <mat-option value="TODOS"> TODOS </mat-option>
+        <mat-option value="true"> FINALIZADO </mat-option>
+        <mat-option value="false"> PENDIENTE </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="w-full md:w-1/4 px-2">
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Limite</mat-label>
+      <mat-select formControlName="limite">
+        @for (item of limites; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+</form>
+}
+
+<div class="table-container">
+  <table class="tabla-estilizada" #tabla>
+    <thead>
+      <tr>
+        <th colspan="3">INGRESOS</th>
+        <th colspan="3">{{fechaHoy| date}}</th>
+      </tr>
+      <tr>
+        <th>CODIGO</th>
+        <th>DESCRIPCION</th>
+        <th>P.C.</th>
+        <th>P.V.</th>
+        <th>CANTIDAD</th>
+        <th>SALDO</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item; let ultimo = $last) {
+        <tr>
+          <td style="text-align:start"> {{item.productoCodigo}} </td>
+          <td style="text-align:start">{{item.productoDescripcion}}</td>
+          <td style="text-align:start">{{item.pc}}</td>
+          <td style="text-align:start">{{item.pv}}</td>
+          <td style="text-align:start">{{item.cantidad}}</td>
+          <td style="text-align:start">{{item.cantidadSaldo}}</td>
+        </tr>
+      }
+    </tbody>
+    <!--         <tfoot *ngIf="totales">
+    <tr>
+      <th>{{lista.length}}</th>
+      <th>USUARIO</th>
+      <th>TURNO</th>
+      <th>DISP.</th>
+      <th>PROD.</th>
+      <th>INICIO</th>
+      <th>FIN</th>
+      <th style="text-align:end">{{totales?.litros}}</th>
+      <th style="text-align:end">{{totales.dinero | number:'1.2-2': 'EN'}}</th>
+      <th style="text-align:end"></th>
+    </tr>
+  </tfoot> -->
+</table>
+</div>

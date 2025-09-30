@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Registro de Usuario </h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+      <mat-form-field class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Ejemplo: email@gmail.com"
+          formControlName="email" type="email" [required]="true"
+          autocomplete="off">
+        <mat-icon matSuffix>email</mat-icon>
+        @if (registroFormGroup.get('email')!.hasError('required')) {
+          <mat-error>
+            Es necesario su correo
+          </mat-error>
+        }
+        @if (registroFormGroup.get('email')!.hasError('email')) {
+          <mat-error>
+            Es necesario un correo valido
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Password</mat-label>
+        <!-- Cambiar el tipo de input dinámicamente según el estado de `showPassword` -->
+        <input matInput placeholder="Password" formControlName="password"
+          [type]="showPassword ? 'text' : 'password'" [required]="true">
+        <button mat-icon-button matSuffix type="button"
+          (click)="togglePasswordVisibility()"
+          aria-label="Toggle password visibility">
+          <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility'
+          }}</mat-icon>
+        </button>
+        @if (registroFormGroup.get('password')!.hasError('required')) {
+          <mat-error>
+            Es necesario su password
+          </mat-error>
+        }
+        @if (registroFormGroup.get('password')!.hasError('minlength')) {
+          <mat-error>
+            Debe ser mayor a 6 caracteres
+          </mat-error>
+        }
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button">Cancelar</button>
+      <button color="primary" mat-flat-button type="submit">Aceptar</button>
+    </mat-dialog-actions>
+  </form>
+}

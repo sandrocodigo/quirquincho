@@ -1,0 +1,204 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 inline-block text-transparent bg-clip-text">
+      Buscar Producto
+    </h1>
+
+    <p class="text-sm text-gray-500 dark:text-gray-300">Infomacion de Productos</p>
+  </div>
+  <div class="ml-auto">
+
+    <button (click)="obtenerProductos()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Actualizar"
+      type="button">
+      <mat-icon>update</mat-icon>
+    </button>
+
+  </div>
+</div>
+
+
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/3 px-2">
+    @if (buscadorFormGroup) {
+    <form [formGroup]="buscadorFormGroup" (ngSubmit)="buscarConCodigoDeBarra()" class="flex-grow" #aForm>
+      <div class="flex h-10 items-center px-1 bg-app-bar">
+        <div class="flex-grow flex m-0">
+          <div class="flex items-center mr-2 px-2 border rounded-full bg-foreground w-full">
+            <mat-icon>search</mat-icon>
+            <input formControlName="codigoBarra" name="codigoBarra"
+              class="w-full px-2 py-3 border-0 outline-none bg-transparent" placeholder="Codigo de Barra...">
+          </div>
+        </div>
+      </div>
+    </form>
+    }
+  </div>
+
+  <div class="w-full md:w-2/3 px-2">
+    @if (productoFormGroup) {
+    <form (ngSubmit)="onSeleccionar()" [formGroup]="productoFormGroup">
+      <ng-select [items]="listaProductos" bindLabel="dato" bindValue="id" appendTo="body" formControlName="productoId"
+        name="productoId" #productoSelect placeholder="Buscar producto por codigo o descripcion..."
+        panelClass="pos-ngselect">
+      </ng-select>
+    </form>
+    }
+  </div>
+</div> <br>
+
+
+<div class="flex flex-wrap -mx-2">
+  <div class="w-full md:w-1/2 px-2">
+    @if (producto) {
+
+    <div
+      class="flex items-center space-x-3 p-3 rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <!-- Ícono -->
+      <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900">
+        <span class="material-icons text-indigo-600 dark:text-indigo-300 text-lg">qr_code</span>
+      </span>
+
+      <!-- Texto de etiqueta -->
+      <span class="font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+        CODIGO
+      </span>
+
+      <!-- Estado dinámico -->
+      <span class="px-3 py-1 rounded-full text-xl font-bold tracking-wide">
+        {{ producto.codigo }}
+      </span>
+    </div>
+
+
+    <div
+      class="flex items-center space-x-3 p-3 rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <!-- Ícono -->
+      <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900">
+        <span class="material-icons text-indigo-600 dark:text-indigo-300 text-lg">description</span>
+      </span>
+
+      <!-- Texto de etiqueta -->
+      <span class="font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+        Descripción
+      </span>
+
+      <!-- Estado dinámico -->
+      <span class="px-3 py-1 rounded-full text-sm font-bold tracking-wide">
+        {{ producto.descripcion }}
+      </span>
+    </div>
+
+    <div
+      class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6 space-y-4 transition-colors duration-300">
+      <!-- Código -->
+<!--       <div class="flex items-center space-x-2">
+        <span class="material-icons text-blue-500">qr_code</span>
+        <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Código:</span>
+        <span class="text-gray-900 dark:text-gray-100 font-medium">
+          {{ producto.codigo }}
+        </span>
+      </div> -->
+
+      <!-- Descripción -->
+<!--       <div class="flex items-center space-x-2">
+        <span class="material-icons text-green-500">description</span>
+        <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Descripción:</span>
+        <span class="text-gray-900 dark:text-gray-100 font-medium">
+          {{ producto.descripcion }}
+        </span>
+      </div>
+ -->
+      <!-- Imágenes -->
+      <div class="flex items-start space-x-2">
+        <span class="material-icons text-red-500">image</span>
+        <div class="flex flex-col">
+          <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Imágenes:</span>
+          <div class="flex space-x-2 mt-1">
+            @for (foto of producto.fotosUrl; track foto) {
+            <img [src]="foto.url" alt="imagen del producto"
+              class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm" />
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Categoría -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-yellow-500">category</span>
+        <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Categoría:</span>
+        <span class="text-gray-900 dark:text-gray-100 font-medium">
+          {{ producto.categoria }}
+        </span>
+      </div>
+
+      <!-- Fabricante -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-indigo-500">factory</span>
+        <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Fabricante:</span>
+        <span class="text-gray-900 dark:text-gray-100 font-medium">
+          {{ producto.fabricante }}
+        </span>
+      </div>
+
+
+
+
+      <!-- Código de barra -->
+      <div class="flex items-center space-x-2">
+        <span class="material-icons text-purple-500">barcode</span>
+        <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Código de barra:</span>
+        <span class="text-gray-900 dark:text-gray-100 font-medium">
+          {{ producto.codigoBarra }}
+        </span>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="w-full md:w-1/2 px-2">
+
+
+    @if (producto) {
+    <div
+      class="flex items-center space-x-3 p-3 rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <!-- Ícono -->
+      <!--         <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900">
+          <span class="material-icons text-indigo-600 dark:text-indigo-300 text-lg">done</span>
+        </span> -->
+
+      <!-- Texto de etiqueta -->
+      <span class="font-semibold text-sm text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+        Estado
+      </span>
+
+      <!-- Estado dinámico -->
+      <span class="px-3 py-1 rounded-full text-xs font-bold tracking-wide" [ngClass]="{
+      'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300': producto.activo,
+      'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300': !producto.activo
+    }">
+        {{ producto.activo ? 'ACTIVO' : 'INACTIVO' }}
+      </span>
+    </div>
+    }
+
+    @if (producto) {
+    <div class="flex justify-end space-x-2 mt-2">
+      <button (click)="editar(producto)" mat-button type="button" color="primary">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+      <button (click)="barra()" mat-button type="button" color="primary">
+        <mat-icon>code</mat-icon>
+        Codigo de Barra
+      </button>
+      <button (click)="imprimir()" mat-button type="button" color="primary">
+        <mat-icon>print</mat-icon>
+        Imprimir
+      </button>
+    </div>
+    }
+
+
+  </div>
+</div>

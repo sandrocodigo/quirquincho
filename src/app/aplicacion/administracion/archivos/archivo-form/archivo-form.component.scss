@@ -1,0 +1,21 @@
+.dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    transition: background-color 0.3s;
+    height: 300px; /* Añade la altura deseada aquí */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dropzone:hover,
+.dropzone.dragover {
+    background-color: #f5f5f5;
+}
+
+input[type="file"] {
+    display: none;
+}

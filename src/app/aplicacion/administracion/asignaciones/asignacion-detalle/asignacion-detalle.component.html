@@ -1,0 +1,119 @@
+<div class="flex items-center justify-between py-4">
+  <h1 class="text-3xl font-semibold dark:text-white">Detalle de Asignacion</h1>
+  <button [routerLink]="'/administracion/asignaciones'" class="ml-1 mr-1" mat-button matTooltip="Riesgos"
+    type="button">
+    <mat-icon>grid_on</mat-icon> Mas Asignaciones
+  </button>
+</div>
+
+
+@if (asignacion) {
+  <div>
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg dark:bg-gray-700">
+      <div #tabla class="ticket">
+        <div class="ticket-header">
+          <h2><strong>ACTA DE ASIGNACION DE VEHICULO</strong></h2>
+        </div>
+        <div class="ticket-info">
+          <div class="info-row">
+            <span>Nro: <strong> {{ asignacion.codigo }}</strong></span>
+            <span>Fecha: <strong> {{ hoy | date:'short' }}</strong> </span>
+          </div>
+          <div class="info-row">
+            <span>Placa: <strong> {{ asignacion.vehiculoPlaca }}</strong></span>
+            <span>Conductor: <strong> {{asignacion.conductorApellidos}} {{asignacion.conductorNombres}}</strong>
+          </span>
+        </div>
+        <div class="info-row">
+          <span>Fecha Inicio: <strong> {{asignacion.fechaInicio | date}}</strong></span>
+          <span>Fecha Final: <strong> {{asignacion.fechaFinal | date}}</strong> </span>
+        </div>
+        <div class="info-row">
+          <span>Kilometraje Inicio: <strong> {{asignacion.kilometrajeInicio}}</strong></span>
+          <span>Kilometraje Final: <strong> {{asignacion.kilometrajeFinal}}</strong> </span>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <p class="italic text-sm text-gray-600 dark:text-gray-300">Contenido de INVENTARIO DE VEHICULO (BUS)
+        </p>
+        <div class="contenido-html text-gray-900 dark:text-white"
+          [innerHTML]="sanitizeHtml(asignacion.contenido)">
+        </div>
+      </div>
+      <div>
+        <br><br><br><br><br><br><br>
+      </div>
+      <div class="ticket-info">
+        <div class="info-row">
+          <span><strong>_________________________________</strong></span>
+          <span><strong>_________________________________</strong> </span>
+        </div>
+        <div class="info-row">
+          <span><strong> {{asignacion.conductorApellidos}} {{asignacion.conductorNombres}}</strong></span>
+          <span><strong>Administracion</strong> </span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <div class="flex-grow border-t border-gray-300"></div>
+      <span class="px-4 text-gray-600">Opciones</span>
+      <div class="flex-grow border-t border-gray-300"></div>
+    </div>
+    <div class="flex flex-wrap items-center -mx-2">
+      <div class="flex justify-end">
+        <button (click)="editar()" color="primary" mat-flat-button>
+          <mat-icon>edit</mat-icon> Editar
+        </button>
+      </div>
+      <div class="flex justify-end">
+        <button (click)="editor()" color="primary" mat-flat-button>
+          <mat-icon>edit_note</mat-icon> Editar Contenido
+        </button>
+      </div>
+      <div class="flex justify-end">
+        <button (click)="imprimir()" color="primary" mat-flat-button>
+          <mat-icon>print</mat-icon> Imprimir
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-wrap justify-center">
+    <!-- Imagen Destacada -->
+    <div class="w-full p-4 ">
+      <div class="bg-white rounded-lg shadow-lg p-4 h-96 flex justify-center items-center dark:bg-gray-700">
+        @if (fotoSeleccionado) {
+          <img [src]="fotoSeleccionado.url" alt="Imagen destacada"
+            class="object-contain h-full w-full max-w-full">
+        }
+      </div>
+    </div>
+    <!-- Miniaturas -->
+    <div class="flex space-x-4 p-4 overflow-auto">
+      @for (item of fotos; track item) {
+        <div cdkDrag class="cursor-pointer">
+          <img [src]="item.url" alt="Miniatura"
+            class="object-cover h-24 w-24 border-2 border-transparent hover:border-blue-500"
+            (click)="seleccionarImagen(item)">
+        </div>
+      }
+    </div>
+  </div>
+  <div class="flex flex-wrap justify-center">
+    <!-- Imagen Destacada -->
+    <div class="w-full p-4 ">
+      @if (asignacion.actaDigital) {
+        <a mat-flat-button target="_blank" [href]="asignacion.actaDigital"
+          [download]="asignacion.codigo">
+          <mat-icon>download</mat-icon> Descargar Acta Digital
+        </a>
+      }
+    </div>
+    <!-- Miniaturas -->
+    <div class="flex space-x-4 p-4 overflow-auto">
+      <button (click)="seleccionarArchivo()" color="primary" mat-flat-button>
+        <mat-icon>edit</mat-icon> Buscar Acta Digital
+      </button>
+    </div>
+  </div>
+</div>
+}

@@ -1,0 +1,192 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Programacion</h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup" #aForm>
+    <mat-dialog-content>
+      <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId" appendTo="body"
+        placeholder="Placa de Vehiculo">
+      </ng-select>
+      @if (registroControl && r.vehiculoId.errors && r.vehiculoId.errors.required) {
+        <span
+          class="italic text-xs text-red-600 dark:text-gray-300">
+          Se requiere Placa del Vehiculo
+        </span>
+      }
+      <br>
+        <ng-select [items]="listaMantenimientos" bindLabel="dato" bindValue="id" formControlName="mantenimientoId"
+          appendTo="body" placeholder="Mantenimiento">
+        </ng-select>
+        @if (registroControl && r.mantenimientoId.errors && r.mantenimientoId.errors.required) {
+          <span
+            class="italic text-xs text-red-600 dark:text-gray-300">
+            Se requiere el tipo de Mantenimiento
+          </span>
+        }
+        <br>
+          <!--         <ng-select [items]="listaDescripcion" bindLabel="descripcion" bindValue="id"
+          formControlName="mantenimientoDescripcion" appendTo="body" placeholder="Descripcion de Mantenimiento">
+        </ng-select>
+        <span *ngIf="registroControl && r.mantenimientoDescripcion.errors && r.mantenimientoDescripcion.errors.required"
+          class="italic text-xs text-red-600 dark:text-gray-300">
+          Se requiere la Descripcion
+        </span>
+        <br> -->
+        <div class="flex">
+          <div class="w-1/3 px-2">
+            <span class="italic text-xs text-blue-600 dark:text-gray-300"> Kilometraje</span>
+            <ng-select [items]="listaKilometrajes" bindLabel="descripcion" bindValue="id"
+              formControlName="kilometraje" appendTo="body" placeholder="Kilometraje">
+            </ng-select>
+            @if (registroControl && r.kilometraje.errors && r.kilometraje.errors.required) {
+              <span
+                class="italic text-xs text-red-600 dark:text-gray-300">
+                Se requiere Kilometraje
+              </span>
+            }
+          </div>
+          <div class="w-1/3 px-2">
+            <span class="italic text-xs text-blue-600 dark:text-gray-300"> Kilometraje Inicio</span>
+            <input type="text" formControlName="kilometrajeInicio" placeholder="Kilometraje Inicio"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
+          <div class="w-1/3 px-2">
+            <span class="italic text-xs text-blue-600 dark:text-gray-300"> Kilometraje Proximo</span>
+            <input type="text" formControlName="kilometrajeProximo" placeholder="Kilometraje Proximo"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
+        </div>
+        <br>
+          <div class="flex">
+            <div class="w-1/3 px-2">
+              <span class="italic text-xs text-blue-600 dark:text-gray-300"> Frecuencia</span>
+              <ng-select [items]="listaFrecuencias" bindLabel="descripcion" bindValue="id"
+                formControlName="frecuencia" appendTo="body" placeholder="Frecuencia">
+              </ng-select>
+              @if (registroControl && r.frecuencia.errors && r.frecuencia.errors.required) {
+                <span
+                  class="italic text-xs text-red-600 dark:text-gray-300">
+                  Se requiere la Frecuencia
+                </span>
+              }
+            </div>
+            <div class="w-1/3 px-2">
+              <span class="italic text-xs text-orange-500 dark:text-gray-300">
+                Fecha Inicio
+              </span>
+              <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white w-full" id="fechaInicio"
+                name="fechaInicio" formControlName="fechaInicio">
+              @if (registroControl && r.fechaInicio.errors && r.fechaInicio.errors.required) {
+                <span
+                  class="italic text-xs text-red-600 dark:text-gray-300">
+                  Se requiere fecha de Inicio
+                </span>
+              }
+            </div>
+            <div class="w-1/3 px-2">
+              <span class="italic text-xs text-green-600 dark:text-gray-300"> Fecha Proximo </span>
+              <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white w-full" id="fechaProximo"
+                name="fechaProximo" formControlName="fechaProximo">
+              @if (registroControl && r.fechaProximo.errors && r.fechaProximo.errors.required) {
+                <span
+                  class="italic text-xs text-red-600 dark:text-gray-300">
+                  Se requiere fecha de Inicio
+                </span>
+              }
+            </div>
+          </div>
+          <!--         <div class="bg-foreground rounded-full border px-4 flex items-center w-full mr-2">
+          <mat-icon class="dark:text-white">search</mat-icon>
+          <input class="px-4 py-3 border-0 outline-none w-full bg-transparent" formControlName="orden"
+            placeholder="Nro de Orden...">
+          <mat-error *ngIf="registroControl && r.orden.errors && r.orden.errors.required">
+            Se requiere Orden
+          </mat-error>
+        </div>
+        <div class="w-full max-w-xs">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="select-example">
+            Selecciona una opción
+          </label>
+          <select id="select-example"
+            class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-indigo-500">
+            <option>Opción 1</option>
+            <option>Opción 2</option>
+            <option>Opción 3</option>
+          </select>
+        </div> -->
+        <!--
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Orden</mat-label>
+          <input matInput placeholder="Numero de Orden" formControlName="orden">
+          <mat-error *ngIf="registroControl && r.orden.errors && r.orden.errors.required">
+            Se requiere Orden
+          </mat-error>
+        </mat-form-field>
+        -->
+        <!--         <mat-form-field class="flex-auto w-full">
+        <mat-label>Fecha</mat-label>
+        <input type="date" matInput placeholder="Fecha" formControlName="fecha">
+      </mat-form-field> -->
+      <!--         <mat-form-field class="flex-auto w-full">
+      <mat-label>Empresa</mat-label>
+      <mat-select formControlName="empresa">
+        <mat-option *ngFor="let item of empresas" [value]="item.id">
+          {{item.descripcion}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="registroControl && r.empresa.errors && r.empresa.errors.required">
+        Se requiere el Empresa
+      </mat-error>
+    </mat-form-field> -->
+    <!--         <mat-form-field class="flex-auto w-full">
+    <mat-label>Producto</mat-label>
+    <mat-select formControlName="producto">
+      <mat-option *ngFor="let item of productos" [value]="item.id">
+        {{item.descripcion}}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="registroControl && r.producto.errors && r.producto.errors.required">
+      Se requiere el Producto
+    </mat-error>
+  </mat-form-field> -->
+  <!--         <div class="flex">
+  <div class="w-1/2 px-2">
+    <mat-slide-toggle formControlName="lleno">Tanque lleno</mat-slide-toggle>
+  </div>
+  <div class="w-1/2 px-2">
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Litros</mat-label>
+      <input name="litros" matInput placeholder="Orden Litros" formControlName="ordenLitros">
+      <mat-error *ngIf="registroControl && r.ordenLitros.errors?.required">
+        Se requiere Litros
+      </mat-error>
+      <mat-error *ngIf="registroControl && r.ordenLitros.errors?.litrosInvalido">
+        Los litros deben ser mayores a 0
+      </mat-error>
+    </mat-form-field>
+  </div>
+</div>
+<mat-form-field class="flex-auto w-full">
+  <mat-label>Conductor</mat-label>
+  <input name="Conductor" matInput placeholder="conductor" formControlName="conductor">
+  <mat-error *ngIf="registroControl && r.conductor.errors && r.conductor.errors.required">
+    Se requiere Conductor
+  </mat-error>
+</mat-form-field> -->
+@if (ordenExistente) {
+  <p class="text-red-500">
+    Ya existe un orden vigente: {{ordenExistente.orden}}
+  </p>
+}
+<br>
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  @if (!ordenExistente) {
+    <button color="primary" mat-flat-button type="submit"> Aceptar</button>
+  }
+</mat-dialog-actions>
+</form>
+}

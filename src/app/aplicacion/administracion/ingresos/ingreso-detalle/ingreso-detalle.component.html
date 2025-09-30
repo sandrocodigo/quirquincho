@@ -1,0 +1,238 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Ingreso @if (ingreso) {
+      <span>{{ ingreso.codigo }}</span>
+      }
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Detalle de Items</p>
+  </div>
+  <div class="ml-auto">
+    <button [routerLink]="'/administracion/ingresos'" class="ml-1 mr-1" color="warn" mat-mini-fab
+      matTooltip="Mas Ingresos" type="button">
+      <mat-icon>list</mat-icon>
+    </button>
+  </div>
+</div>
+
+@if (ingreso) {
+<div
+  class="bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200 p-4 rounded-lg shadow-lg flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
+  <div class="flex items-center space-x-2 border-l">
+    <span class="material-icons text-green-500">home</span>
+    <span>{{ ingreso.sucursal }}</span>
+  </div>
+  <div class="flex items-center space-x-2 border-l">
+    <!-- Teléfono -->
+    <span class="material-icons text-green-500">list</span>
+    <span>{{ ingreso.tipo }}</span>
+  </div>
+  <div class="flex items-center space-x-2 flex-1 border-l">
+    <!-- Descripción -->
+    <span class="material-icons text-purple-500">description</span>
+    <span>{{ ingreso.descripcion }}</span>
+  </div>
+  <!-- Botón de Editar -->
+  @if (!ingreso.finalizado) {
+  <button (click)="editarIngreso()"
+    class="flex items-center text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg shadow-lg transition duration-200 md:ml-auto">
+    <span class="material-icons mr-1">edit</span>
+    Editar
+  </button>
+  }
+</div>
+}
+
+<div class="container mx-auto mt-2 p-4 md:p-0">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+    <!-- Cart Items -->
+    <div class="col-span-3 bg-white p-4 rounded shadow-md dark:bg-gray-700 dark:text-white">
+
+      @if (ingreso && !ingreso.finalizado) {
+      <div>
+        <div class="flex flex-wrap -mx-2">
+          <div class="w-full md:w-1/3 px-2">
+            @if (buscadorFormGroup) {
+            <form [formGroup]="buscadorFormGroup" (ngSubmit)="ingresarConCodigoDeBarra()" class="flex-grow">
+              <div class="flex h-10 items-center px-1 bg-app-bar">
+                <div class="flex-grow flex m-0">
+                  <div class="flex items-center mr-2 px-2 border rounded-full bg-foreground w-full">
+                    <mat-icon>search</mat-icon>
+                    <input formControlName="codigoBarra" class="w-full px-2 py-3 border-0 outline-none bg-transparent"
+                      placeholder="Codigo de Barra...">
+                  </div>
+                </div>
+              </div>
+            </form>
+            }
+          </div>
+          <div class="w-full md:w-2/3 px-2">
+            @if (productoFormGroup) {
+            <form (ngSubmit)="onSeleccionar()" [formGroup]="productoFormGroup">
+              <ng-select [items]="listaProductos" bindLabel="dato" bindValue="id" appendTo="body"
+                formControlName="productoId" name="productoId" #productoSelect
+                placeholder="Buscar producto por codigo o descripcion..." panelClass="pos-ngselect">
+              </ng-select>
+            </form>
+            }
+          </div>
+        </div> <br>
+      </div>
+      }
+
+      <!--             <div class="flex justify-between border-b pb-4" *ngIf="ingreso && !ingreso.finalizado">
+      <form *ngIf="buscadorFormGroup" [formGroup]="buscadorFormGroup" (ngSubmit)="ingresarConCodigoDeBarra()"
+        class="flex-grow">
+        <div class="flex h-10 items-center px-1 bg-app-bar">
+          <div class="flex-grow flex m-0">
+            <div class="flex items-center mr-2 px-2 border rounded-full bg-foreground w-full">
+              <mat-icon>manage_search</mat-icon>
+              <input formControlName="codigoBarra"
+                class="w-full px-2 py-3 border-0 outline-none bg-transparent"
+                placeholder="Codigo de Barra...">
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <button (click)="buscarProducto()" class="ml-1 mr-1" color="warn" mat-mini-fab
+        matTooltip="Buscar Producto" type="button">
+        <mat-icon>manage_search</mat-icon>
+      </button>
+
+    </div> -->
+
+      <div class="border-b border-gray-300 my-1"></div>
+
+
+      @for (item of detalle; track item) {
+      <div class="flex flex-col md:flex-row items-center gap-4 p-4 border-b hover:bg-gray-100 dark:hover:bg-gray-500">
+        <div class="flex flex-grow gap-4 items-center">
+          <div class="w-16 h-24">
+            <img
+              [src]="item.productoFotosUrl && item.productoFotosUrl.length> 0 ? item.productoFotosUrl[0].url : 'assets/imagenes/sinfoto.png'"
+              alt="Imagen del producto" class="w-16 h-16 object-cover border-radius: 0.5rem; cursor: pointer;"
+              (click)="fotos(item.producto)">
+          </div>
+          <div class="flex flex-col justify-between">
+            <span class="text-[10px]">{{item.productoCodigo}}</span>
+            <span class="text-sm font-bold">{{item.productoDescripcion}}</span>
+            <span class="text-xs text-red-500">{{item.producto.categoria}} - {{item.productoCodigoBarra}}
+            </span>
+            <span class="text-xs text-gray-500">
+              P. Venta ({{item.pv | number:'1.2-2'}})
+            </span>
+          </div>
+        </div>
+        <div class="flex flex-row justify-between items-center gap-4">
+          <div class="flex flex-col items-center justify-center w-16">
+            @if (ingreso && !ingreso.finalizado) {
+            <mat-icon class="text-lime-600" (click)="sumar(item)">add_circle
+            </mat-icon>
+            }
+            <span class="text-lg font-semibold">
+              {{item.cantidad}}
+              @if (ingreso && !ingreso.finalizado) {
+              <span style="font-size:10px">
+                + {{item.cantidadSaldo}}
+              </span>
+              }
+            </span>
+            @if (ingreso && !ingreso.finalizado && item.cantidad> 1) {
+            <mat-icon class="text-rose-700 cursor-pointer" (click)="restar(item)">remove_circle
+            </mat-icon>
+            }
+          </div>
+          <!-- Precio de Compra -->
+          <div class="text-right">
+            <p class="text-xs text-gray-400">P. Compra</p>
+            <span class="text-sm font-semibold">{{item.pc | number:'1.2-2'}}</span>
+          </div>
+          <!-- Sub Total -->
+          <div class="text-right">
+            <p class="text-xs text-gray-400">Sub total</p>
+            <span class="text-sm font-semibold">{{item.subtotal | number:'1.2-2'}}</span>
+          </div>
+        </div>
+        <div class="flex flex-row md:flex-col items-center gap-2">
+          @if (ingreso && !ingreso.finalizado) {
+          <button mat-icon-button type="button" (click)="editar(item)">
+            <mat-icon class="text-green-500">edit</mat-icon>
+          </button>
+          }
+          @if (ingreso && !ingreso.finalizado) {
+          <button mat-icon-button type="button" (click)="eliminar(item)">
+            <mat-icon class="text-red-500">delete</mat-icon>
+          </button>
+          }
+        </div>
+      </div>
+      }
+
+      <div class="flex justify-between border-t pb-4">
+        <!--                 <a *ngIf="ingreso && !ingreso.finalizado" (click)="buscarProducto()"
+      class="flex items-center mt-4 text-sm text-indigo-600 font-semibold gap-2 cursor-pointer">
+      <mat-icon>add</mat-icon>
+      Mas Productos...
+    </a> -->
+        @if (detalle) {
+        <h2 class="text-xl font-semibold">{{detalle.length}} Items</h2>
+        }
+      </div>
+
+    </div>
+
+    <!-- Order Summary -->
+    <div class="col-span-1 bg-white p-4 rounded shadow-md dark:bg-gray-700 dark:text-white">
+      <h1 class="text-2xl font-semibold border-b pb-4">Resumen</h1>
+      <div class="flex justify-between mt-4 mb-2 text-sm font-semibold">
+        @if (detalle) {
+        <span class="uppercase">{{detalle.length}} Items </span>
+        }
+        <span>${{total}}</span>
+      </div>
+
+      <div class="flex justify-between mt-4 mb-2 text-sm font-semibold">
+        <span class="uppercase">Otros </span>
+        <span>$0.00</span>
+      </div>
+
+      <!--             <div class="my-4">
+  <label class="block mb-2 text-sm font-medium uppercase">Shipping</label>
+  <select class="w-full p-2 text-sm text-gray-600">
+    <option>Standard shipping - $10.00</option>
+  </select>
+</div>
+<div class="my-4">
+  <label for="promo" class="block mb-2 text-sm font-medium uppercase">Promo Code</label>
+  <input type="text" id="promo" placeholder="Enter your code" class="w-full p-2 text-sm">
+</div>
+<button class="w-full bg-red-500 hover:bg-red-600 p-2 text-sm text-white uppercase">Apply</button>
+
+-->
+
+      <div class="border-t mt-4">
+        <div class="flex justify-between py-2 text-sm font-semibold uppercase">
+          <span>Total</span>
+          <span>${{total | number:'1.2-2'}}</span>
+        </div>
+        @if (ingreso && !ingreso.finalizado) {
+        <button (click)="finalizar()"
+          class="w-full bg-indigo-500 hover:bg-indigo-600 p-2 text-sm text-white uppercase">Finalizar</button>
+        }
+
+
+        @if (ingreso && ingreso.finalizado) {
+        <button (click)="imprimir()"
+          class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
+          <mat-icon>print</mat-icon>
+          Imprimir
+        </button>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>

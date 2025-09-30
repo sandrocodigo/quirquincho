@@ -1,0 +1,127 @@
+<div class="flex items-center justify-between py-4">
+  <div>
+    <h1 class="titulo">Egresos de Ordenes</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300"> Reporte de Egresos </p>
+  </div>
+  <div class="ml-auto">
+
+    <button (click)="imprimir()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Mas Egresos"
+      type="button">
+      <mat-icon>print</mat-icon>
+    </button>
+
+    <button (click)="exportarJson()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+      type="button">
+      <mat-icon>table_rows</mat-icon>
+    </button>
+
+  </div>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/5 px-2">
+        <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaInicio"
+          name="fechaInicio" formControlName="fechaInicio">
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaFinal" name="fechaFinal"
+          formControlName="fechaFinal">
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId"
+          appendTo="body" placeholder="Vehiculo">
+        </ng-select>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>FINALIZADO</mat-label>
+          <mat-select formControlName="finalizado">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            <mat-option value="true"> FINALIZADO </mat-option>
+            <mat-option value="false"> PENDIENTE </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/5 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal</mat-label>
+          <mat-select formControlName="sucursal">
+            <mat-option value="TODOS"> TODOS </mat-option>
+            @for (item of listaSucursales; track item) {
+              <mat-option [value]="item.id">
+                {{item.descripcion}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+}
+
+<div class="table-container">
+  <table class="tabla-estilizada" #tabla>
+    <thead>
+      <tr>
+        <th colspan="9">REPORTE DE EGRESOS DE ORDENES</th>
+        <th colspan="2">{{fechaHoy| date:'short'}}</th>
+        <th colspan="2">{{b.sucursal.value}}</th>
+      </tr>
+      <tr>
+        <th>ORDEN</th>
+        <th>EGRESO</th>
+        <th>SUCURSAL</th>
+        <th>INTERNO</th>
+        <th>PLACA</th>
+        <th>CODIGO</th>
+        <th>DESCRIPCION</th>
+        <th>CANTIDAD</th>
+        <th>P.C.</th>
+        <th>P.V.</th>
+        <th>SUBTOTAL</th>
+        <th>FECHA</th>
+        <th>REGISTRO</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lista; track item; let ultimo = $last) {
+        <tr>
+          <td style="text-align:start"> {{item.ordenCodigo}} </td>
+          <td style="text-align:start"> {{item.egresoCodigo}} </td>
+          <td style="text-align:start"> {{item.sucursal }} </td>
+          <td style="text-align:start">{{item.vehiculoInterno }}</td>
+          <td style="text-align:start">{{item.vehiculoPlaca }}</td>
+          <td style="text-align:start">{{item.productoCodigo }}</td>
+          <td style="text-align:start">{{item.productoDescripcion }}</td>
+          <td style="text-align:center"> {{item.cantidad }} </td>
+          <td style="text-align:end"> {{item.pc | number:'1.2-2': 'EN' }} </td>
+          <td style="text-align:end"> {{item.pv | number:'1.2-2': 'EN' }} </td>
+          <td style="text-align:end"> {{item.subtotal | number:'1.2-2': 'EN' }} </td>
+          <td style="text-align:center">{{ item.fecha | date}}</td>
+          <td style="text-align:center">{{ item.registroFecha?.toDate() | date:'short'}}</td>
+        </tr>
+      }
+    </tbody>
+    @if (totales) {
+      <tfoot>
+        <tr>
+          <th>{{lista.length}}</th>
+          <th>EGRESO</th>
+          <th>SUCURSAL</th>
+          <th>INTERNO</th>
+          <th>PLACA</th>
+          <th>CODIGO</th>
+          <th>DESCRIPCION</th>
+          <th>CANTIDAD</th>
+          <th>P.C.</th>
+          <th>P.V.</th>
+          <th style="text-align:end">{{totales.subtotal | number:'1.2-2': 'EN'}}</th>
+          <th style="text-align:end"></th>
+          <th style="text-align:end"></th>
+        </tr>
+      </tfoot>
+    }
+  </table>
+</div>

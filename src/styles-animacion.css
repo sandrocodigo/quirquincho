@@ -1,0 +1,74 @@
+/* Subir con fade (entra desde abajo hacia arriba) */
+.fade-up {
+  animation: fade-up 400ms cubic-bezier(0.35, 0, 0.25, 1);
+  will-change: transform, opacity;
+}
+@keyframes fade-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* Bajar con fade (entra desde arriba hacia abajo) */
+.fade-down {
+  animation: fade-down 400ms cubic-bezier(0.35, 0, 0.25, 1);
+}
+@keyframes fade-down {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* Desde izquierda a derecha */
+.fade-right {
+  animation: fade-right 300ms cubic-bezier(0.35, 0, 0.25, 1);
+}
+@keyframes fade-right {
+  from { transform: translateX(-20px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+/* Crecimiento */
+.grow-in {
+  animation: grow-in 300ms cubic-bezier(0.35, 0, 0.25, 1);
+}
+@keyframes grow-in {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Desde derecha a izquierda */
+.fade-left {
+  animation: fade-left 300ms cubic-bezier(0.35, 0, 0.25, 1);
+}
+@keyframes fade-left {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+/* Rotar desde pequeño */
+.rotate-in {
+  animation: rotate-in 400ms ease-out;
+}
+@keyframes rotate-in {
+  from { transform: rotate(-15deg) scale(0.8); opacity: 0; }
+  to   { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+/* Zoom-out (efecto inverso al grow-in) */
+.shrink-in {
+  animation: shrink-in 300ms ease-out;
+}
+@keyframes shrink-in {
+  from { transform: scale(1.2); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Rebote sutil */
+.bounce-in {
+  animation: bounce-in 500ms cubic-bezier(0.68,-0.55,0.27,1.55);
+}
+@keyframes bounce-in {
+  0%   { transform: scale(0.5); opacity: 0; }
+  80%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}
+

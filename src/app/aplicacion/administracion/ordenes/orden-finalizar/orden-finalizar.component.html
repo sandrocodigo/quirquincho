@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>Finalizar Orden</h2>
+
+<mat-divider></mat-divider>
+
+@if (registroFormGroup && data && r) {
+  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup" #aForm>
+    <mat-dialog-content>
+      <div class="flex">
+        <div class="w-1/2 px-2">
+          <span class="italic text-xs text-blue-600 dark:text-gray-300">Kilometraje Actual</span>
+          <input type="text" formControlName="kilometrajeActual" placeholder="Kilometraje Actual"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+        </div>
+        <div class="w-1/2 px-2">
+          <span class="italic text-xs text-blue-600 dark:text-gray-300">Kilometraje Proximo</span>
+          <input type="text" formControlName="kilometrajeProximo" placeholder="Kilometraje Proximo"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+        </div>
+      </div>
+      <br>
+        <div class="flex">
+          <div class="w-1/3 px-2">
+            <span class="italic text-xs text-orange-500 dark:text-gray-300"> Fecha Entrada</span>
+            <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white w-full" id="fechaEntrada"
+              name="fechaEntrada" formControlName="fechaEntrada">
+            @if (registroControl && r.fechaEntrada.errors && r.fechaEntrada.errors.required) {
+              <span
+                class="italic text-xs text-red-600 dark:text-gray-300">
+                Se requiere fecha de Entrada
+              </span>
+            }
+          </div>
+          <div class="w-1/3 px-2">
+            <span class="italic text-xs text-green-600 dark:text-gray-300"> Fecha Salida </span>
+            <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white w-full" id="fechaSalida"
+              name="fechaSalida" formControlName="fechaSalida">
+            @if (registroControl && r.fechaSalida.errors && r.fechaSalida.errors.required) {
+              <span
+                class="italic text-xs text-red-600 dark:text-gray-300">
+                Se requiere fecha de Salida
+              </span>
+            }
+          </div>
+          <div class="w-1/3 px-2">
+            <span class="italic text-xs text-green-600 dark:text-gray-300"> Fecha Proximo </span>
+            <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white w-full" id="fechaProximo"
+              name="fechaSalida" formControlName="fechaProximo">
+            @if (registroControl && r.fechaProximo.errors && r.fechaProximo.errors.required) {
+              <span
+                class="italic text-xs text-red-600 dark:text-gray-300">
+                Se requiere fecha proximo
+              </span>
+            }
+          </div>
+        </div>
+        <br>
+          <span class="italic text-xs text-orange-500 dark:text-gray-300">Observacion</span>
+          <input type="text" formControlName="finalizadoObservacion" placeholder="Observacion y/o Recomendaciones"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          @if (registroControl && r.finalizadoObservacion.errors && r.finalizadoObservacion.errors.required) {
+            <span
+              class="italic text-xs text-red-600 dark:text-gray-300">
+              Se requiere
+            </span>
+          }
+          <br> <br>
+        </mat-dialog-content>
+        <mat-divider></mat-divider>
+        <mat-dialog-actions align="end">
+          <button mat-button mat-dialog-close type="button">Cancelar</button>
+          <button color="primary" mat-flat-button type="submit"> Aceptar</button>
+        </mat-dialog-actions>
+      </form>
+    }

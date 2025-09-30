@@ -1,0 +1,67 @@
+<div class="flex items-center justify-between">
+  <div>
+    <h1 class="titulo">
+      Reportes
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Gestion de Reportes</p>
+  </div>
+  <div class="ml-auto">
+
+
+    <button [matMenuTriggerFor]="menu" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+      type="button">
+      <mat-icon>blur_on</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      @for (item of menuReportes; track item) {
+        <button mat-menu-item [routerLink]="item.link">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </mat-menu>
+
+
+
+
+  </div>
+</div>
+
+
+
+
+<div
+  class="flex flex-wrap items-center bg-gradient-to-r from-lime-500 via-lime-850 to-lime-950 text-white p-1 rounded-lg lg:rounded-r-lg">
+  <!--     <h2 class="flex-auto m-0 text-white text-xl ">
+  Reportes
+</h2>
+<div class="w-full flex flex-wrap space-x-4 space-y-2 mt-2 sm:space-y-0">
+
+  <a [routerLink]="'reporte1'" class="flex items-center text-white hover:text-gray-300">
+    <span class="material-icons">inventory</span>
+    <span class="ml-1">1. Inventario</span>
+  </a>
+
+  <a [routerLink]="'reporte2'" class="flex items-center text-white hover:text-gray-300">
+    <span class="material-icons">category</span>
+    <span class="ml-1">2. Ingresos</span>
+  </a>
+
+  <a [routerLink]="'reporte3'" class="flex items-center text-white hover:text-gray-300">
+    <span class="material-icons">category</span>
+    <span class="ml-1">3. Egresos</span>
+  </a>
+
+  <a [routerLink]="'reporte4'" class="flex items-center text-white hover:text-gray-300">
+    <span class="material-icons">category</span>
+    <span class="ml-1">4. Reporte</span>
+  </a>
+
+  <a [routerLink]="'reporte5'" class="flex items-center text-white hover:text-gray-300">
+    <span class="material-icons">category</span>
+    <span class="ml-1">5. Reporte</span>
+  </a>
+</div> -->
+</div>
+<router-outlet></router-outlet>

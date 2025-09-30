@@ -1,0 +1,153 @@
+<h2 mat-dialog-title>Imprimir de Egreso </h2>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+
+  @if (egreso && detalle) {
+    <table #tabla class="table-ticket">
+      <thead>
+        <tr>
+          <th colspan="6" style="text-align: center;">
+            GRUPO EMPRESARIAL QUIRQUINCHO
+          </th>
+        </tr>
+        <tr>
+          <th colspan="4" style="text-align: center;">
+            <strong> DETALLE DE EGRESO [{{egreso.tipo}}]</strong>
+          </th>
+          <th colspan="2" style="text-align: center; font-size: 20px;"> {{egreso.codigo}}</th>
+        </tr>
+        <tr>
+          <th colspan="3"> Origen: {{egreso.sucursal}} </th>
+          <th colspan="3">
+            Registro: {{egreso.registroFecha.toDate() | date:'short'}} <br>
+            Impreso: {{fechaHoy | date:'short'}} <br>
+          </th>
+        </tr>
+        <!--             <tr>
+        <th> Cliente </th>
+        <th colspan="3"> {{egreso.clienteEmpresa}} </th>
+      </tr> -->
+      <tr>
+        <th> Nro.</th>
+        <th> Codigo </th>
+        <th> Descripcion </th>
+        <th> Cantidad </th>
+        <th> Precio </th>
+        <th> Subtotal </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of detalle; track item; let i = $index) {
+        <tr>
+          <td> {{i+1}} </td>
+          <td> {{item.productoCodigo}} </td>
+          <td> {{item.productoDescripcion}} </td>
+          <td> {{item.cantidad}} </td>
+          <td> {{item.pv | number:'1.2-2'}} </td>
+          <td> {{item.subtotal | number:'1.2-2'}} </td>
+        </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="5"> Total </th>
+        <th> {{total}} </th>
+      </tr>
+      <tr>
+        <th colspan="2">Descripcion y Obs.</th>
+        <th colspan="4">
+          {{egreso.descripcion}}
+        </th>
+      </tr>
+      <tr>
+        <th colspan="2">Entregue Conforme</th>
+        <th colspan="2" style="vertical-align: bottom; height: 60px;">
+          <span style="color: rgb(192, 188, 188); display: inline-block;">Nombre completo</span>
+        </th>
+        <th colspan="2" style="vertical-align: bottom; height: 60px;">
+          <span style="color: rgb(192, 188, 188); display: inline-block;">Firma</span>
+        </th>
+      </tr>
+      <tr>
+        <th colspan="2">Recibi Conforme</th>
+        <th colspan="2" style="vertical-align: bottom; height: 50px;">
+          <span style="color: rgb(192, 188, 188); display: inline-block;">Nombre completo</span>
+        </th>
+        <th colspan="2" style="vertical-align: bottom; height: 60px;">
+          <span style="color: rgb(192, 188, 188); display: inline-block;">Firma</span>
+        </th>
+      </tr>
+      <tr>
+        <th colspan="2">Conductor</th>
+        <th colspan="2" style="vertical-align: bottom; height: 50px;">
+          <span style="color: rgb(192, 188, 188); display: inline-block;">Nombre completo</span>
+        </th>
+        <th colspan="2" style="vertical-align: bottom; height: 50px;">
+          <span style="color: rgb(192, 188, 188); display: inline-block;">Firma</span>
+        </th>
+      </tr>
+    </tfoot>
+  </table>
+}
+
+</mat-dialog-content>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button (click)="imprimir()" mat-button type="button" color="primary">Imprimir</button>
+</mat-dialog-actions>
+
+
+<!--
+<h2 mat-dialog-title>Imprimir Egreso</h2>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+
+  <div *ngIf="egreso" #tabla class="ticket">
+    <div class="ticket-header">
+      <h3>DETALLE DE EGRESO</h3>
+    </div>
+    <div class="ticket-info">
+      <p><strong>Nro:</strong> {{ egreso.codigo}}</p>
+      <p><strong>Fecha:</strong> {{ egreso.finalizadoFecha?.toDate() | date:'short' }}</p>
+      <p><strong>Cliente:</strong> {{ egreso.clienteEmpresa }} - {{ egreso.clienteResponsable }}</p>
+    </div>
+    <div class="ticket-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Desc</th>
+            <th>Cant</th>
+            <th>P.Unit</th>
+            <th>Sub</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of detalle">
+            <td>{{ item.productoDescripcion }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>{{ item.pv | number: '1.2-2' }}</td>
+            <td>{{ item.subtotal | number: '1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ticket-footer">
+      <p><strong>Total:</strong> {{ total }}</p>
+    </div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-divider></mat-divider>
+
+<mat-dialog-actions align="end">
+  <button (click)="imprimirTicket()" mat-button type="button" color="primary">Imprimir</button>
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+</mat-dialog-actions> -->

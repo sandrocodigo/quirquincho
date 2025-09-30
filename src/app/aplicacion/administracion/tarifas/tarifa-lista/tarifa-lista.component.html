@@ -1,0 +1,121 @@
+<div class="flex items-center justify-between py-4">
+  <h1 class="text-3xl font-semibold dark:text-white">Tarifas</h1>
+  <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+
+@if (buscadorFormGroup ) {
+  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/3 px-2">
+        <!--             <mat-form-field class="flex-auto w-full">
+        <mat-label>EMPRESA</mat-label>
+        <mat-select formControlName="empresa">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option *ngFor="let item of empresas" [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>ACTIVO</mat-label>
+        <mat-select formControlName="activo">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> ACTIVOS </mat-option>
+          <mat-option value="false"> PASIVOS </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/3 px-2">
+      <mat-form-field appearance="fill" style="width:100%">
+        <mat-label>Limite</mat-label>
+        <mat-select formControlName="limite">
+          @for (item of limites; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
+}
+
+
+<div class="bg-app-bar flex px-1 h-20 items-center">
+  <div class="flex-auto flex m-0">
+    <div class="bg-foreground rounded-full border px-4 flex items-center w-full mr-2">
+      <mat-icon class=" dark:text-white">search</mat-icon>
+      <input (keyup)="applyFilter($event)" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+        placeholder="Buscar...">
+    </div>
+  </div>
+</div>
+
+<div class="table-container mat-elevation-z2">
+  <table mat-table [dataSource]="dataSource" matSort class="w-full dark:bg-gray-800">
+
+
+    <!--         <ng-container matColumnDef="numero">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Numero </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      <span class="font-semibold px-2 py-1 rounded-full bg-red-500 text-white"> {{ element.numero }}</span>
+    </td>
+  </ng-container> -->
+
+  <ng-container matColumnDef="origen">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Origen </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      <span class="font-semibold"> {{ element.origen }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="destino">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Destino </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      <span class="font-semibold"> {{ element.destino }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="precio1">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Precio 1 </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      {{ element.precio1 }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="precio2">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Precio 2 </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      {{ element.precio2 }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="precio3">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Precio 3 </th>
+    <td mat-cell *matCellDef="let element" class="dark:text-white">
+      {{ element.precio3 }}
+    </td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="opciones">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+    <td mat-cell *matCellDef="let element">
+      <div class="text-right">
+        <button (click)="editar(element)" mat-icon-button type="button" color="accent">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+</div>
