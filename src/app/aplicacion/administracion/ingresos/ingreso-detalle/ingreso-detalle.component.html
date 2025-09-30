@@ -34,7 +34,7 @@
     <span>{{ ingreso.descripcion }}</span>
   </div>
   <!-- Botón de Editar -->
-  @if (!ingreso.finalizado) {
+  @if (!ingreso.finalizado && !ingreso.traspaso) {
   <button (click)="editarIngreso()"
     class="flex items-center text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg shadow-lg transition duration-200 md:ml-auto">
     <span class="material-icons mr-1">edit</span>
@@ -119,7 +119,7 @@
           <div class="flex flex-col justify-between">
             <span class="text-[10px]">{{item.productoCodigo}}</span>
             <span class="text-sm font-bold">{{item.productoDescripcion}}</span>
-            <span class="text-xs text-red-500">{{item.producto.categoria}} - {{item.productoCodigoBarra}}
+            <span class="text-xs text-red-500">{{item.productoCodigoBarra}}
             </span>
             <span class="text-xs text-gray-500">
               P. Venta ({{item.pv | number:'1.2-2'}})
@@ -181,6 +181,30 @@
         <h2 class="text-xl font-semibold">{{detalle.length}} Items</h2>
         }
       </div>
+
+
+      @if (ingreso && ingreso.traspaso) {
+      <div class="mt-4 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+
+        <p class="flex items-center gap-1">
+          <span class="font-medium text-gray-500 dark:text-gray-300">Sucursal Origen</span>
+          <span class="font-semibold text-blue-600 dark:text-blue-400">{{ ingreso.egresoSucursalOrigen }}</span>
+        </p>
+
+        <p class="flex items-center gap-1">
+          <span class="font-medium text-gray-500 dark:text-gray-300">Sucursal Destino</span>
+          <span class="font-semibold text-blue-600 dark:text-blue-400">{{ ingreso.egresoSucursalDestino }}</span>
+        </p>
+
+        <p class="flex items-center gap-1">
+          <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo</span>
+          <span class="font-semibold text-blue-600 dark:text-blue-400">
+            {{ ingreso.vehiculoInterno }} - {{ ingreso.vehiculoPlaca }}
+          </span>
+        </p>
+
+      </div>
+      }
 
     </div>
 

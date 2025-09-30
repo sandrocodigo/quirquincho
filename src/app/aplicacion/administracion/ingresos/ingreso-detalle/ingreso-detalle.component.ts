@@ -30,6 +30,7 @@ import { ProductoService } from '../../../servicios/producto.service';
 import { CalculoService } from '../../../servicios/calculo.service';
 import { IngresoFormComponent } from '../ingreso-form/ingreso-form.component';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
+import { EgresoService } from '../../../servicios/egreso.service';
 
 @Component({
   selector: 'app-ingreso-detalle',
@@ -82,6 +83,7 @@ export class IngresoDetalleComponent {
     private cargando: SpinnerService,
     public router: Router,
     private dialog: MatDialog,
+    private egresoServicio: EgresoService,
     private ingresoServicio: IngresoService,
     private ingresoDetalleServicio: IngresoDetalleService,
     private kardexServicio: KardexService,
@@ -137,7 +139,7 @@ export class IngresoDetalleComponent {
   obtenerIngreso() {
     this.cargando.show();
     this.ingresoServicio.obtenerPorId(this.idIngreso).then(res => {
-      // console.log('INGRESO: ', res);
+      console.log('INGRESO: ', res);
       this.ingreso = res;
       this.titleService.setTitle('Ingreso: ' + this.ingreso.codigo);
       if (!res.finalizado) {
@@ -369,6 +371,15 @@ export class IngresoDetalleComponent {
             finalizado: true,
           });
 
+          // Actualizar el ingreso
+          if (this.ingreso.traspaso) {
+            await this.egresoServicio.editar(this.ingreso.egresoId, {
+              traspasado: true,
+              traspasadoUsuario: this.usuario.email,
+              traspasadoFecha: fechaRegistro,
+            });
+          }
+
           // Actualizaciones de los detalles y Kardex
           const actualizaciones = this.detalle.map(async (item: any) => {
             // Obtener el saldo actual del producto
@@ -487,12 +498,11 @@ export class IngresoDetalleComponent {
           this.ingresoDetalleServicio.crear({
             fecha: fecha,
             sucursal: this.ingreso.sucursal,
-            ingreso: this.ingreso,
+
             ingresoId: this.idIngreso,
             ingresoCodigo: this.ingreso.codigo,
             ingresoDescripcion: this.ingreso.descripcion,
 
-            producto: producto,
             productoId: producto.id,
             productoTipo: producto.tipo,
             productoCodigo: producto.codigo,
@@ -524,12 +534,11 @@ export class IngresoDetalleComponent {
           this.ingresoDetalleServicio.crear({
             fecha: fecha,
             sucursal: this.ingreso.sucursal,
-            ingreso: this.ingreso,
+
             ingresoId: this.idIngreso,
             ingresoCodigo: this.ingreso.codigo,
             ingresoDescripcion: this.ingreso.descripcion,
 
-            producto: producto,
             productoId: producto.id,
             productoTipo: producto.tipo,
             productoCodigo: producto.codigo,

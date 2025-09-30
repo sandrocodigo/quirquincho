@@ -191,4 +191,22 @@ export class EgresoService {
   }
 
 
+  // OBTENER EGRESOS POR TRASPASO
+  async obtenerEgresosPorTraspasoPendientes(sucursalDestino: any): Promise<any[]> {
+    let q = query(
+      collection(this.firestore, `${this.url}`) as CollectionReference<any>,
+      where('tipo', '==', 'TRASPASO'),
+      where('finalizado', '==', true),
+      where('traspasado', '==', false),
+      where('sucursalDestino', '==', sucursalDestino),
+    );
+    return getDocs(q).then((querySnapshot) => {
+      const registros: any[] = [];
+      querySnapshot.forEach((doc) => {
+        registros.push({ ...doc.data(), id: doc.id } as any);
+      });
+      return registros;
+    });
+  }
+
 }

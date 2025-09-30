@@ -113,7 +113,7 @@
           </form>
           }
         </div>
-      </div> 
+      </div>
 
       <br>
 
@@ -243,6 +243,28 @@
             <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo</span>
             <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoInterno }} - {{
               egreso.vehiculoPlaca }}</span>
+          </p>
+
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Traspasado</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">
+              {{ egreso.traspasado?'CONFIRMADO':'PENDIENTE' }}
+            </span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Traspasado Usuario</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">
+              {{ egreso.traspasadoUsuario }}
+            </span>
+          </p>
+
+          <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Traspasado Fecha</span>
+            <span class="font-semibold text-blue-600 dark:text-blue-400">
+              {{ egreso.traspasadoFecha?.toDate() | date:'short' }}
+            </span>
           </p>
 
         </div>

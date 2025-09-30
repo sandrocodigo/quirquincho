@@ -26,6 +26,7 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AuthService } from '../../../servicios/auth.service';
 import { sucursales } from '../../../datos/sucursales';
+import { IngresoTraspaso } from '../ingreso-traspaso/ingreso-traspaso';
 
 
 @Component({
@@ -75,7 +76,7 @@ export class IngresoListaComponent {
 
   usuario: any | null = null;
   listaSucursales = sucursales;
-  
+
   constructor(
     private fb: FormBuilder,
     private titleService: Title,
@@ -222,5 +223,43 @@ export class IngresoListaComponent {
       }
     });
   }
+
+  nuevoTraspaso(): void {
+    const dialogRef = this.dialog.open(IngresoTraspaso, {
+      width: '800px',
+      data: {
+        nuevo: true,
+        id: null,
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // console.log('RESULTADO: ',result.id);
+        this.router.navigate(['/administracion/ingresos/detalle/' + result.id]);
+        // this.obtenerConsulta();
+      }
+    });
+  }
+
+  editarTraspaso(fila: any): void {
+    const dialogRef = this.dialog.open(IngresoTraspaso, {
+      width: '800px',
+      data: {
+        nuevo: false,
+        idUsuario: fila.usuarioId,
+        id: fila.id,
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.obtenerConsulta();
+      }
+    });
+  }
+
 
 }

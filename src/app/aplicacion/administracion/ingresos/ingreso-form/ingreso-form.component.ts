@@ -81,9 +81,11 @@ export class IngresoFormComponent {
         finalizado: [false],
         aprobado: [false],
 
+        activo: [true],
+
+        // Auditoria
         usuarioRegistro: [this.auth.obtenerUsuario.email],
         fechaRegistro: [this.fechaHoy],
-
 
         registroUsuario: [this.auth.obtenerUsuario.email],
         registroFecha: [this.fechaHoy]

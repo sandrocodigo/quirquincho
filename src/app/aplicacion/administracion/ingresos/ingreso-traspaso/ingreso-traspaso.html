@@ -1,0 +1,90 @@
+<h2 mat-dialog-title>{{data.nuevo?'Nuevo':'Editar'}} Ingreso x Traspaso </h2>
+<mat-divider></mat-divider>
+
+@if (registroFormGroup) {
+<form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+    <mat-dialog-content>
+
+        <mat-form-field class="flex-auto w-full">
+            <mat-label>Sucursal Destino</mat-label>
+            <mat-select formControlName="sucursal">
+                @for (item of listaSucursales; track item) {
+                <mat-option [value]="item.id">
+                    {{item.descripcion}}
+                </mat-option>
+                }
+            </mat-select>
+            @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
+            <mat-error>
+                Sucursal Origen
+            </mat-error>
+            }
+        </mat-form-field>
+
+        <div class="flex flex-wrap -mx-2">
+            <div class="w-full md:w-1/2 px-2">
+
+            </div>
+            <div class="w-full md:w-1/2 px-2">
+                <!--                 <mat-form-field class="flex-auto w-full">
+                    <mat-label>Sucursal Destino</mat-label>
+                    <mat-select formControlName="sucursalDestino">
+                        @for (item of listaSucursalesDestino; track item) {
+                        <mat-option [value]="item.id">
+                            {{item.descripcion}}
+                        </mat-option>
+                        }
+                    </mat-select>
+                    @if (registroControl && r.sucursalDestino.errors && r.sucursalDestino.errors.required) {
+                    <mat-error>
+                        Sucursal Destino
+                    </mat-error>
+                    }
+                </mat-form-field> -->
+            </div>
+        </div>
+
+        <mat-form-field class="flex-auto w-full">
+            <mat-label>Egresos por Traspaso</mat-label>
+            <mat-select formControlName="egresoId">
+                @for (item of listaEgresos; track item) {
+                <mat-option [value]="item.id">
+                    {{item.codigo}}: {{item.sucursal}} a {{item.sucursalDestino}}
+                </mat-option>
+                }
+            </mat-select>
+            @if (registroControl && r.egresoId.errors && r.egresoId.errors.required) {
+            <mat-error>
+                Seleccione un Egreso
+            </mat-error>
+            }
+        </mat-form-field>
+
+        <!--         <mat-form-field class="flex-auto w-full">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="tipo">
+        <mat-option *ngFor="let item of listaTipos" [value]="item.id">
+          {{item.descripcion}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="registroControl && r.tipo.errors && r.tipo.errors.required">
+        Se requiere el tipo de Egreso
+      </mat-error>
+    </mat-form-field> -->
+        <mat-form-field class="flex-auto w-full">
+            <mat-label>Descricion</mat-label>
+            <input name="descripcion" matInput placeholder="Descripcion" formControlName="descripcion">
+            <!--             <mat-error *ngIf="registroControl && r.descripcion.errors && r.descripcion.errors.required">
+      Se requieren la descripcion
+    </mat-error> -->
+        </mat-form-field>
+
+        <br>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close type="button">Cancelar</button>
+        <button color="primary" mat-flat-button type="submit" [disabled]="boton">Aceptar</button>
+    </mat-dialog-actions>
+</form>
+}

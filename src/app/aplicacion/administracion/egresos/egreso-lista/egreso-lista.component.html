@@ -1,10 +1,7 @@
 <div class="flex items-center justify-between py-4">
   <div>
-    <h1
-      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
-      Egresos
-    </h1>
-    <p class="text-sm text-gray-500 dark:text-gray-300">Salida de Productos</p>
+    <h1 class="titulo"> Egresos </h1>
+    <p class="subtitulo">Salida de Productos</p>
   </div>
   <div class="ml-auto">
     <button (click)="nuevoTraspaso()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Traspaso" type="button">
@@ -81,7 +78,7 @@
     <ng-container matColumnDef="sucursal">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Sucursal </th>
       <td mat-cell *matCellDef="let element">
-        {{ element.sucursal }}<br>
+        {{ element.sucursal }} <br> {{ element.sucursalDestino }}
       </td>
     </ng-container>
 
@@ -208,65 +205,3 @@ class="bg-gray-200 p-2 rounded-full hover:bg-gray-300 dark:bg-gray-700 dark:hove
   </table>
 </div>
 
-
-<!--
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-    <thead class="text-xs text-gray-700 uppercase dark:text-gray-400">
-      <tr>
-        <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
-          CODIGO
-        </th>
-        <th scope="col" class="px-6 py-3">
-          DESCRIPCION
-        </th>
-        <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
-          TOTAL
-        </th>
-        <th scope="col" class="px-6 py-3">
-          FINALIZADO
-        </th>
-        <th scope="col" class="px-6 py-3">
-
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of lista" class="border-b border-gray-200 dark:border-gray-700">
-        <th scope="row"
-          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
-          <p class="text-xs mb-1">{{item.sucursal}}</p>
-          <p class="text-emerald-600">{{item.codigo}}</p>
-        </th>
-        <td class="px-6 py-4">
-          <p class="text-xs mb-1">{{item.tipo}}</p>
-          <p class="text-sm">{{item.descripcion}}</p>
-        </td>
-        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800 text-right">
-          {{item.total}}
-        </td>
-        <td class="px-6 py-4">
-          <mat-icon [style.color]="item.finalizado ? 'green' : 'red'">
-            {{item.finalizado ? 'done' : 'close'}}
-          </mat-icon>
-        </td>
-        <td class="px-6 py-4">
-          <button *ngIf="!item.finalizado" mat-icon-button type="button" color="accent"
-            (click)="editar(item)">
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <button *ngIf="!item.finalizado" mat-icon-button type="button" color="warn" (click)="eliminar(item)">
-            <mat-icon>delete</mat-icon>
-          </button>
-
-
-          <button [routerLink]="'detalle/'+ item.id"
-            class="bg-gradient-to-r from-black to-green-500 text-white rounded-md px-2 py-1 hover:bg-gray-800">
-            Detalle
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div> -->

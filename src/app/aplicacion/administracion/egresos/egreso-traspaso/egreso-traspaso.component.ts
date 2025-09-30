@@ -12,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-
 import { AuthService } from '../../../servicios/auth.service';
 import { EgresoService } from '../../../servicios/egreso.service';
 
@@ -66,9 +65,7 @@ export class EgresoTraspasoComponent {
     private dialogRef: MatDialogRef<EgresoTraspasoComponent>,
     private fb: FormBuilder,
     private snackbar: MatSnackBar,
-    private dialog: MatDialog,
     private cargando: SpinnerService,
-    private auth: AuthService,
     private egresoServicio: EgresoService,
     private vehiculoServicio: VehiculoService,
     public authServicio: AuthService,
@@ -116,6 +113,7 @@ export class EgresoTraspasoComponent {
           pagado: [false],
 
           traspaso: [true],
+          traspasado: [false],
           activo: [true],
 
           // Auditoria
