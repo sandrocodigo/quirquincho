@@ -116,7 +116,7 @@ export class ProductoService {
     ];
 
     // Combinar condiciones, orden y rango para crear la consulta
-    let q = query(coleccion, ...condiciones, ...ordenYRango, limit(datos.limite));
+    let q = query(coleccion, ...condiciones, ...ordenYRango);
 
     // Ejecutar la consulta y procesar los resultados
     const querySnapshot = await getDocs(q);

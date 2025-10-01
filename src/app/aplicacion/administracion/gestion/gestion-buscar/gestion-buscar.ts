@@ -145,7 +145,7 @@ export class GestionBuscar {
       activo: 'TODOS',
       publicado: 'TODOS',
       categoria: 'TODOS',
-      limite: 2000
+      limite: 3000
     }).then((respuesta: any[]) => {
 
       this.listaProductos = respuesta
@@ -289,6 +289,23 @@ export class GestionBuscar {
     const suma = this.listaIngresos.reduce((total: any, ingreso: any) => total + (ingreso.pv || 0), 0);
     const promedio = suma / this.listaIngresos.length;
     return parseFloat(promedio.toFixed(2)); // redondea a 2 decimales
+  }
+
+  nuevo() {
+    const dialogRef = this.dialog.open(ProductoFormComponent, {
+      width: '800px',
+      data: {
+        nuevo: true,
+        id: null,
+        objeto: null
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.obtenerProductos();
+      }
+    });
   }
 
   editar(fila: any) {
