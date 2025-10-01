@@ -39,6 +39,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { EgresoTraspasoComponent } from '../egreso-traspaso/egreso-traspaso.component';
+import { EgresoImprimirTraspaso } from '../egreso-imprimir-traspaso/egreso-imprimir-traspaso';
 
 @Component({
   selector: 'app-egreso-detalle',
@@ -540,22 +541,6 @@ export class EgresoDetalleComponent {
     });
   }
 
-  imprimir() {
-    const dialogRef = this.dialog.open(EgresoImprimirComponent, {
-      width: '400px',
-      data: {
-        id: this.idEgreso,
-        egreso: this.egreso,
-      },
-      disableClose: false
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // this.obtenerEgreso();
-        // this.obtenerEgresoDetalle();
-      }
-    });
-  }
 
   nuevaVenta(): void {
     const dialogRef = this.dialog.open(EgresoFormComponent, {
@@ -787,6 +772,44 @@ export class EgresoDetalleComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.obtenerEgreso();
+      }
+    });
+  }
+
+  imprimir() {
+    const dialogRef = this.dialog.open(EgresoImprimirComponent, {
+      width: '400px',
+      data: {
+        id: this.idEgreso,
+        egreso: this.egreso,
+        detalle: this.detalle,
+        total: this.totalGeneral
+      },
+      disableClose: false
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.obtenerEgreso();
+        // this.obtenerEgresoDetalle();
+      }
+    });
+  }
+
+  imprimirTraspaso() {
+    const dialogRef = this.dialog.open(EgresoImprimirTraspaso, {
+      width: '400px',
+      data: {
+        id: this.idEgreso,
+        egreso: this.egreso,
+        detalle: this.detalle,
+        total: this.totalGeneral
+      },
+      disableClose: false
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.obtenerEgreso();
+        // this.obtenerEgresoDetalle();
       }
     });
   }

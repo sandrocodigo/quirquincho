@@ -38,6 +38,10 @@ style="background-image: url('imagenes/fondo.webp'); background-size: cover; bac
           <span class="text-xs mt-1">{{ item.label }}</span>
         </a>
         }
+        <a
+          class="flex flex-col items-center justify-center w-full h-14 hover:text-blue-500 dark:text-cyan-300 border-t border-gray-300 dark:border-gray-600">
+          <span class="text-xs mt-1">Version 2.0</span>
+        </a>
 
 
         <!--                 <div class="mt-10">
@@ -75,27 +79,28 @@ style="background-image: url('imagenes/fondo.webp'); background-size: cover; bac
     </button>
 
     <mat-divider></mat-divider>
+
     <div class="px-3 py-2">
-      <div class="text-xs mb-2 text-gray-600 dark:text-gray-300">Color principal</div>
-      <div class="flex gap-2">
-        <button mat-stroked-button (click)="setColorTheme('theme-orange')">Orange</button>
-        <button mat-stroked-button (click)="setColorTheme('theme-cyan')">Cyan</button>
-        <button mat-stroked-button (click)="setColorTheme('theme-violet')">Violet</button>
-
-      </div>
-      <div class="flex gap-2">
-        <button mat-stroked-button (click)="setColorTheme('theme-magenta')">Magenta</button>
-        <button mat-stroked-button (click)="setColorTheme('theme-chartreuse')">Chartreuse</button>
-        <button mat-stroked-button (click)="setColorTheme('theme-rose')">Rose</button>
-      </div>
-    </div>
-
-    <!-- Toggle Dark Mode -->
-    <div class="mt-6">
-      <div align="end">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-xs text-gray-600 dark:text-gray-300">Color principal</div>
         <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode($event)">
-          <!-- <span class="text-xs text-gray-600 dark:text-gray-300">Modo oscuro</span> -->
+          <span class="text-xs text-gray-600 dark:text-gray-300">
+            {{ darkMode ? 'Claro' : 'Oscuro' }}
+          </span>
         </mat-slide-toggle>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        @for (item of listaTemas; track $index) {
+        <button mat-stroked-button (click)="setColorTheme(item.id)" [class.border-2]="isActive(item.id)"
+          [class.border-current]="isActive(item.id)" class="flex items-center gap-2 !py-1.5 !px-2 rounded-xl"
+          [attr.aria-pressed]="isActive(item.id)">
+
+          <span class="inline-block h-4 w-4 rounded-full ring-1 ring-black/10" [style.background]="item.preview"
+            aria-hidden="true">
+          </span>
+        </button>
+        }
       </div>
     </div>
 

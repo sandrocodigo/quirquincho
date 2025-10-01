@@ -49,6 +49,14 @@ export class AdministracionComponent {
   menuItemsTodos: any = [];
 
   colorTheme: 'theme-orange' | 'theme-cyan' | 'theme-violet' | 'theme-magenta' | 'theme-chartreuse' | 'theme-rose' = 'theme-orange';
+  listaTemas = [
+    { "id": "theme-orange", "label": "Orange", "preview": "#fb923c" },
+    { "id": "theme-cyan", "label": "Cyan", "preview": "#06b6d4" },
+    { "id": "theme-violet", "label": "Violet", "preview": "#8b5cf6" },
+    { "id": "theme-magenta", "label": "Magenta", "preview": "#db2777" },
+    { "id": "theme-chartreuse", "label": "Chartreuse", "preview": "#84cc16" },
+    { "id": "theme-rose", "label": "Rose", "preview": "#f43f5e" }
+  ];
 
   constructor(
     private authServicio: AuthService,
@@ -140,9 +148,13 @@ export class AdministracionComponent {
     else { body.classList.remove(darkClass); host.classList.remove(darkClass); }
   }
 
-  setColorTheme(theme: 'theme-orange' | 'theme-cyan' | 'theme-violet' | 'theme-magenta' | 'theme-chartreuse' | 'theme-rose') {
+  setColorTheme(theme: any) {
     this.colorTheme = theme;
     localStorage.setItem('colorTheme', theme);
     this.syncThemeClasses();
+  }
+
+  isActive(id: string) {
+    return this.colorTheme === id;
   }
 }

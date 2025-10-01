@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject,ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // MATERIAL
@@ -8,12 +8,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-
 @Component({
-  selector: 'app-egreso-imprimir',
-  templateUrl: './egreso-imprimir.component.html',
-  styleUrl: './egreso-imprimir.component.scss',
-  standalone: true,
+  selector: 'app-ingreso-imprimir-traspaso',
+  templateUrl: './ingreso-imprimir-traspaso.html',
+  styleUrl: './ingreso-imprimir-traspaso.css',
+    standalone: true,
   imports: [
     CommonModule,
 
@@ -23,14 +22,14 @@ import { MatInputModule } from '@angular/material/input';
     MatDialogModule,
     MatInputModule,
     MatButtonModule,
+
   ],
 })
-export class EgresoImprimirComponent {
+export class IngresoImprimirTraspaso {
+fechaHoy = new Date();
 
-  fechaHoy = new Date();
-
-  idEgreso: any;
-  egreso: any;
+  idIngreso: any;
+  ingreso: any;
 
   detalle: any;
   total: any = 0;
@@ -39,17 +38,17 @@ export class EgresoImprimirComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<EgresoImprimirComponent>,
+    private dialogRef: MatDialogRef<IngresoImprimirTraspaso>,
   ) {
-    this.idEgreso = data.id;
-    this.egreso = data.egreso;
+    this.idIngreso = data.id;
+    this.ingreso = data.egreso;
     this.detalle = data.detalle;
     this.total = data.total;
   }
 
   // INICIAR
   ngOnInit() {
- 
+
   }
 
   imprimir() {
@@ -101,65 +100,4 @@ export class EgresoImprimirComponent {
       }
     }, 0);
   }
-
-  imprimirTicket() {
-    let printContents: any, popupWin: any;
-    printContents = this.tabla.nativeElement.outerHTML;
-    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-
-    setTimeout(() => {
-      if (popupWin) {
-        popupWin.document.open();
-        popupWin.document.write(`
-            <html>
-              <head>
-                <title>Egreso de productos</title>
-                <style>
-                  body {
-                    font-family: 'Courier New', Courier, monospace;
-                    width: 75mm; /* Ajusta según el ancho de tu impresora */
-                    margin: 0;
-                    padding: 0;
-                    font-size: 12px;
-                  }
-                  .ticket-header {
-                    text-align: center;
-                    font-size: 14px;
-                    font-weight: bold;
-                    border-bottom: 1px dashed black;
-                    margin-bottom: 5px;
-                    padding-bottom: 5px;
-                  }
-                  .ticket-body table {
-                    width: 100%;
-                    border-collapse: collapse;
-                  }
-                  .ticket-body th,
-                  .ticket-body td {
-                    text-align: left;
-                    padding: 2px 5px;
-                    font-size: 10px;
-                  }
-                  .ticket-body th {
-                    text-align: left;
-                    font-weight: bold;
-                  }
-                  .ticket-footer {
-                    margin-top: 10px;
-                    text-align: right;
-                    border-top: 1px dashed black;
-                    padding-top: 5px;
-                  }
-                </style>
-              </head>
-              <body onload="window.print();window.close()">
-                ${printContents}
-              </body>
-            </html>`
-        );
-        popupWin.document.close();
-      }
-    }, 0);
-  }
-
 }

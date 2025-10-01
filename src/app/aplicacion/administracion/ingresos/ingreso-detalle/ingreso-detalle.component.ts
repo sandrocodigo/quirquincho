@@ -31,6 +31,7 @@ import { CalculoService } from '../../../servicios/calculo.service';
 import { IngresoFormComponent } from '../ingreso-form/ingreso-form.component';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { EgresoService } from '../../../servicios/egreso.service';
+import { IngresoImprimirTraspaso } from '../ingreso-imprimir-traspaso/ingreso-imprimir-traspaso';
 
 @Component({
   selector: 'app-ingreso-detalle',
@@ -447,24 +448,6 @@ export class IngresoDetalleComponent {
     });
   }
 
-
-  imprimir() {
-    const dialogRef = this.dialog.open(IngresoImprimirComponent, {
-      width: '400px',
-      data: {
-        id: this.idIngreso,
-        egreso: this.ingreso,
-      },
-      disableClose: false
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // this.obtenerEgreso();
-        // this.obtenerEgresoDetalle();
-      }
-    });
-  }
-
   // 7771609000205
   adicionar(producto: any) {
 
@@ -584,4 +567,43 @@ export class IngresoDetalleComponent {
       }
     }, 0);
   }
+
+  imprimir() {
+    const dialogRef = this.dialog.open(IngresoImprimirComponent, {
+      width: '400px',
+      data: {
+        id: this.idIngreso,
+        egreso: this.ingreso,
+        detalle: this.detalle,
+        total: this.total
+      },
+      disableClose: false
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.obtenerEgreso();
+        // this.obtenerEgresoDetalle();
+      }
+    });
+  }
+
+  imprimirTraspaso() {
+    const dialogRef = this.dialog.open(IngresoImprimirTraspaso, {
+      width: '400px',
+      data: {
+        id: this.idIngreso,
+        egreso: this.ingreso,
+        detalle: this.detalle,
+        total: this.total
+      },
+      disableClose: false
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.obtenerEgreso();
+        // this.obtenerEgresoDetalle();
+      }
+    });
+  }
+
 }

@@ -1,18 +1,12 @@
-import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 
 // MATERIAL
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { IngresoService } from '../../../servicios/ingreso.service';
-import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.service';
-
 
 @Component({
   selector: 'app-ingreso-imprimir',
@@ -21,7 +15,6 @@ import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.servic
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule, ReactiveFormsModule,
 
     // MATERIAL
     MatIconModule,
@@ -46,47 +39,16 @@ export class IngresoImprimirComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<IngresoImprimirComponent>,
-    private fb: FormBuilder,
-    private snackbar: MatSnackBar,
-    private dialog: MatDialog,
-    private cargando: SpinnerService,
-    private ingresoServicio: IngresoService,
-    private ingresoDetalleServicio: IngresoDetalleService,
   ) {
     this.idIngreso = data.id;
+    this.ingreso = data.egreso;
+    this.detalle = data.detalle;
+    this.total = data.total;
   }
 
   // INICIAR
   ngOnInit() {
-    this.obtenerIngreso();
-  }
 
-  // OBTENER USUARIO
-  obtenerIngreso() {
-    this.cargando.show();
-    this.ingresoServicio.obtenerPorId(this.idIngreso).then(data => {
-      this.ingreso = data;
-      this.obtenerEgresoDetalle();
-    })
-  }
-
-  obtenerEgresoDetalle(): void {
-    this.ingresoDetalleServicio.obtenerPorIngreso(this.idIngreso).then(respuesta => {
-      // console.log('DETALLE: ', respuesta);
-      this.detalle = respuesta;
-      this.total = this.calcularTotal();
-
-      // this.imprimir();
-      this.cargando.hide();
-    });
-  }
-
-  calcularTotal() {
-    let total = 0;
-    this.detalle.forEach((item: any) => {
-      total += item.subtotal;
-    });
-    return total.toFixed(2);
   }
 
   imprimir() {

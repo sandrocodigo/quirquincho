@@ -355,11 +355,24 @@
 
 
         } @else {
+
+        @if(!egreso.traspaso) {
         <button (click)="imprimir()"
           class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
           <mat-icon>print</mat-icon>
           Imprimir
         </button>
+        }
+
+        @if (egreso.traspaso) {
+        <button (click)="imprimirTraspaso()"
+          class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
+          <mat-icon>print</mat-icon>
+          Imprimir Traspaso
+        </button>
+        }
+
+
         <!--         <button (click)="imprime()"
           class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
           <mat-icon>print</mat-icon>
