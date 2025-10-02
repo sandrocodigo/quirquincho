@@ -1,344 +1,335 @@
 @if (orden) {
-  <div class="flex items-center justify-between py-4">
-    @if (orden) {
+<div class="flex items-center justify-between py-4">
+  @if (orden) {
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Orden : <span>{{ orden.codigo }}</span>
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
+  </div>
+  }
+  <div class="ml-auto">
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      {{ orden.codigo }}
+    </h1>
+  </div>
+</div>
+}
+
+@if (orden) {
+<div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 max-w-6xl mx-auto border-l-4"
+  [ngClass]="orden.finalizado ? 'border-green-500' : 'border-yellow-500'">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
+      <mat-icon>build</mat-icon>
+      {{ orden.mantenimientoDescripcion }}
+    </h2>
+    <h1>
+      <span class="font-semibold px-2 py-1 rounded-full bg-green-500 text-white">
+        {{ orden.numero }}
+      </span>
+    </h1>
+  </div>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">UBICACION</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
+    <div class="flex items-start gap-2">
+      <mat-icon>store</mat-icon>
       <div>
-        <h1
-          class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
-          Orden : <span>{{ orden.codigo }}</span>
-        </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Sucursal</p>
+        <p>{{ orden.sucursal }}</p>
       </div>
-    }
-    <div class="ml-auto">
-      <h1
-        class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
-        {{ orden.codigo }}
-      </h1>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>home_repair_service</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Taller</p>
+        <p>{{ orden.taller }}</p>
+      </div>
     </div>
   </div>
+  <br>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">VEHICULO</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
+    <div class="flex items-start gap-2">
+      <mat-icon>confirmation_number</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Interno</p>
+        <p>{{ orden.vehiculoInterno }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>tag</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Vehículo Nº</p>
+        <p>{{ orden.vehiculoNumero }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>directions_car</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Placa</p>
+        <p>{{ orden.vehiculoPlaca }}</p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">MANTENIMIENTO</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
+    <div class="flex items-start gap-2">
+      <mat-icon>assignment</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Descripcion</p>
+        <p>{{ orden.mantenimientoDescripcion }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>category</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Tipo</p>
+        <p>{{ orden.mantenimientoTipo }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>repeat</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Frecuencia</p>
+        <p>{{ orden.programacionFrecuencia }}</p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">KILOMETRAJES</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
+    <div class="flex items-start gap-2">
+      <mat-icon>speed</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Km. Actual</p>
+        <p>{{ orden.kilometrajeActual}} km</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>speed</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Km. Proximo</p>
+        <p>{{ orden.kilometrajeProximo}} km</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>calendar_month</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Km. Frecuencia</p>
+        <p>{{ orden.programacionKilometraje }}</p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">FECHAS</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
+    <div class="flex items-start gap-2">
+      <mat-icon>login</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Fecha Entrada</p>
+        <p>{{ orden.fechaEntrada | date }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>logout</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Fecha Salida</p>
+        <p>{{ orden.fechaSalida | date }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>event</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Próximo Mantenimiento</p>
+        <p>{{ orden.fechaProximo | date }}</p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">SISTEMA</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
+    <div class="flex items-start gap-2">
+      <mat-icon>person</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Usuario</p>
+        <p>{{ orden.registroUsuario }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>check_circle</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Activo</p>
+        <p>{{ orden.activo ? 'Sí' : 'No' }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>assignment_turned_in</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Finalizado</p>
+        <p>{{ orden.finalizado ? 'Sí' : 'No' }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>calendar_month</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Fecha Registro</p>
+        <p>{{ orden.registroFecha.toDate() | date:'short' }}</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-2 lg:col-span-3">
+      <mat-icon>notes</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Observaciones</p>
+        <p>{{ orden.observaciones || 'Sin observaciones.' }}</p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <!-- Botones -->
+  <div class="mt-4 flex flex-wrap gap-2 justify-end">
+    @if (!orden.finalizado) {
+    <button mat-button color="primary"
+      class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
+      (click)="editar(orden)">
+      <mat-icon class="text-sm">edit</mat-icon> Editar
+    </button>
+    }
+    @if (!orden.finalizado) {
+    <button mat-button color="primary"
+      class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
+      (click)="finalizar(orden)">
+      <mat-icon class="text-sm">done_all</mat-icon> Finalizar
+    </button>
+    }
+    @if (!orden.finalizado) {
+    <button mat-button color="accent"
+      class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200"
+      (click)="nuevoEgreso(orden)">
+      <mat-icon class="text-sm">indeterminate_check_box</mat-icon> Egresar Repuesto
+    </button>
+    }
+  </div>
+  <br>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">EGRESOS DE REPUESTOS</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="overflow-x-auto mt-6">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+      <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+        <tr>
+          <th class="px-4 py-2 text-left">Código</th>
+          <th class="px-4 py-2 text-left">Fecha</th>
+          <th class="px-4 py-2 text-left">Mantenimiento</th>
+          <th class="px-4 py-2 text-right">Total</th>
+          <th class="px-4 py-2 text-center">Finalizado</th>
+          <th class="px-4 py-2 text-center">Opciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        @for (egreso of listaEgresosPorIdOrden; track egreso) {
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+          <td class="px-4 py-2">{{ egreso.codigo }}</td>
+          <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
+          <td class="px-4 py-2">{{ egreso.mantenimientoDescripcion }}</td>
+          <td class="px-4 py-2 text-right">{{ egreso.total | number:'1.2-2' }}</td>
+          <td class="px-4 py-2 text-center">
+            <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
+              {{ egreso.finalizado ? 'Sí' : 'No' }}
+            </span>
+          </td>
+          <td class="px-4 py-2 text-center">
+            <a [routerLink]="'/administracion/egresos/detalle/'+ egreso.id"
+              matTooltip="Detalle, Agregrar/Quitar/Editar Items" target="_blank"
+              class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+              Detalle
+            </a>
+            @if (!egreso.finalizado) {
+            <button mat-icon-button type="button" (click)="desvincularEgreso(egreso)">
+              <mat-icon class="!text-red-600">delete</mat-icon>
+            </button>
+            }
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <div class="flex items-center">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="px-4 text-gray-600">DETALLE DE EGRESOS DE REPUESTOS</span>
+    <div class="flex-grow border-t border-gray-300"></div>
+  </div>
+  <div class="overflow-x-auto mt-6">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+      <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+        <tr>
+          <th class="px-4 py-2 text-left">Código</th>
+          <th class="px-4 py-2 text-left">Fecha</th>
+          <th class="px-4 py-2 text-left">Repuesto Codigo</th>
+          <th class="px-4 py-2 text-left">Repuesto Descripcion</th>
+          <th class="px-4 py-2 text-left">Cantidad</th>
+          <th class="px-4 py-2 text-right">Precio</th>
+          <th class="px-4 py-2 text-right">Subtotal</th>
+          <th class="px-4 py-2 text-center">Finalizado</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        @for (egreso of listaEgresosDetallesPorIdOrden; track egreso) {
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+          <td class="px-4 py-2">{{ egreso.egresoCodigo }}</td>
+          <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
+          <td class="px-4 py-2">{{ egreso.productoCodigo }}</td>
+          <td class="px-4 py-2">{{ egreso.productoDescripcion }}</td>
+          <td class="px-4 py-2">{{ egreso.cantidad }}</td>
+          <td class="px-4 py-2 text-right">{{ egreso.pv | number:'1.2-2' }}</td>
+          <td class="px-4 py-2 text-right">{{ egreso.subtotal | number:'1.2-2' }}</td>
+          <td class="px-4 py-2 text-center">
+            <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
+              {{ egreso.finalizado ? 'Sí' : 'No' }}
+            </span>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
 }
 
 
-@if (orden) {
-  <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 max-w-6xl mx-auto border-l-4"
-    [ngClass]="orden.finalizado ? 'border-green-500' : 'border-yellow-500'">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
-        <mat-icon>build</mat-icon>
-        {{ orden.mantenimientoDescripcion }}
-      </h2>
-      <h1>
-        <span class="font-semibold px-2 py-1 rounded-full bg-green-500 text-white">
-          {{ orden.numero }}
-        </span>
-      </h1>
-    </div>
-    <div class="flex items-center">
-      <div class="flex-grow border-t border-gray-300"></div>
-      <span class="px-4 text-gray-600">UBICACION</span>
-      <div class="flex-grow border-t border-gray-300"></div>
-    </div>
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
-      <div class="flex items-start gap-2">
-        <mat-icon>store</mat-icon>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Sucursal</p>
-          <p>{{ orden.sucursal }}</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-2">
-        <mat-icon>home_repair_service</mat-icon>
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Taller</p>
-          <p>{{ orden.taller }}</p>
-        </div>
-      </div>
-    </div>
-    <br>
-      <div class="flex items-center">
-        <div class="flex-grow border-t border-gray-300"></div>
-        <span class="px-4 text-gray-600">VEHICULO</span>
-        <div class="flex-grow border-t border-gray-300"></div>
-      </div>
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
-        <div class="flex items-start gap-2">
-          <mat-icon>confirmation_number</mat-icon>
-          <div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Interno</p>
-            <p>{{ orden.vehiculoInterno }}</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-2">
-          <mat-icon>tag</mat-icon>
-          <div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Vehículo Nº</p>
-            <p>{{ orden.vehiculoNumero }}</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-2">
-          <mat-icon>directions_car</mat-icon>
-          <div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Placa</p>
-            <p>{{ orden.vehiculoPlaca }}</p>
-          </div>
-        </div>
-      </div>
-      <br>
-        <div class="flex items-center">
-          <div class="flex-grow border-t border-gray-300"></div>
-          <span class="px-4 text-gray-600">MANTENIMIENTO</span>
-          <div class="flex-grow border-t border-gray-300"></div>
-        </div>
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
-          <div class="flex items-start gap-2">
-            <mat-icon>assignment</mat-icon>
-            <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">Descripcion</p>
-              <p>{{ orden.mantenimientoDescripcion }}</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-2">
-            <mat-icon>category</mat-icon>
-            <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">Tipo</p>
-              <p>{{ orden.mantenimientoTipo }}</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-2">
-            <mat-icon>repeat</mat-icon>
-            <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">Frecuencia</p>
-              <p>{{ orden.programacionFrecuencia }}</p>
-            </div>
-          </div>
-        </div>
-        <br>
-          <div class="flex items-center">
-            <div class="flex-grow border-t border-gray-300"></div>
-            <span class="px-4 text-gray-600">KILOMETRAJES</span>
-            <div class="flex-grow border-t border-gray-300"></div>
-          </div>
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
-            <div class="flex items-start gap-2">
-              <mat-icon>speed</mat-icon>
-              <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Km. Actual</p>
-                <p>{{ orden.kilometrajeActual}} km</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-2">
-              <mat-icon>speed</mat-icon>
-              <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Km. Proximo</p>
-                <p>{{ orden.kilometrajeProximo}} km</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-2">
-              <mat-icon>calendar_month</mat-icon>
-              <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Km. Frecuencia</p>
-                <p>{{ orden.programacionKilometraje }}</p>
-              </div>
-            </div>
-          </div>
-          <br>
-            <div class="flex items-center">
-              <div class="flex-grow border-t border-gray-300"></div>
-              <span class="px-4 text-gray-600">FECHAS</span>
-              <div class="flex-grow border-t border-gray-300"></div>
-            </div>
-            <div
-              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
-              <div class="flex items-start gap-2">
-                <mat-icon>login</mat-icon>
-                <div>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Fecha Entrada</p>
-                  <p>{{ orden.fechaEntrada | date }}</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-2">
-                <mat-icon>logout</mat-icon>
-                <div>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Fecha Salida</p>
-                  <p>{{ orden.fechaSalida | date }}</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-2">
-                <mat-icon>event</mat-icon>
-                <div>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Próximo Mantenimiento</p>
-                  <p>{{ orden.fechaProximo | date }}</p>
-                </div>
-              </div>
-            </div>
-            <br>
-              <div class="flex items-center">
-                <div class="flex-grow border-t border-gray-300"></div>
-                <span class="px-4 text-gray-600">SISTEMA</span>
-                <div class="flex-grow border-t border-gray-300"></div>
-              </div>
-              <div
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 text-sm text-gray-800 dark:text-gray-100">
-                <div class="flex items-start gap-2">
-                  <mat-icon>person</mat-icon>
-                  <div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Usuario</p>
-                    <p>{{ orden.registroUsuario }}</p>
-                  </div>
-                </div>
-                <div class="flex items-start gap-2">
-                  <mat-icon>check_circle</mat-icon>
-                  <div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Activo</p>
-                    <p>{{ orden.activo ? 'Sí' : 'No' }}</p>
-                  </div>
-                </div>
-                <div class="flex items-start gap-2">
-                  <mat-icon>assignment_turned_in</mat-icon>
-                  <div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Finalizado</p>
-                    <p>{{ orden.finalizado ? 'Sí' : 'No' }}</p>
-                  </div>
-                </div>
-                <div class="flex items-start gap-2">
-                  <mat-icon>calendar_month</mat-icon>
-                  <div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Fecha Registro</p>
-                    <p>{{ orden.registroFecha.toDate() | date:'short' }}</p>
-                  </div>
-                </div>
-                <div class="flex items-start gap-2 lg:col-span-3">
-                  <mat-icon>notes</mat-icon>
-                  <div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Observaciones</p>
-                    <p>{{ orden.observaciones || 'Sin observaciones.' }}</p>
-                  </div>
-                </div>
-              </div>
-              <br>
-                <!-- Botones -->
-                <div class="mt-4 flex flex-wrap gap-2 justify-end">
-                  @if (!orden.finalizado) {
-                    <button mat-button color="primary"
-                      class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
-                      (click)="editar(orden)">
-                      <mat-icon class="text-sm">edit</mat-icon> Editar
-                    </button>
-                  }
-                  @if (!orden.finalizado) {
-                    <button mat-button color="primary"
-                      class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
-                      (click)="finalizar(orden)">
-                      <mat-icon class="text-sm">done_all</mat-icon> Finalizar
-                    </button>
-                  }
-                  @if (!orden.finalizado) {
-                    <button mat-button color="accent"
-                      class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200"
-                      (click)="nuevoEgreso(orden)">
-                      <mat-icon class="text-sm">indeterminate_check_box</mat-icon> Egresar Repuesto
-                    </button>
-                  }
-                </div>
-                <br>
-                  <div class="flex items-center">
-                    <div class="flex-grow border-t border-gray-300"></div>
-                    <span class="px-4 text-gray-600">EGRESOS DE REPUESTOS</span>
-                    <div class="flex-grow border-t border-gray-300"></div>
-                  </div>
-                  <div class="overflow-x-auto mt-6">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                      <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                        <tr>
-                          <th class="px-4 py-2 text-left">Código</th>
-                          <th class="px-4 py-2 text-left">Fecha</th>
-                          <th class="px-4 py-2 text-left">Mantenimiento</th>
-                          <th class="px-4 py-2 text-right">Total</th>
-                          <th class="px-4 py-2 text-center">Finalizado</th>
-                          <th class="px-4 py-2 text-center">Opciones</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @for (egreso of listaEgresosPorIdOrden; track egreso) {
-                          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                            <td class="px-4 py-2">{{ egreso.codigo }}</td>
-                            <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
-                            <td class="px-4 py-2">{{ egreso.mantenimientoDescripcion }}</td>
-                            <td class="px-4 py-2 text-right">{{ egreso.total | number:'1.2-2' }}</td>
-                            <td class="px-4 py-2 text-center">
-                              <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
-                                {{ egreso.finalizado ? 'Sí' : 'No' }}
-                              </span>
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                              <a [routerLink]="'/administracion/egresos/detalle/'+ egreso.id"
-                                matTooltip="Detalle, Agregrar/Quitar/Editar Items" target="_blank"
-                                class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                                Detalle
-                              </a>
-                              @if (!egreso.finalizado) {
-                                <button mat-icon-button type="button"
-                                  (click)="desvincularEgreso(egreso)">
-                                  <mat-icon class="!text-red-600">delete</mat-icon>
-                                </button>
-                              }
-                            </td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                  <br>
-                    <div class="flex items-center">
-                      <div class="flex-grow border-t border-gray-300"></div>
-                      <span class="px-4 text-gray-600">DETALLE DE EGRESOS DE REPUESTOS</span>
-                      <div class="flex-grow border-t border-gray-300"></div>
-                    </div>
-                    <div class="overflow-x-auto mt-6">
-                      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                        <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                          <tr>
-                            <th class="px-4 py-2 text-left">Código</th>
-                            <th class="px-4 py-2 text-left">Fecha</th>
-                            <th class="px-4 py-2 text-left">Repuesto Codigo</th>
-                            <th class="px-4 py-2 text-left">Repuesto Descripcion</th>
-                            <th class="px-4 py-2 text-left">Cantidad</th>
-                            <th class="px-4 py-2 text-right">Precio</th>
-                            <th class="px-4 py-2 text-right">Subtotal</th>
-                            <th class="px-4 py-2 text-center">Finalizado</th>
-                          </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                          @for (egreso of listaEgresosDetallesPorIdOrden; track egreso) {
-                            <tr
-                              class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                              <td class="px-4 py-2">{{ egreso.egresoCodigo }}</td>
-                              <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
-                              <td class="px-4 py-2">{{ egreso.productoCodigo }}</td>
-                              <td class="px-4 py-2">{{ egreso.productoDescripcion }}</td>
-                              <td class="px-4 py-2">{{ egreso.cantidad }}</td>
-                              <td class="px-4 py-2 text-right">{{ egreso.pv | number:'1.2-2' }}</td>
-                              <td class="px-4 py-2 text-right">{{ egreso.subtotal | number:'1.2-2' }}</td>
-                              <td class="px-4 py-2 text-center">
-                                <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
-                                  {{ egreso.finalizado ? 'Sí' : 'No' }}
-                                </span>
-                              </td>
-                            </tr>
-                          }
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                }
 
-
-
-                <!--
+<!--
                 <h3 class="mt-10 mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
                   <mat-icon class="align-middle mr-1">list</mat-icon>
                   Otros mantenimientos registrados
@@ -346,80 +337,80 @@
                 -->
 
 
-                @if (orden) {
-                  <div class="flex items-center justify-between py-4">
-                    @if (orden) {
-                      <div>
-                        <h1
-                          class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
-                          Otras Ordenes de Mantenimiento
-                        </h1>
-                        <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
-                      </div>
-                    }
-                    <div class="ml-auto">
-                      <!--
+@if (orden) {
+<div class="flex items-center justify-between py-4">
+  @if (orden) {
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Otras Ordenes de Mantenimiento
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
+  </div>
+  }
+  <div class="ml-auto">
+    <!--
                       <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
                         <mat-icon>add</mat-icon>
                       </button>  -->
-                    </div>
-                  </div>
-                }
+  </div>
+</div>
+}
 
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  @for (m of listaOrdenes; track m) {
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4"
-                      [ngClass]="m.finalizado ? 'border-green-500' : 'border-yellow-500'">
-                      <!-- Encabezado -->
-                      <div class="flex justify-between items-center mb-2">
-                        <h4 class="font-semibold text-green-600 dark:text-green-400 text-base">
-                          <mat-icon class="mr-1 align-middle">build</mat-icon>
-                          {{ m.mantenimientoDescripcion }}
-                        </h4>
-                        <span class="text-xs px-2 py-1 rounded-full"
-                          [ngClass]="m.finalizado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800'">
-                          {{ m.finalizado ? 'Finalizado' : 'Pendiente' }}
-                        </span>
-                      </div>
-                      <!-- Contenido -->
-                      <div class="text-sm text-gray-700 dark:text-gray-200 space-y-1">
-                        <div class="flex items-center gap-2">
-                          <mat-icon>update</mat-icon>
-                          <span>Numero: {{ m.numero }}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <mat-icon>repeat</mat-icon>
-                          <span>Frecuencia: {{ m.programacionFrecuencia }}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <mat-icon>store</mat-icon>
-                          <span>Sucursal: {{ m.sucursal }}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <mat-icon>calendar_month</mat-icon>
-                          <span>Fecha Entrada: {{ m.fechaEntrada | date }}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <mat-icon>event</mat-icon>
-                          <span>Próxima: {{ m.fechaSalida | date }}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <mat-icon>speed</mat-icon>
-                          <span>Kilometraje: {{ m.programacionKilometraje }} km</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <mat-icon>person</mat-icon>
-                          <span>Usuario: {{ m.registroUsuario }}</span>
-                        </div>
-                      </div>
-                      <!-- Botones -->
-                      <div class="mt-4 flex flex-wrap gap-2 justify-end">
-                        <a (click)="cargar(m.id)" matTooltip="Detalle, Agregrar/Quitar/Editar Items"
-                          class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                          Ver Detalle
-                        </a>
-                        <!--
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  @for (m of listaOrdenes; track m) {
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4"
+    [ngClass]="m.finalizado ? 'border-green-500' : 'border-yellow-500'">
+    <!-- Encabezado -->
+    <div class="flex justify-between items-center mb-2">
+      <h4 class="font-semibold text-green-600 dark:text-green-400 text-base">
+        <mat-icon class="mr-1 align-middle">build</mat-icon>
+        {{ m.mantenimientoDescripcion }}
+      </h4>
+      <span class="text-xs px-2 py-1 rounded-full"
+        [ngClass]="m.finalizado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800'">
+        {{ m.finalizado ? 'Finalizado' : 'Pendiente' }}
+      </span>
+    </div>
+    <!-- Contenido -->
+    <div class="text-sm text-gray-700 dark:text-gray-200 space-y-1">
+      <div class="flex items-center gap-2">
+        <mat-icon>update</mat-icon>
+        <span>Numero: {{ m.numero }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <mat-icon>repeat</mat-icon>
+        <span>Frecuencia: {{ m.programacionFrecuencia }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <mat-icon>store</mat-icon>
+        <span>Sucursal: {{ m.sucursal }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <mat-icon>calendar_month</mat-icon>
+        <span>Fecha Entrada: {{ m.fechaEntrada | date }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <mat-icon>event</mat-icon>
+        <span>Próxima: {{ m.fechaSalida | date }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <mat-icon>speed</mat-icon>
+        <span>Kilometraje: {{ m.programacionKilometraje }} km</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <mat-icon>person</mat-icon>
+        <span>Usuario: {{ m.registroUsuario }}</span>
+      </div>
+    </div>
+    <!-- Botones -->
+    <div class="mt-4 flex flex-wrap gap-2 justify-end">
+      <a (click)="cargar(m.id)" matTooltip="Detalle, Agregrar/Quitar/Editar Items"
+        class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+        Ver Detalle
+      </a>
+      <!--
                         <button *ngIf="!m.finalizado" mat-button color="primary"
                           class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
                           (click)="finalizar(m)">
@@ -442,134 +433,137 @@
                           </button>
                         </mat-menu>
                         -->
-                      </div>
-                    </div>
-                  }
-                </div>
+    </div>
+  </div>
+  }
+</div>
 
-                <br>
-                  @if (orden) {
-                    <div class="flex items-center justify-between py-4">
-                      @if (orden) {
-                        <div>
-                          <h1
-                            class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
-                            Otros Egresos de Repuestos
-                          </h1>
-                          <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
-                        </div>
-                      }
-                      <div class="ml-auto">
-                        <!--         <button (click)="nuevoEgreso()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+<br>
+@if (orden) {
+<div class="flex items-center justify-between py-4">
+  @if (orden) {
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Otros Egresos de Repuestos
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
+  </div>
+  }
+  <div class="ml-auto">
+    <!--         <button (click)="nuevoEgreso()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
                         type="button">
                         <mat-icon>add</mat-icon>
                       </button> -->
-                    </div>
-                  </div>
-                }
+  </div>
+</div>
+}
 
-                <div class="overflow-x-auto mt-6">
-                  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                    <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                      <tr>
-                        <th class="px-4 py-2 text-left">Código</th>
-                        <th class="px-4 py-2 text-left">Fecha</th>
-                        <th class="px-4 py-2 text-left">Descripción</th>
-                        <th class="px-4 py-2 text-left">Vehículo</th>
-                        <th class="px-4 py-2 text-left">Placa</th>
-                        <th class="px-4 py-2 text-left">Mant. Tipo</th>
-                        <th class="px-4 py-2 text-left">Mantenimiento</th>
-                        <th class="px-4 py-2 text-right">Total</th>
-                        <th class="px-4 py-2 text-center">Finalizado</th>
-                        <th class="px-4 py-2 text-center">Opciones</th>
+<div class="overflow-x-auto mt-6">
+  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+    <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+      <tr>
+        <th class="px-4 py-2 text-left">Código</th>
+        <th class="px-4 py-2 text-left">Fecha</th>
+        <th class="px-4 py-2 text-left">Descripción</th>
+        <th class="px-4 py-2 text-left">Vehículo</th>
+        <th class="px-4 py-2 text-left">Placa</th>
+        <th class="px-4 py-2 text-left">Mant. Tipo</th>
+        <th class="px-4 py-2 text-left">Mantenimiento</th>
+        <th class="px-4 py-2 text-right">Total</th>
+        <th class="px-4 py-2 text-center">Finalizado</th>
+        <th class="px-4 py-2 text-center">Opciones</th>
 
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                      @for (egreso of listaEgresos; track egreso) {
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                          <td class="px-4 py-2">{{ egreso.codigo }}</td>
-                          <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
-                          <td class="px-4 py-2">{{ egreso.descripcion }}</td>
-                          <td class="px-4 py-2">{{ egreso.vehiculoInterno }}</td>
-                          <td class="px-4 py-2">{{ egreso.vehiculoPlaca }}</td>
-                          <td class="px-4 py-2">{{ egreso.mantenimientoTipo }}</td>
-                          <td class="px-4 py-2">{{ egreso.mantenimientoDescripcion }}</td>
-                          <td class="px-4 py-2 text-right">{{ egreso.total | number:'1.2-2' }}</td>
-                          <td class="px-4 py-2 text-center">
-                            <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
-                              {{ egreso.finalizado ? 'Sí' : 'No' }}
-                            </span>
-                          </td>
-                          <td class="px-4 py-2 text-center">
-                            <a [routerLink]="'/administracion/egresos/detalle/'+ egreso.id"
-                              matTooltip="Detalle, Agregrar/Quitar/Editar Items" target="_blank"
-                              class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                              Detalle
-                            </a>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      @for (egreso of listaEgresos; track egreso) {
+      <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+        <td class="px-4 py-2">{{ egreso.codigo }}</td>
+        <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
+        <td class="px-4 py-2">{{ egreso.descripcion }}</td>
+        <td class="px-4 py-2">{{ egreso.vehiculoInterno }}</td>
+        <td class="px-4 py-2">{{ egreso.vehiculoPlaca }}</td>
+        <td class="px-4 py-2">{{ egreso.mantenimientoTipo }}</td>
+        <td class="px-4 py-2">{{ egreso.mantenimientoDescripcion }}</td>
+        <td class="px-4 py-2 text-right">{{ egreso.total | number:'1.2-2' }}</td>
+        <td class="px-4 py-2 text-center">
+          <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
+            {{ egreso.finalizado ? 'Sí' : 'No' }}
+          </span>
+        </td>
+        <td class="px-4 py-2 text-center">
+          <a [routerLink]="'/administracion/egresos/detalle/'+ egreso.id"
+            matTooltip="Detalle, Agregrar/Quitar/Editar Items" target="_blank"
+            class="inline-block px-4 py-2 border-2 border-lime-600 text-lime-600 font-medium text-xs leading-tight uppercase rounded-lg hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+            Detalle
+          </a>
 
-                <br>
-                  @if (orden) {
-                    <div class="flex items-center justify-between py-4">
-                      @if (orden) {
-                        <div>
-                          <h1
-                            class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
-                            Otros Detalles de Egresos de Repuestos
-                          </h1>
-                          <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
-                        </div>
-                      }
-                      <div class="ml-auto">
-                        <!--         <button (click)="nuevoEgreso()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
+          <button matButton="filled" (click)="ajustar(egreso)">Revisar</button>
+
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<br>
+@if (orden) {
+<div class="flex items-center justify-between py-4">
+  @if (orden) {
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Otros Detalles de Egresos de Repuestos
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">{{orden.codigo}} : {{orden.fechaEntrada | date}}</p>
+  </div>
+  }
+  <div class="ml-auto">
+    <!--         <button (click)="nuevoEgreso()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar"
                         type="button">
                         <mat-icon>add</mat-icon>
                       </button> -->
-                    </div>
-                  </div>
-                }
+  </div>
+</div>
+}
 
-                <div class="overflow-x-auto mt-6">
-                  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-                    <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                      <tr>
-                        <th class="px-4 py-2 text-left">Código</th>
-                        <th class="px-4 py-2 text-left">Fecha</th>
-                        <th class="px-4 py-2 text-left">Descripción</th>
-                        <th class="px-4 py-2 text-left">Cantidad</th>
-                        <th class="px-4 py-2 text-left">Repuesto Codigo</th>
-                        <th class="px-4 py-2 text-left">Repuesto Descripcion</th>
-                        <th class="px-4 py-2 text-left">Mant. Tipo</th>
-                        <th class="px-4 py-2 text-left">Mantenimiento</th>
-                        <th class="px-4 py-2 text-right">S.T</th>
-                        <th class="px-4 py-2 text-center">Finalizado</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                      @for (egreso of listaEgresosDetalles; track egreso) {
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                          <td class="px-4 py-2">{{ egreso.egresoCodigo }}</td>
-                          <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
-                          <td class="px-4 py-2">{{ egreso.egresoDescripcion }}</td>
-                          <td class="px-4 py-2">{{ egreso.cantidad }}</td>
-                          <td class="px-4 py-2">{{ egreso.productoCodigo }}</td>
-                          <td class="px-4 py-2">{{ egreso.productoDescripcion }}</td>
-                          <td class="px-4 py-2">{{ egreso.mantenimientoTipo }}</td>
-                          <td class="px-4 py-2">{{ egreso.mantenimientoDescripcion }}</td>
-                          <td class="px-4 py-2 text-right">{{ egreso.subtotal | number:'1.2-2' }}</td>
-                          <td class="px-4 py-2 text-center">
-                            <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
-                              {{ egreso.finalizado ? 'Sí' : 'No' }}
-                            </span>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
+<div class="overflow-x-auto mt-6">
+  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+    <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+      <tr>
+        <th class="px-4 py-2 text-left">Código</th>
+        <th class="px-4 py-2 text-left">Fecha</th>
+        <th class="px-4 py-2 text-left">Descripción</th>
+        <th class="px-4 py-2 text-left">Cantidad</th>
+        <th class="px-4 py-2 text-left">Repuesto Codigo</th>
+        <th class="px-4 py-2 text-left">Repuesto Descripcion</th>
+        <th class="px-4 py-2 text-left">Mant. Tipo</th>
+        <th class="px-4 py-2 text-left">Mantenimiento</th>
+        <th class="px-4 py-2 text-right">S.T</th>
+        <th class="px-4 py-2 text-center">Finalizado</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      @for (egreso of listaEgresosDetalles; track egreso) {
+      <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+        <td class="px-4 py-2">{{ egreso.egresoCodigo }}</td>
+        <td class="px-4 py-2">{{ egreso.fecha | date}}</td>
+        <td class="px-4 py-2">{{ egreso.egresoDescripcion }}</td>
+        <td class="px-4 py-2">{{ egreso.cantidad }}</td>
+        <td class="px-4 py-2">{{ egreso.productoCodigo }}</td>
+        <td class="px-4 py-2">{{ egreso.productoDescripcion }}</td>
+        <td class="px-4 py-2">{{ egreso.mantenimientoTipo }}</td>
+        <td class="px-4 py-2">{{ egreso.mantenimientoDescripcion }}</td>
+        <td class="px-4 py-2 text-right">{{ egreso.subtotal | number:'1.2-2' }}</td>
+        <td class="px-4 py-2 text-center">
+          <span [ngClass]="egreso.finalizado ? 'text-green-600' : 'text-red-500'">
+            {{ egreso.finalizado ? 'Sí' : 'No' }}
+          </span>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -340,4 +340,31 @@ export class OrdenDetalleComponent {
     this.router.navigate(['/administracion/ordenes/temporal/' + idOrden]);
   }
 
+
+  ajustar(egreso: any) {
+    console.log('EGRESO A REVISAR: ', egreso);
+    this.cargando.show('Revisando detalles del egreso...');
+    this.egresoDetalleServicio.obtenerPorEgreso(egreso.id).then(respuesta => {
+
+      respuesta.forEach((detalle: any) => {
+        console.log('DETALLE A REVISAR: ', detalle);
+        this.egresoDetalleServicio.editar(detalle.id, {
+          ordenId: egreso.ordenId,
+          ordenCodigo: egreso.ordenCodigo,
+
+          vehiculoId: egreso.vehiculoId,
+          vehiculoInterno: egreso.vehiculoInterno,
+          vehiculoPlaca: egreso.vehiculoPlaca,
+
+          mantenimientoTipo: egreso.mantenimientoTipo,
+          mantenimientoDescripcion: egreso.mantenimientoDescripcion,
+        }).then(res => {
+          this.snackbar.open('Hey!, detalle revisado con exito...', 'OK', { duration: 10000 });
+          this.cargando.hide();
+        });
+
+      });
+
+    });
+  }
 }

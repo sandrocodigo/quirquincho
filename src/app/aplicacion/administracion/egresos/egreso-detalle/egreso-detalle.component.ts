@@ -616,7 +616,6 @@ export class EgresoDetalleComponent {
 
             fecha: fecha,
 
-            egreso: this.egreso,
             egresoId: this.idEgreso,
             egresoCodigo: this.egreso.codigo,
             egresoDescripcion: this.egreso.descripcion,
@@ -624,7 +623,17 @@ export class EgresoDetalleComponent {
             //ingresoDetalleId: ingresoDetalle.id,
             //ingresoCantidadSaldo: ingresoDetalle.cantidadSaldo,
 
-            producto: producto,
+            // DETALLE ORDEN Y VEHICULO
+            ordenId: this.egreso.ordenId || '',
+            ordenCodigo: this.egreso.ordenCodigo || 0,
+
+            vehiculoId: this.egreso.vehiculoId || '',
+            vehiculoInterno: this.egreso.vehiculoInterno || '',
+            vehiculoPlaca: this.egreso.vehiculoPlaca || '',
+
+            mantenimientoTipo: this.egreso.mantenimientoTipo || '',
+            mantenimientoDescripcion: this.egreso.mantenimientoDescripcion || '',
+
             productoId: producto.id,
             productoTipo: producto.tipo,
             productoCodigo: producto.codigo,
