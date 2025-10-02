@@ -19,50 +19,51 @@ export class OrdenService {
 
 
   async crear(datos: any) {
-    if ('kilometraje' in datos) { datos.kilometraje = parseFloat(datos.kilometraje); }
-    if ('kilometrajeInicio' in datos) { datos.kilometrajeInicio = parseFloat(datos.kilometrajeInicio); }
+    // Coerción a número de los campos kilométricos
+    ['kilometraje', 'kilometrajeInicio', 'kilometrajeActual', 'kilometrajeProximo']
+      .forEach(k => { if (k in datos) datos[k] = parseFloat(datos[k]); });
 
-    if ('kilometrajeActual' in datos) { datos.kilometrajeActual = parseFloat(datos.kilometrajeActual); }
-    if ('kilometrajeProximo' in datos) { datos.kilometrajeProximo = parseFloat(datos.kilometrajeProximo); }
-
-    if (datos.codigo == 'nuevo') {
-      // Buscar el código más grande en la colección
-      let q = query(
+    // ===== CÓDIGO (si viene como 'nuevo') =====
+    if (datos.codigo === 'nuevo') {
+      const qCodigo = query(
         collection(this.firestore, `${this.url}`) as CollectionReference<any>,
         orderBy('codigo', 'desc'),
         limit(1)
       );
-      const querySnapshot = await getDocs(q);
-      let nuevoCodigo = 1; // Código por defecto en caso de que no haya registros
-      querySnapshot.forEach((doc) => {
-        if (doc.data().codigo >= nuevoCodigo) {
-          nuevoCodigo = doc.data().codigo + 1; // Incrementar el código más grande
-        }
-      });
-      // Usar el nuevo código para el nuevo registro
+      const snapCodigo = await getDocs(qCodigo);
+
+      let nuevoCodigo = 1;
+      if (!snapCodigo.empty) {
+        const doc0 = snapCodigo.docs[0].data();
+        const maxCodigo = Number(doc0.codigo) || 0;
+        nuevoCodigo = maxCodigo + 1;
+      }
       datos.codigo = nuevoCodigo;
     }
 
-
-    // Buscar el numero más grande en la colección
-    let q = query(
+    // ===== NÚMERO (corregido) =====
+    const qNumero = query(
       collection(this.firestore, `${this.url}`) as CollectionReference<any>,
       orderBy('numero', 'desc'),
       limit(1)
     );
-    const querySnapshot = await getDocs(q);
-    let nuevoNumero = 1; // Código por defecto en caso de que no haya registros
-    querySnapshot.forEach((doc) => {
-      if (doc.data().codigo >= nuevoNumero) {
-        nuevoNumero = doc.data().numero + 1; // Incrementar el numero más grande
-      }
-    });
-    // Usar el nuevo numero para el nuevo registro
+    const snapNumero = await getDocs(qNumero);
+
+    let nuevoNumero = 1;
+    if (!snapNumero.empty) {
+      const doc0 = snapNumero.docs[0].data();
+      const maxNumero = Number(doc0.numero) || 0; // asegúrate que sea numérico
+      nuevoNumero = maxNumero + 1;
+    }
     datos.numero = nuevoNumero;
 
     const docRef = await addDoc(collection(this.firestore, `${this.url}`), datos);
     return docRef;
   }
+
+
+
+
 
   // CREAR
   async crear2(datos: any) {
