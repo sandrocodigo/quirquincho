@@ -254,21 +254,19 @@ export class VehiculoService {
     let condiciones = [];
 
     // Aplicar condiciones 
-    /*     if (datos.activo !== 'TODOS') {
-          condiciones.push(where('cliente', '==', datos.cliente));
-        }  */
+    if (datos.empresa !== 'TODOS') {
+      condiciones.push(where('empresa', '==', datos.empresa));
+    }
 
     if (datos.activo !== 'TODOS') {
       const activoBoolean = datos.activo === 'true'; // Asegúrate de que sea booleano
       condiciones.push(where('activo', '==', activoBoolean));
     }
 
-
     // Orden predeterminado y rango de fechas
     let ordenYRango = [
       orderBy('numero', 'desc'),
     ];
-
 
     // Combinar condiciones, orden y rango para crear la consulta
     let q = query(coleccion, ...condiciones, ...ordenYRango, limit(datos.limite));

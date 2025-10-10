@@ -25,6 +25,7 @@ import { VehiculoFormComponent } from '../vehiculo-form/vehiculo-form.component'
 import { UsuarioService } from '../../../servicios/usuario.service';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { MatMenuModule } from '@angular/material/menu';
+import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
 
 
 @Component({
@@ -75,6 +76,8 @@ export class VehiculoListaComponent {
   lista: any[] = [];
   listaOriginal: any[] = [];
 
+  listaEmpresas = vehiculoEmpresas;
+
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -95,6 +98,7 @@ export class VehiculoListaComponent {
     });
 
     this.buscadorFormGroup = this.fb.group({
+      empresa: ['TODOS'],
       activo: ['true'],
       limite: [100],
     });
@@ -122,10 +126,12 @@ export class VehiculoListaComponent {
     this.b.limite.valueChanges.subscribe((val: any) => {
       this.obtenerConsulta();
     });
+    this.b.empresa.valueChanges.subscribe((val: any) => {
+      this.obtenerConsulta();
+    });
   }
 
   obtenerUsuario() {
-    this.cargando.show();
     this.usuarioServicio.obtenerPorId(this.usuario.email).then((data: any) => {
       this.usuarioDatos = data;
       console.log('USUARIO', data);
@@ -137,8 +143,9 @@ export class VehiculoListaComponent {
 
   // OBTENER CONSULAR
   obtenerConsulta() {
-    this.cargando.show();
+    this.cargando.show('Obtieniendo datos...');
     this.vehiculoServicio.obtenerConsulta(this.buscadorFormGroup.getRawValue()).then(res => {
+      this.cargando.hide();
       console.log('CONSULTA', res);
 
       const resultadosOrdenados = res.sort((a: any, b: any) => b.numero - a.numero);
@@ -147,7 +154,16 @@ export class VehiculoListaComponent {
       this.lista = resultadosOrdenados; // Asigna la lista de resultados
       this.listaOriginal = [...resultadosOrdenados]; // Guarda una copia de la lista original
 
-      this.cargando.hide();
+    });
+  }
+
+  actualizar() {
+    this.cargando.show('Actualizando datos...');
+    this.lista.forEach(item => {
+      this.vehiculoServicio.editar(item.id, { empresa: item.modelo }).then(res => {
+        console.log('Actualizado', res);
+        this.cargando.hide();
+      });
     });
   }
 

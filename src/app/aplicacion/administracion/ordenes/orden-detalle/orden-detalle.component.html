@@ -52,6 +52,24 @@
         <p>{{ orden.taller }}</p>
       </div>
     </div>
+    <div class="flex items-start gap-2">
+      <mat-icon>city</mat-icon>
+      <div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Empresa</p>
+        <p>
+
+          <span class="text-xs px-2 py-1 rounded-full capitalize font-bold" [ngClass]="{
+                            'text-orange-700 bg-orange-100': orden.vehiculoEmpresa == 'QUIRQUINCHO',
+                            'text-blue-700 bg-blue-100': orden.vehiculoEmpresa == 'URKUPIÑA',
+                            'text-green-700 bg-green-100': orden.vehiculoEmpresa == 'PUMA',
+                            'text-purple-700 bg-purple-100': orden.vehiculoEmpresa == 'PULLMAN',
+                        }">
+            {{ orden.vehiculoEmpresa }}
+          </span>
+
+        </p>
+      </div>
+    </div>
   </div>
   <br>
   <div class="flex items-center">

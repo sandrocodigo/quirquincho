@@ -22,6 +22,7 @@ import { vehiculoModelos } from '../../../datos/vehiculo-modelos';
 import { vehiculoCarrocerias } from '../../../datos/vehiculo-carrocerias';
 import { vehiculoTipos } from '../../../datos/vehiculo-tipos';
 import { vehiculoEjes } from '../../../datos/vehiculo-ejes';
+import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
 
 @Component({
   selector: 'app-vehiculo-form',
@@ -62,6 +63,7 @@ export class VehiculoFormComponent {
   listaTipos = vehiculoTipos;
   listaMarcas = vehiculoMarcas;
   listaModelos = vehiculoModelos;
+  listaEmpresas = vehiculoEmpresas;
   listaCarrocerias = vehiculoCarrocerias;
   listaEjes = vehiculoEjes;
 
@@ -87,6 +89,8 @@ export class VehiculoFormComponent {
         interno: [null, [Validators.required]],
 
         gestion: [null, [Validators.required]],
+
+        empresa: [null, [Validators.required]],
 
         tipo: [null, [Validators.required]],
         marca: [null, [Validators.required]],
@@ -127,6 +131,7 @@ export class VehiculoFormComponent {
           interno: [respuesta.interno, [Validators.required]],
   
           gestion: [respuesta.gestion],
+          empresa: [respuesta.empresa, [Validators.required]],
   
           tipo: [respuesta.tipo, [Validators.required]],
           marca: [respuesta.marca, [Validators.required]],

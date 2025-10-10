@@ -44,9 +44,9 @@
         </div>
         <div class="w-1/2 px-2">
           <mat-form-field class="flex-auto w-full">
-            <mat-label>Modelo</mat-label>
-            <mat-select formControlName="modelo">
-              @for (item of listaModelos; track item) {
+            <mat-label>Empresa</mat-label>
+            <mat-select formControlName="empresa">
+              @for (item of listaEmpresas; track item) {
                 <mat-option [value]="item.id">
                   {{item.id}}
                 </mat-option>

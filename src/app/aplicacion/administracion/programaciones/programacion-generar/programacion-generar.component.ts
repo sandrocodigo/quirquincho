@@ -99,6 +99,7 @@ export class ProgramacionGenerarComponent {
           vehiculoNumero: [this.programacion.vehiculoNumero, [Validators.required]],
           vehiculoPlaca: [this.programacion.vehiculoPlaca, [Validators.required]],
           vehiculoInterno: [this.programacion.vehiculoInterno, [Validators.required]],
+          vehiculoEmpresa: [this.programacion.vehiculoEmpresa, [Validators.required]],
 
           mantenimientoId: [null, [Validators.required]],
           mantemimientoTipo: [null, [Validators.required]],
@@ -267,12 +268,14 @@ export class ProgramacionGenerarComponent {
       this.r.vehiculoNumero.setValue(vehiculoEncontrado.numero);
       this.r.vehiculoPlaca.setValue(vehiculoEncontrado.placa);
       this.r.vehiculoInterno.setValue(vehiculoEncontrado.interno);
+      this.r.vehiculoEmpresa.setValue(vehiculoEncontrado.empresa);
 
     } else {
       // Si no se encuentra el cliente, puedes manejar el caso (mostrar un mensaje, limpiar los campos, etc.)
       this.r.vehiculoNumero.setValue('');
       this.r.vehiculoPlaca.setValue('');
       this.r.vehiculoInterno.setValue('');
+      this.r.vehiculoEmpresa.setValue('');
 
       console.log('no encontrado');
     }

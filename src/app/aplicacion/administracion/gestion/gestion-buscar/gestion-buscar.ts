@@ -122,7 +122,7 @@ export class GestionBuscar {
 
   cargarProductos() {
     try {
-      const raw = localStorage.getItem('listaProductos');
+      const raw = localStorage.getItem('listaProductosTodos');
       if (raw) {
         const lista = JSON.parse(raw);
         if (Array.isArray(lista)) {
@@ -139,26 +139,36 @@ export class GestionBuscar {
   }
 
   obtenerProductos() {
-    this.cargando.show('Cargando productos desde el servidor...');
+    console.log('CARGANDO PRODUCTOS DESDE SERVIDOR...');
+    this.cargando.show('Cargando productos desde el Servidor...');
     this.productoServicio.obtenerConsulta({
       tipo: 'TODOS',
       activo: 'TODOS',
       publicado: 'TODOS',
       categoria: 'TODOS',
-      limite: 3000
+      limite: 1000
     }).then((respuesta: any[]) => {
 
-      this.listaProductos = respuesta
-        .sort((a, b) => a.descripcion.localeCompare(b.descripcion)) // ordena por descripción alfabética
+      const productoLista = (respuesta || [])
+        .sort((a, b) => (a?.descripcion || '').localeCompare(b?.descripcion || ''))
         .map(producto => ({
           ...producto,
-          dato: `${producto.codigo} - ${producto.descripcion}`
+          dato: `${producto.codigo} - ${producto.descripcion} (${producto.activo ? 'ACTIVO' : 'INACTIVO'})`,
         }));
 
+      this.listaProductos = productoLista; // <- asigna a la lista del componente
+
+      try {
+        localStorage.setItem('listaProductosTodos', JSON.stringify(productoLista));
+      } catch (e) {
+        console.warn('No se pudo guardar listaProductos en localStorage:', e);
+      }
+
+      // this.focusSeleccinar();
+      this.tryFocusNgSelect();
       this.cargando.hide();
     }).catch(error => {
       console.error('Error al obtener productos:', error);
-      this.cargando.hide();
     });
   }
 
@@ -291,6 +301,18 @@ export class GestionBuscar {
     return parseFloat(promedio.toFixed(2)); // redondea a 2 decimales
   }
 
+  private tryFocusNgSelect(): void {
+    // Espera al siguiente tick para que el input interno de ng-select exista,
+    // especialmente si usas appendTo="body"
+    setTimeout(() => {
+      if (this.productoSelect) {
+        this.productoSelect.focus(); // mueve el foco al input de búsqueda
+        // opcional: abrir el dropdown
+        // this.productoSelect.open();
+      }
+    }, 0);
+  }
+
   nuevo() {
     const dialogRef = this.dialog.open(ProductoFormComponent, {
       width: '800px',
@@ -325,17 +347,5 @@ export class GestionBuscar {
         this.obtenerProductos();
       }
     });
-  }
-
-  private tryFocusNgSelect(): void {
-    // Espera al siguiente tick para que el input interno de ng-select exista,
-    // especialmente si usas appendTo="body"
-    setTimeout(() => {
-      if (this.productoSelect) {
-        this.productoSelect.focus(); // mueve el foco al input de búsqueda
-        // opcional: abrir el dropdown
-        // this.productoSelect.open();
-      }
-    }, 0);
   }
 }

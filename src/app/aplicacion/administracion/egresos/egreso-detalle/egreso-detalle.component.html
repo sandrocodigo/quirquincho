@@ -290,6 +290,19 @@
           </p>
 
           <p class="flex items-center gap-1">
+            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo Empresa</span>
+    <span class="text-xs px-2 py-1 rounded-full capitalize font-bold" [ngClass]="{
+                            'text-orange-700 bg-orange-100': egreso.vehiculoEmpresa == 'QUIRQUINCHO',
+                            'text-blue-700 bg-blue-100': egreso.vehiculoEmpresa == 'URKUPIÑA',
+                            'text-green-700 bg-green-100': egreso.vehiculoEmpresa == 'PUMA',
+                            'text-purple-700 bg-purple-100': egreso.vehiculoEmpresa == 'PULLMAN',
+                        }">
+            {{ egreso.vehiculoEmpresa }}
+          </span>
+          </p>
+
+
+          <p class="flex items-center gap-1">
             <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo Interno</span>
             <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoInterno }}</span>
           </p>

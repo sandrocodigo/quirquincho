@@ -99,6 +99,7 @@ export class AsignacionFormComponent {
             vehiculoNumero: [null, [Validators.required]],
             vehiculoPlaca: [null, [Validators.required]],
             vehiculoInterno: [null, [Validators.required]],
+            vehiculoEmpresa: [null, [Validators.required]],
 
             conductorId: [null, [Validators.required]],
             conductorNombres: [null, [Validators.required]],
@@ -133,6 +134,7 @@ export class AsignacionFormComponent {
               vehiculoNumero: [respuesta.vehiculoNumero, [Validators.required]],
               vehiculoPlaca: [respuesta.vehiculoPlaca, [Validators.required]],
               vehiculoInterno: [respuesta.vehiculoInterno, [Validators.required]],
+              vehiculoEmpresa: [respuesta.vehiculoEmpresa, [Validators.required]],
 
               conductorId: [respuesta.conductorId, [Validators.required]],
               conductorNombres: [respuesta.conductorNombres, [Validators.required]],
@@ -305,12 +307,14 @@ export class AsignacionFormComponent {
       this.r.vehiculoNumero.setValue(vehiculoEncontrado.numero);
       this.r.vehiculoPlaca.setValue(vehiculoEncontrado.placa);
       this.r.vehiculoInterno.setValue(vehiculoEncontrado.interno);
+      this.r.vehiculoEmpresa.setValue(vehiculoEncontrado.empresa);
 
     } else {
       // Si no se encuentra el cliente, puedes manejar el caso (mostrar un mensaje, limpiar los campos, etc.)
       this.r.vehiculoNumero.setValue('');
       this.r.vehiculoPlaca.setValue('');
       this.r.vehiculoInterno.setValue('');
+      this.r.vehiculoEmpresa.setValue('');
 
       console.log('no encontrado');
     }

@@ -123,6 +123,7 @@ export class ProgramacionOrdenComponent {
             vehiculoNumero: [this.programacion.vehiculoNumero, [Validators.required]],
             vehiculoPlaca: [this.programacion.vehiculoPlaca, [Validators.required]],
             vehiculoInterno: [this.programacion.vehiculoInterno, [Validators.required]],
+            vehiculoEmpresa: [this.programacion.vehiculoEmpresa, [Validators.required]],
 
             mantenimientoId: [{ value: this.programacion.mantenimientoId, disabled: true }, [Validators.required]],
             mantenimientoTipo: [this.programacion.mantenimientoTipo, [Validators.required]],

@@ -97,7 +97,7 @@ export class DocumentoFormComponent {
             vehiculoNumero: [null, [Validators.required]],
             vehiculoPlaca: [null, [Validators.required]],
             vehiculoInterno: [null, [Validators.required]],
-
+            vehiculoEmpresa: [null, [Validators.required]],
 
             documentoTipo: [null, [Validators.required]],
 
@@ -127,6 +127,7 @@ export class DocumentoFormComponent {
               vehiculoNumero: [respuesta.vehiculoNumero, [Validators.required]],
               vehiculoPlaca: [respuesta.vehiculoPlaca, [Validators.required]],
               vehiculoInterno: [respuesta.vehiculoInterno, [Validators.required]],
+              vehiculoEmpresa: [respuesta.vehiculoEmpresa, [Validators.required]],
 
               documentoTipo: [respuesta.documentoTipo, [Validators.required]],
 
@@ -304,12 +305,14 @@ export class DocumentoFormComponent {
       this.r.vehiculoNumero.setValue(vehiculoEncontrado.numero);
       this.r.vehiculoPlaca.setValue(vehiculoEncontrado.placa);
       this.r.vehiculoInterno.setValue(vehiculoEncontrado.interno);
+      this.r.vehiculoEmpresa.setValue(vehiculoEncontrado.empresa);
 
     } else {
       // Si no se encuentra el cliente, puedes manejar el caso (mostrar un mensaje, limpiar los campos, etc.)
       this.r.vehiculoNumero.setValue('');
       this.r.vehiculoPlaca.setValue('');
       this.r.vehiculoInterno.setValue('');
+      this.r.vehiculoEmpresa.setValue('');
 
       console.log('no encontrado');
     }

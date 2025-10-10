@@ -95,6 +95,7 @@ export class ProgramacionFormComponent {
             vehiculoNumero: [null, [Validators.required]],
             vehiculoPlaca: [null, [Validators.required]],
             vehiculoInterno: [null, [Validators.required]],
+            vehiculoEmpresa: [null, [Validators.required]],
 
             mantenimientoId: [null, [Validators.required]],
             mantenimientoTipo: [null, [Validators.required]],
@@ -328,12 +329,14 @@ export class ProgramacionFormComponent {
       this.r.vehiculoNumero.setValue(vehiculoEncontrado.numero);
       this.r.vehiculoPlaca.setValue(vehiculoEncontrado.placa);
       this.r.vehiculoInterno.setValue(vehiculoEncontrado.interno);
+      this.r.vehiculoEmpresa.setValue(vehiculoEncontrado.empresa);
 
     } else {
       // Si no se encuentra el cliente, puedes manejar el caso (mostrar un mensaje, limpiar los campos, etc.)
       this.r.vehiculoNumero.setValue('');
       this.r.vehiculoPlaca.setValue('');
       this.r.vehiculoInterno.setValue('');
+      this.r.vehiculoEmpresa.setValue('');
 
       console.log('no encontrado');
     }

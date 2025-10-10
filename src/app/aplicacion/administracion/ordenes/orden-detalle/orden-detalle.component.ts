@@ -282,6 +282,7 @@ export class OrdenDetalleComponent {
           vehiculoId: fila.vehiculoId,
           vehiculoInterno: fila.vehiculoInterno,
           vehiculoPlaca: fila.vehiculoPlaca,
+          vehiculoEmpresa: fila.vehiculoEmpresa,
 
           mantenimientoDescripcion: fila.mantenimientoDescripcion,
           mantenimientoTipo: fila.mantenimientoTipo,
@@ -355,6 +356,7 @@ export class OrdenDetalleComponent {
           vehiculoId: egreso.vehiculoId,
           vehiculoInterno: egreso.vehiculoInterno,
           vehiculoPlaca: egreso.vehiculoPlaca,
+          vehiculoEmpresa: egreso.vehiculoEmpresa,
 
           mantenimientoTipo: egreso.mantenimientoTipo,
           mantenimientoDescripcion: egreso.mantenimientoDescripcion,

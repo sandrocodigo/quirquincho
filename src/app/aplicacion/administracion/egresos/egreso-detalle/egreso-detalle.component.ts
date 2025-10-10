@@ -197,6 +197,7 @@ export class EgresoDetalleComponent {
     this.egresoDetalleServicio.obtenerPorEgreso(this.idEgreso)
       .then(respuesta => {
         this.detalle = respuesta;
+        console.log('EGRESO DETALLE: ', this.detalle);
         this.imprimirAutomatico = this.contieneProductoTipoComida(this.detalle);
         this.calcularTodo();
       })
@@ -630,6 +631,7 @@ export class EgresoDetalleComponent {
             vehiculoId: this.egreso.vehiculoId || '',
             vehiculoInterno: this.egreso.vehiculoInterno || '',
             vehiculoPlaca: this.egreso.vehiculoPlaca || '',
+            vehiculoEmpresa: this.egreso.vehiculoEmpresa || '',
 
             mantenimientoTipo: this.egreso.mantenimientoTipo || '',
             mantenimientoDescripcion: this.egreso.mantenimientoDescripcion || '',
