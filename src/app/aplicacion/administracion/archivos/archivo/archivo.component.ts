@@ -22,6 +22,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ArchivoService } from '../../../servicios/archivo.service';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
 import { ArchivoEditarComponent } from '../archivo-editar/archivo-editar.component';
+import { DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 
 @Component({
@@ -47,6 +48,19 @@ import { ArchivoEditarComponent } from '../archivo-editar/archivo-editar.compone
 export class ArchivoComponent {
 
   lista: any;
+
+  pagina: any[] = [];
+
+
+  pageSize = 20;
+
+  // Pila de cursores (último doc de cada página para poder retroceder)
+  stackCursors: QueryDocumentSnapshot<DocumentData>[] = [];
+  // Último doc de la página actual (sirve para "siguiente")
+  lastCursor: QueryDocumentSnapshot<DocumentData> | null = null;
+
+  pageSizeOptions = [12, 20, 40, 80];
+
   constructor(
     public dialog: MatDialog,
     private snackbar: MatSnackBar,
@@ -55,7 +69,7 @@ export class ArchivoComponent {
   ) { }
 
   ngOnInit(): void {
-    this.listar();
+    this.cargarPrimeraPagina();
   }
 
   listar() {
@@ -71,43 +85,19 @@ export class ArchivoComponent {
   nuevo(): void {
     const dialogRef = this.dialog.open(ArchivoFormComponent, {
       width: '80%',
-      data: {
-        nuevo: true,
-        objeto: null
-      },
+      data: { nuevo: true, objeto: null },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.listar();
-      if (result) {
-        // this.obtener();
-      }
-    });
+    dialogRef.afterClosed().subscribe(ok => { if (ok) this.cargarPrimeraPagina(); });
   }
-
-  /*
-  applyFilter(event: Event) {
-      const filterValue = (event.target as HTMLInputElement).value;
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-    } */
 
   editar(fila: any): void {
     const dialogRef = this.dialog.open(ArchivoEditarComponent, {
       width: '800px',
-      data: {
-        nuevo: false,
-        idUsuario: fila.usuarioId,
-        id: fila.id,
-      },
+      data: { nuevo: false, idUsuario: fila.usuarioId, id: fila.id },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.listar();
-      }
-    });
+    dialogRef.afterClosed().subscribe(ok => { if (ok) this.cargarPrimeraPagina(); });
   }
 
   eliminar(fila: any) {
@@ -131,4 +121,45 @@ export class ArchivoComponent {
       }
     });
   }
+
+  // Carga primera página y reinicia historial
+  async cargarPrimeraPagina() {
+    this.cargando.show();
+    const { items, last } = await this.archivoServicio.obtenerPagina(this.pageSize);
+    this.pagina = items;
+    this.stackCursors = [];
+    this.lastCursor = last;
+    this.cargando.hide();
+  }
+
+  async siguiente() {
+    if (!this.lastCursor) return; // no hay más
+    this.cargando.show();
+    const { items, last } = await this.archivoServicio.obtenerPagina(this.pageSize, this.lastCursor);
+    // Guarda el cursor de la página actual para poder volver
+    if (this.lastCursor) this.stackCursors.push(this.lastCursor);
+    this.pagina = items;
+    this.lastCursor = last;
+    this.cargando.hide();
+  }
+
+  async anterior() {
+    if (!this.stackCursors.length) return; // ya estás en la primera
+    // El cursor "ancla" para reconstruir la página previa es el último de la pila - 1
+    const prevAnchor = this.stackCursors.length > 1 ? this.stackCursors.at(-2)! : undefined;
+
+    this.cargando.show();
+    const { items, last } = await this.archivoServicio.obtenerPagina(this.pageSize, prevAnchor);
+    this.pagina = items;
+    // Quita el cursor de la página que abandonas
+    this.stackCursors.pop();
+    this.lastCursor = last;
+    this.cargando.hide();
+  }
+
+  onChangePageSize(size: number) {
+    this.pageSize = size;
+    this.cargarPrimeraPagina(); // reinicia con nuevo tamaño
+  }
+
 }

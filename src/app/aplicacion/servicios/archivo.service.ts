@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collectionData, collection, addDoc, doc, setDoc, getDoc, updateDoc, orderBy, onSnapshot, query, where, getDocs, CollectionReference, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, collectionData, collection, addDoc, doc, setDoc, getDoc, updateDoc, orderBy, onSnapshot, query, where, getDocs, CollectionReference, deleteDoc, QueryDocumentSnapshot, DocumentData, limit, startAfter } from '@angular/fire/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 @Injectable({
@@ -181,6 +181,21 @@ export class ArchivoService {
   async eliminar(ID: any) {
     const documento = doc(this.firestore, `${this.url}`, ID);
     await deleteDoc(documento);
+  }
+
+  async obtenerPagina(tam: number, cursor?: QueryDocumentSnapshot<DocumentData>) {
+    const base = query(
+      collection(this.firestore, this.url) as CollectionReference<any>,
+      orderBy('fechaRegistro', 'desc'),
+      limit(tam)
+    );
+    const q = cursor ? query(base, startAfter(cursor)) : base;
+
+    const snap = await getDocs(q);
+    const items = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+    const last = snap.docs.at(-1) ?? null;
+
+    return { items, last };
   }
 
 }
