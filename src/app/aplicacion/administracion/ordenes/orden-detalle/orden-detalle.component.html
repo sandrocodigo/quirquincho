@@ -58,6 +58,7 @@
         <p class="text-xs text-gray-500 dark:text-gray-400">Empresa</p>
         <p>
 
+          @if (orden.vehiculoEmpresa) {
           <span class="text-xs px-2 py-1 rounded-full capitalize font-bold" [ngClass]="{
                             'text-orange-700 bg-orange-100': orden.vehiculoEmpresa == 'QUIRQUINCHO',
                             'text-blue-700 bg-blue-100': orden.vehiculoEmpresa == 'URKUPIÑA',
@@ -66,6 +67,15 @@
                         }">
             {{ orden.vehiculoEmpresa }}
           </span>
+          } @else {
+          <button mat-button color="warn"
+            class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-red-100 text-red-800 rounded hover:bg-red-200"
+            (click)="ajustarEmpresa(orden)">
+            <mat-icon class="text-sm">warning</mat-icon> Ajustar Empresa
+          </button>
+          }
+
+
 
         </p>
       </div>

@@ -35,6 +35,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { EgresoService } from '../../../servicios/egreso.service';
 import { EgresoDetalleService } from '../../../servicios/egreso-detalle.service';
 import { OrdenFormComponent } from '../orden-form/orden-form.component';
+import { VehiculoService } from '../../../servicios/vehiculo.service';
 
 
 @Component({
@@ -92,6 +93,7 @@ export class OrdenDetalleComponent {
     private calculoServicio: CalculoService,
     private egresoServicio: EgresoService,
     private egresoDetalleServicio: EgresoDetalleService,
+    private vehiculoServicio: VehiculoService,
   ) {
     this.idOrden = this.ruta.snapshot.paramMap.get('id');
     this.authServicio.user$.subscribe((user) => {
@@ -367,6 +369,19 @@ export class OrdenDetalleComponent {
 
       });
 
+    });
+  }
+
+  ajustarEmpresa(orden: any) {
+    this.cargando.show('Ajustando orden...');
+    console.log('ORDEN: ',orden);
+    this.vehiculoServicio.obtenerPorId(orden.vehiculoId).then((vehiculo: any) => {
+      console.log('VEHICULO: ', vehiculo);
+      this.ordenServicio.editar(orden.id, { vehiculoEmpresa: vehiculo.empresa }).then(respuesta => {
+        this.cargando.hide();
+        this.snackbar.open('Hey!, orden ajustada con exito...', 'OK', { duration: 10000 });
+        this.obtenerOrden();
+      });
     });
   }
 }
