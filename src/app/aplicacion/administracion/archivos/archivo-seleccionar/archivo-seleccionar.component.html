@@ -2,57 +2,74 @@
 
 <mat-dialog-content>
 
-  <div class="flex items-center">
-    <h2 class="flex-auto m-0 headline font-bold">
-      Si desea agregar mas foto, presione el boton 👉🏻
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="flex-auto m-0 text-base font-semibold">
+      Si desea agregar más archivos, presione el botón 👉🏻
     </h2>
-    <button class="ltr:ml-1 rtl:mr-1 flex-none" color="primary" mat-mini-fab matTooltip="Agregar Fotos"
-      type="button" (click)="nuevo()">
-      <mat-icon>add</mat-icon>
-    </button>
+    <div class="flex items-center gap-3">
+      <mat-form-field appearance="outline" class="w-36">
+        <mat-label>Ítems por página</mat-label>
+        <mat-select [value]="pageSize" (valueChange)="onChangePageSize($event)">
+          @for (opt of pageSizeOptions; track opt) {
+          <mat-option [value]="opt">{{ opt }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="flex-none" color="primary" mat-mini-fab matTooltip="Agregar Fotos" type="button" (click)="nuevo()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
   </div>
 
   <div class="flex flex-wrap justify-center">
 
-    @for (item of lista; track item) {
-      <div class="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3">
-        <div class="bg-white rounded-lg shadow-lg p-4 h-72">
-          <!-- <h3 class="text-xs font-semibold truncate w-32">{{ item.nombre }}</h3> -->
-          <h3 class="text-xs font-semibold ">{{ item.nombre }}</h3>
-          <p class="text-xs">{{ item.fechaRegistro.toDate() | date:'short' }}</p>
-          <!-- Condición para imágenes -->
-          <div class="w-full h-32">
-            @if (item.clase === 'image') {
-              <img [src]="item.url" alt="Place image title"
-                class="object-cover h-full w-full">
+    @for (item of pagina; track item) {
+    <div class="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3">
+      <div class="bg-white rounded-lg shadow-lg p-4 h-72 flex flex-col justify-between">
+        <div>
+          <h3 class="text-sm font-semibold truncate">{{ item.nombre }}</h3>
+          <p class="text-xs text-gray-500">
+            {{ (item.fechaRegistro?.toDate ? item.fechaRegistro.toDate() : (item.fechaRegistro | date)) | date:'short' }}
+          </p>
+        </div>
+        <!-- Condición para imágenes -->
+        <div class="w-full h-32 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden mt-2">
+          @if (item.clase === 'image') {
+          <img [src]="item.url" alt="Vista previa" class="object-cover h-full w-full">
+          } @else {
+          <div class="flex items-center justify-center text-gray-700">
+            @if (item.extencion === 'pdf') {
+            <mat-icon class="text-red-500 text-4xl">picture_as_pdf</mat-icon>
             }
-            @if (item.clase !== 'image') {
-              <div class="flex justify-center">
-                @if (item.extencion === 'pdf') {
-                  <mat-icon>picture_as_pdf</mat-icon>
-                }
-                @if (item.extencion === 'xls') {
-                  <mat-icon>table_view</mat-icon>
-                }
-                <!-- Agregar más condiciones aquí -->
-              </div>
+            @if (item.extencion === 'xls') {
+            <mat-icon class="text-green-500 text-4xl">table_view</mat-icon>
             }
+            <!-- Agregar más condiciones aquí -->
           </div>
-          <div class="flex justify-between mt-4">
-            <span class="text-sm">{{ (item.tamano / (1024 * 1024)) | number: '1.2-2' }} MB</span>
-            <a target="_blank" [href]="item.url" [download]="item.nombre">
-              <mat-icon>download</mat-icon>
-            </a>
-          </div>
-          <!-- Botón de eliminar -->
-          <div class="flex justify-end mt-4">
-            <button mat-raised-button color="warn" (click)="seleccionar(item)">
-              <mat-icon>done</mat-icon> Seleccionar
-            </button>
-          </div>
+          }
+        </div>
+        <div class="flex justify-between items-center mt-4 text-xs">
+          <span>{{ item.tamano ? (item.tamano / (1024 * 1024) | number: '1.2-2') + ' MB' : '' }}</span>
+          <a target="_blank" [href]="item.url" [download]="item.nombre" class="text-indigo-600 hover:text-indigo-700">
+            <mat-icon>download</mat-icon>
+          </a>
+        </div>
+        <!-- Botón de eliminar -->
+        <div class="flex justify-end mt-4">
+          <button mat-raised-button color="primary" (click)="seleccionar(item)">
+            <mat-icon>done</mat-icon> Seleccionar
+          </button>
         </div>
       </div>
+    </div>
     }
+  </div>
+
+  <!-- Controles de navegación -->
+  <div class="mt-4 flex items-center justify-center gap-3">
+    <button mat-stroked-button (click)="anterior()" [disabled]="!stackCursors.length">Anterior</button>
+    <button mat-raised-button color="primary" (click)="siguiente()" [disabled]="!lastCursor">Siguiente</button>
+    <button mat-button (click)="cargarPrimeraPagina()">Primera</button>
   </div>
 
 </mat-dialog-content>

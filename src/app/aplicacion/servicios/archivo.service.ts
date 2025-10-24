@@ -198,4 +198,28 @@ export class ArchivoService {
     return { items, last };
   }
 
+  async obtenerPaginaPorClase(tam: number, clase: string, cursor?: QueryDocumentSnapshot<DocumentData>) {
+    const coleccion = collection(this.firestore, this.url) as CollectionReference<any>;
+    const restricciones: any[] = [];
+
+    if (clase && clase !== 'TODOS') {
+      restricciones.push(where('clase', '==', clase));
+    }
+
+    restricciones.push(orderBy('fechaRegistro', 'desc'));
+
+    if (cursor) {
+      restricciones.push(startAfter(cursor));
+    }
+
+    restricciones.push(limit(tam));
+
+    const q = query(coleccion, ...restricciones);
+    const snap = await getDocs(q);
+    const items = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+    const last = snap.docs.at(-1) ?? null;
+
+    return { items, last };
+  }
+
 }

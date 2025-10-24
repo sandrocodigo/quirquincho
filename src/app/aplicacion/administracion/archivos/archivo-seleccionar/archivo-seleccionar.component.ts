@@ -21,6 +21,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { ArchivoService } from '../../../servicios/archivo.service';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
+import { DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 
 
@@ -46,8 +47,13 @@ import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacio
   ],
 })
 export class ArchivoSeleccionarComponent {
-  lista: any;
+  pagina: any[] = [];
   clase: any;
+  pageSize = 12;
+  pageSizeOptions = [6, 12, 24, 48];
+  stackCursors: QueryDocumentSnapshot<DocumentData>[] = [];
+  lastCursor: QueryDocumentSnapshot<DocumentData> | null = null;
+
   constructor(
     public dialog: MatDialog,
     private snackbar: MatSnackBar,
@@ -56,20 +62,60 @@ export class ArchivoSeleccionarComponent {
     public dialogRef: MatDialogRef<ArchivoSeleccionarComponent>, @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.clase = data.clase;
-    this.listar();
   }
 
   ngOnInit(): void {
-
+    this.cargarPrimeraPagina();
   }
 
-  listar() {
+  async cargarPrimeraPagina() {
     this.cargando.show();
-    this.archivoServicio.obtenerConsulta({ clase: this.clase }).then((res: any) => {
-      console.log('LISTA PARA SELECCIONAR: ', res);
-      this.lista = res
+    try {
+      const { items, last } = await this.archivoServicio.obtenerPaginaPorClase(this.pageSize, this.clase);
+      this.pagina = items;
+      this.stackCursors = [];
+      this.lastCursor = last;
+    } finally {
       this.cargando.hide();
-    });
+    }
+  }
+
+  async siguiente() {
+    if (!this.lastCursor) {
+      return;
+    }
+    this.cargando.show();
+    try {
+      const { items, last } = await this.archivoServicio.obtenerPaginaPorClase(this.pageSize, this.clase, this.lastCursor);
+      if (this.lastCursor) {
+        this.stackCursors.push(this.lastCursor);
+      }
+      this.pagina = items;
+      this.lastCursor = last;
+    } finally {
+      this.cargando.hide();
+    }
+  }
+
+  async anterior() {
+    if (!this.stackCursors.length) {
+      return;
+    }
+    const prevAnchor = this.stackCursors.length > 1 ? this.stackCursors.at(-2)! : undefined;
+    this.cargando.show();
+    try {
+      const { items, last } = await this.archivoServicio.obtenerPaginaPorClase(this.pageSize, this.clase, prevAnchor);
+      this.stackCursors.pop();
+      this.pagina = items;
+      this.lastCursor = last;
+    } finally {
+      this.cargando.hide();
+    }
+  }
+
+  onChangePageSize(size: number) {
+    this.pageSize = size;
+    this.cargarPrimeraPagina();
   }
 
   // NUEVO
@@ -84,7 +130,7 @@ export class ArchivoSeleccionarComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.listar();
+      this.cargarPrimeraPagina();
       if (result) {
         // this.obtener();
       }
@@ -113,7 +159,7 @@ export class ArchivoSeleccionarComponent {
           this.snackbar.open('Archivo eliminado...', 'OK', {
             duration: 10000
           });
-          this.listar();
+          this.cargarPrimeraPagina();
         })
       }
     });
