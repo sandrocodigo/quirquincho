@@ -12,8 +12,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { ProductoFormComponent } from '../producto-form/producto-form.component';
 import { ProductoFotosComponent } from '../producto-fotos/producto-fotos.component';
 import { ProductoEditorComponent } from '../producto-editor/producto-editor.component';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ArchivoSeleccionarComponent } from '../../archivos/archivo-seleccionar/archivo-seleccionar.component';
+import { KardexService } from '../../../servicios/karex.service';
 
 @Component({
   selector: 'app-producto-detalle',
@@ -35,15 +36,22 @@ export class ProductoDetalleComponent {
   fotos: any[] = [];
   fotoSeleccionado: any = null;
 
+
+  listaKardexLaPaz: any;
+  listaKardexSantaCruz: any;
+  listaKardexCochabamba: any;
+
   constructor(
     private ruta: ActivatedRoute,
     private auth: AuthService,
     private pServicio: ProductoService,
+    private kardexServicio: KardexService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
     private cargando: SpinnerService,
     public router: Router,
-    private sanitizer: DomSanitizer) {
+    private sanitizer: DomSanitizer,
+    private titleService: Title) {
     this.idProducto = this.ruta.snapshot.paramMap.get('id');
 
     //console.log('PROYECTO: ', this.idProyecto);
@@ -52,13 +60,17 @@ export class ProductoDetalleComponent {
 
   ngOnInit() {
     this.obtenerProducto();
+    
   }
 
   obtenerProducto() {
-    this.cargando.show();
+    this.cargando.show('Cargando Producto…');
     this.pServicio.obtenerPorId(this.idProducto).then((res: any) => {
+      this.cargando.hide();
       this.producto = res;
       console.log('PRODUCTO: ', this.producto);
+
+      this.titleService.setTitle(this.producto.descripcion);
 
       this.fotos = Array.isArray(res?.fotosUrl) ? res.fotosUrl : [];
 
@@ -66,7 +78,7 @@ export class ProductoDetalleComponent {
         this.fotoSeleccionado = this.fotos[0];
       }
 
-      this.cargando.hide();
+      this.obtenerKardex();
     });
   }
 
@@ -141,13 +153,50 @@ export class ProductoDetalleComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log('ARCHIVO SELECCIONADO: ', result);
       if (result) {
-        this.pServicio.editar(this.idProducto, { fichaTecnica: result.url }).then(result => { 
+        this.pServicio.editar(this.idProducto, { fichaTecnica: result.url }).then(result => {
           this.snackbar.open('Hey!, Ficha Tecnica cargada...', 'OK', { duration: 10000 });
           this.obtenerProducto();
         })
       }
     });
   }
+
+  async obtenerKardex(): Promise<void> {
+    this.cargando.show('Cargando Kardex…');
+    try {
+      const ciudades = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
+
+      // 1) Traer todo en paralelo
+      const [lp, sc, cb] = await Promise.all(
+        ciudades.map(c => this.kardexServicio.obtenerPorProducto(c, this.idProducto))
+      );
+
+      // 2) Procesador reutilizable
+      const procesar = (items: any[] = []) => {
+        let acc = 0;
+        return items
+          .slice()
+          .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+          .map((i) => {
+            const cant = Number(i.cantidad) || 0;
+            const signo = i.tipo === 'INGRESO' ? 1 : i.tipo === 'EGRESO' ? -1 : 0;
+            acc += signo * cant;
+            return { ...i, cantidadAcumulada: acc };
+          });
+      };
+
+      // 3) Asignar
+      this.listaKardexLaPaz = procesar(lp);
+      this.listaKardexSantaCruz = procesar(sc);
+      this.listaKardexCochabamba = procesar(cb);
+    } catch (err) {
+      console.error(err);
+      // this.snackBar?.open('Ocurrió un error al cargar el Kardex', 'Cerrar', { duration: 4000 });
+    } finally {
+      this.cargando.hide();
+    }
+  }
+
 
   // Método para sanitizar HTML
   sanitizeHtml(html: string): SafeHtml {

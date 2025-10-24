@@ -77,7 +77,7 @@ export class KardexService {
   // OBTENER TODOS EN TIEMPO REAL
   obtenerTodosTR() {
     return collectionData<any>(
-      query<any,any>(
+      query<any, any>(
         collection(this.firestore, `${this.url}`) as CollectionReference<any>,
         orderBy('ordenar')
       ), { idField: 'id' }
@@ -116,9 +116,10 @@ export class KardexService {
   }
 
   // OBTENER POR PRODUCTO
-  async obtenerPorProducto(idProducto: any): Promise<any[]> {
+  async obtenerPorProducto(idSucursal: any, idProducto: any): Promise<any[]> {
     let q = query(
       collection(this.firestore, `${this.url}`) as CollectionReference<any>,
+      where('sucursal', '==', idSucursal),
       where('productoId', '==', idProducto),
       orderBy('fechaRegistro')
     );

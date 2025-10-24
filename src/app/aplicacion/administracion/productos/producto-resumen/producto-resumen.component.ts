@@ -55,6 +55,9 @@ export class ProductoResumenComponent {
   listaIngresos: any;
   listaEgresos: any;
 
+
+  sucursal: any;
+
   constructor(
     private fb: FormBuilder,
     public dialog: MatDialog,
@@ -69,6 +72,7 @@ export class ProductoResumenComponent {
   ) {
     this.idProducto = data.id;
     this.producto = data.objeto;
+    this.sucursal = data.sucursal;
 
     this.buscadorFormGroup = this.fb.group({
       buscador: [''],
@@ -90,7 +94,7 @@ export class ProductoResumenComponent {
 
   buscar(): void {
     this.cargando.show();
-    this.kardexServicio.obtenerPorProducto(this.idProducto).then((respuesta: any) => {
+    this.kardexServicio.obtenerPorProducto(this.sucursal, this.idProducto).then((respuesta: any) => {
       console.log('KARDEX DE PRODUCTOS: ', respuesta);
       // this.lista = respuesta;
       let suma = 0;

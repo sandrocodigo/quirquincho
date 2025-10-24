@@ -69,7 +69,7 @@ export class BuscadorProductoComponent {
 
   precioVenta = 0;
 
-    @ViewChild('productoSelect', { static: false }) productoSelect!: NgSelectComponent;
+  @ViewChild('productoSelect', { static: false }) productoSelect!: NgSelectComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -232,13 +232,14 @@ export class BuscadorProductoComponent {
     });
   }
 
-  resumen(fila: any) {
+  resumen(sucursal: any, fila: any) {
     const dialogRef = this.dialog.open(ProductoResumenComponent, {
       width: '800px',
       data: {
         nuevo: false,
         id: fila.id,
-        objeto: fila
+        objeto: fila,
+        sucursal: sucursal
       },
       disableClose: true
     });
@@ -310,5 +311,6 @@ export class BuscadorProductoComponent {
       }
     }, 0);
   }
+
 
 }

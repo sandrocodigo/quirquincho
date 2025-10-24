@@ -1,115 +1,208 @@
 <div class="flex items-center justify-between py-4">
-  <h1 class="text-3xl font-semibold dark:text-white">Detalle de Producto</h1>
-  <button [routerLink]="'/administracion/productos'" class="ml-1 mr-1" mat-button matTooltip="Riesgos"
-    type="button">
-    <mat-icon>grid_on</mat-icon> Mas Productos
+  <h1 class="titulo">Detalle de Producto</h1>
+  <button [routerLink]="'/administracion/productos'" class="ml-1 mr-1" mat-button matTooltip="Riesgos" type="button">
+    <mat-icon>list</mat-icon> Mas Productos
   </button>
 </div>
 
 @if (producto) {
-  <div>
-    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg dark:bg-gray-700">
-      <div class="flex flex-wrap items-center -mx-2">
-        <!-- Imagen del producto -->
-        <div class="w-full sm:w-1/3 px-2 text-center">
-          <img [src]="producto.fotosUrl && producto.fotosUrl.length> 0 ? producto.fotosUrl[0].url : 'imagenes/sinfoto.png'"
+<div>
+  <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg dark:bg-gray-700">
+    <div class="flex flex-wrap items-center -mx-2">
+      <!-- Imagen del producto -->
+      <div class="w-full sm:w-1/3 px-2 text-center">
+        <img
+          [src]="producto.fotosUrl && producto.fotosUrl.length> 0 ? producto.fotosUrl[0].url : 'imagenes/sinfoto.png'"
           alt="Imagen del producto" class="w-full h-auto object-cover rounded-lg cursor-pointer"
           (click)="cargarFotos()">
-          <button (click)="cargarFotos()" color="primary" mat-flat-button>
-            <mat-icon>edit</mat-icon> Editar Fotos
-          </button>
+        <button (click)="cargarFotos()" color="primary" mat-flat-button>
+          <mat-icon>edit</mat-icon> Editar Fotos
+        </button>
+      </div>
+      <div class="w-full sm:w-2/3 px-2">
+        <!-- Código -->
+        <div class="mb-4">
+          <p class="italic text-sm text-gray-600 dark:text-gray-300">Código</p>
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.codigo}}</p>
         </div>
-        <div class="w-full sm:w-2/3 px-2">
-          <!-- Código -->
-          <div class="mb-4">
-            <p class="italic text-sm text-gray-600 dark:text-gray-300">Código</p>
-            <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.codigo}}</p>
+        <!-- Descripción -->
+        <div class="mb-4">
+          <p class="italic text-sm text-gray-600 dark:text-gray-300">Descripción</p>
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.descripcion}}</p>
+        </div>
+        <!-- Código de Barra -->
+        <div class="mb-4">
+          <p class="italic text-sm text-gray-600 dark:text-gray-300">Código de Barra</p>
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.codigoBarra}}</p>
+        </div>
+        <!-- Tipo -->
+        <div class="mb-4">
+          <p class="italic text-sm text-gray-600 dark:text-gray-300">Tipo</p>
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.tipo}}</p>
+        </div>
+        <!-- Categoría -->
+        <div class="mb-4">
+          <p class="italic text-sm text-gray-600 dark:text-gray-300">Categoría</p>
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.categoria}}</p>
+        </div>
+        <!-- Fabricante -->
+        <div class="mb-4">
+          <p class="italic text-sm text-gray-600 dark:text-gray-300">Fabricante</p>
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.fabricante}}</p>
+        </div>
+        <!-- Detalle -->
+        <div class="mb-4">
+          <p class="italic text-sm text-gray-600 dark:text-gray-300">Detalle</p>
+          <div class="text-gray-900 dark:text-white" [innerHTML]="sanitizeHtml(producto.detalle)">
           </div>
-          <!-- Descripción -->
-          <div class="mb-4">
-            <p class="italic text-sm text-gray-600 dark:text-gray-300">Descripción</p>
-            <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.descripcion}}</p>
-          </div>
-          <!-- Código de Barra -->
-          <div class="mb-4">
-            <p class="italic text-sm text-gray-600 dark:text-gray-300">Código de Barra</p>
-            <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.codigoBarra}}</p>
-          </div>
-          <!-- Tipo -->
-          <div class="mb-4">
-            <p class="italic text-sm text-gray-600 dark:text-gray-300">Tipo</p>
-            <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.tipo}}</p>
-          </div>
-          <!-- Categoría -->
-          <div class="mb-4">
-            <p class="italic text-sm text-gray-600 dark:text-gray-300">Categoría</p>
-            <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.categoria}}</p>
-          </div>
-          <!-- Fabricante -->
-          <div class="mb-4">
-            <p class="italic text-sm text-gray-600 dark:text-gray-300">Fabricante</p>
-            <p class="text-xl font-semibold text-gray-900 dark:text-white">{{producto.fabricante}}</p>
-          </div>
-          <!-- Detalle -->
-          <div class="mb-4">
-            <p class="italic text-sm text-gray-600 dark:text-gray-300">Detalle</p>
-            <div class="text-gray-900 dark:text-white" [innerHTML]="sanitizeHtml(producto.detalle)">
-            </div>
-            <p>
-              <button (click)="editor()" color="primary" mat-flat-button>
-                <mat-icon>edit</mat-icon> Editar detalle
-              </button>
-            </p>
-          </div>
-          <!--                 <p>Bound value:</p>
+          <p>
+            <button (click)="editor()" color="primary" mat-flat-button>
+              <mat-icon>edit</mat-icon> Editar detalle
+            </button>
+          </p>
+        </div>
+        <!--                 <p>Bound value:</p>
           <p class="e2e-inner-html-interpolated">{{producto.detalle}}</p>
           <p>Result of binding to innerHTML:</p>
           <p class="e2e-inner-html-bound" [innerHTML]="producto.detalle"></p> -->
-          <!-- Botones de acción -->
-          <div class="flex justify-end">
-            <button (click)="editar()" color="primary" mat-flat-button>
-              <mat-icon>edit</mat-icon> Editar
-            </button>
-          </div>
+        <!-- Botones de acción -->
+        <div class="flex justify-end">
+          <button (click)="editar()" color="primary" mat-flat-button>
+            <mat-icon>edit</mat-icon> Editar
+          </button>
         </div>
-      </div>
-    </div>
-    <div class="flex flex-wrap justify-center">
-      <!-- Imagen Destacada -->
-      <div class="w-full p-4 ">
-        <div class="bg-white rounded-lg shadow-lg p-4 h-96 flex justify-center items-center dark:bg-gray-700">
-          @if (fotoSeleccionado) {
-            <img [src]="fotoSeleccionado.url" alt="Imagen destacada"
-              class="object-contain h-full w-full max-w-full">
-          }
-        </div>
-      </div>
-      <!-- Miniaturas -->
-      <div class="flex space-x-4 p-4 overflow-auto">
-        @for (item of fotos; track item) {
-          <div cdkDrag class="cursor-pointer">
-            <img [src]="item.url" alt="Miniatura"
-              class="object-cover h-24 w-24 border-2 border-transparent hover:border-blue-500"
-              (click)="seleccionarImagen(item)">
-          </div>
-        }
-      </div>
-    </div>
-    <div class="flex flex-wrap justify-center">
-      <!-- Imagen Destacada -->
-      <div class="w-full p-4 ">
-        @if (producto.fichaTecnica) {
-          <a mat-flat-button target="_blank" [href]="producto.fichaTecnica" [download]="producto.codigo">
-            <mat-icon>download</mat-icon> Descargar Ficha Tecnica
-          </a>
-        }
-      </div>
-      <!-- Miniaturas -->
-      <div class="flex space-x-4 p-4 overflow-auto">
-        <button (click)="seleccionarArchivo()" color="primary" mat-flat-button>
-          <mat-icon>edit</mat-icon> Buscar Ficha Tecnica
-        </button>
       </div>
     </div>
   </div>
+  <div class="flex flex-wrap justify-center">
+    <!-- Imagen Destacada -->
+    <div class="w-full p-4 ">
+      <div class="bg-white rounded-lg shadow-lg p-4 h-96 flex justify-center items-center dark:bg-gray-700">
+        @if (fotoSeleccionado) {
+        <img [src]="fotoSeleccionado.url" alt="Imagen destacada" class="object-contain h-full w-full max-w-full">
+        }
+      </div>
+    </div>
+    <!-- Miniaturas -->
+    <div class="flex space-x-4 p-4 overflow-auto">
+      @for (item of fotos; track item) {
+      <div cdkDrag class="cursor-pointer">
+        <img [src]="item.url" alt="Miniatura"
+          class="object-cover h-24 w-24 border-2 border-transparent hover:border-blue-500"
+          (click)="seleccionarImagen(item)">
+      </div>
+      }
+    </div>
+  </div>
+  <div class="flex flex-wrap justify-center">
+    <!-- Imagen Destacada -->
+    <div class="w-full p-4 ">
+      @if (producto.fichaTecnica) {
+      <a mat-flat-button target="_blank" [href]="producto.fichaTecnica" [download]="producto.codigo">
+        <mat-icon>download</mat-icon> Descargar Ficha Tecnica
+      </a>
+      }
+    </div>
+    <!-- Miniaturas -->
+    <div class="flex space-x-4 p-4 overflow-auto">
+      <button (click)="seleccionarArchivo()" color="primary" mat-flat-button>
+        <mat-icon>edit</mat-icon> Buscar Ficha Tecnica
+      </button>
+    </div>
+  </div>
+</div>
 }
+
+
+
+
+
+<table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+  <thead class="bg-blue-500 text-white">
+    <tr>
+      <th colspan="7">KARDEX LA PAZ</th>
+    </tr>
+    <tr>
+      <th>SUCURSAL</th>
+      <th>FECHA</th>
+      <th>TIPO</th>
+      <th>MOTIVO</th>
+      <th>COD.</th>
+      <th>CANT.</th>
+      <th>ACUMUL.</th>
+    </tr>
+  </thead>
+  <tbody class="text-gray-700">
+    @for (item of listaKardexLaPaz; track item) {
+    <tr class="bg-gray-100 hover:bg-gray-200">
+      <td>{{item.sucursal}}</td>
+      <td>{{item.fecha | date}}</td>
+      <td>{{item.tipo}}</td>
+      <td>{{item.motivo}}</td>
+      <td>{{item.codigo}}</td>
+      <td>{{item.cantidad}}</td>
+      <td>{{item.cantidadAcumulada}}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+<table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+  <thead class="bg-blue-500 text-white">
+    <tr>
+      <th colspan="7">KARDEX SANTA CRUZ</th>
+    </tr>
+    <tr>
+      <th>SUCURSAL</th>
+      <th>FECHA</th>
+      <th>TIPO</th>
+      <th>MOTIVO</th>
+      <th>COD.</th>
+      <th>CANT.</th>
+      <th>ACUMUL.</th>
+    </tr>
+  </thead>
+  <tbody class="text-gray-700">
+    @for (item of listaKardexSantaCruz; track item) {
+    <tr class="bg-gray-100 hover:bg-gray-200">
+      <td>{{item.sucursal}}</td>
+      <td>{{item.fecha | date}}</td>
+      <td>{{item.tipo}}</td>
+      <td>{{item.motivo}}</td>
+      <td>{{item.codigo}}</td>
+      <td>{{item.cantidad}}</td>
+      <td>{{item.cantidadAcumulada}}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+<table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+  <thead class="bg-blue-500 text-white">
+    <tr>
+      <th colspan="7">KARDEX COCHABAMBA</th>
+    </tr>
+    <tr>
+      <th>SUCURSAL</th>
+      <th>FECHA</th>
+      <th>TIPO</th>
+      <th>MOTIVO</th>
+      <th>COD.</th>
+      <th>CANT.</th>
+      <th>ACUMUL.</th>
+    </tr>
+  </thead>
+  <tbody class="text-gray-700">
+    @for (item of listaKardexCochabamba; track item) {
+    <tr class="bg-gray-100 hover:bg-gray-200">
+      <td>{{item.sucursal}}</td>
+      <td>{{item.fecha | date}}</td>
+      <td>{{item.tipo}}</td>
+      <td>{{item.motivo}}</td>
+      <td>{{item.codigo}}</td>
+      <td>{{item.cantidad}}</td>
+      <td>{{item.cantidadAcumulada}}</td>
+    </tr>
+    }
+  </tbody>
+</table>
