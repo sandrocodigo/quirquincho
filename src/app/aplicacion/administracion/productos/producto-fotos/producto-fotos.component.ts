@@ -13,8 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
-
-
 import { ArchivoSeleccionarComponent } from '../../archivos/archivo-seleccionar/archivo-seleccionar.component';
 import { AuthService } from '../../../servicios/auth.service';
 import { ProductoService } from '../../../servicios/producto.service';
@@ -75,7 +73,6 @@ export class ProductoFotosComponent implements OnInit, OnDestroy {
 
         this.registroFormGroup = this.fb.group({
           fotosUrl: [this.fotos, [Validators.required]],
-
           edicionUsuario: [this.auth.obtenerUsuario.email],
           edicionFecha: [this.fechaHoy]
         });
@@ -154,8 +151,12 @@ export class ProductoFotosComponent implements OnInit, OnDestroy {
   }
 
   eliminar(fila: any): void {
+    console.log('ELIMINAR: ', fila);
     if (fila && fila.id) {
       this.fotos = this.fotos.filter(item => item.id !== fila.id);
+
+
+      console.log(" NUEVA LISTA: ", this.fotos  );
       this.r.fotosUrl.setValue(this.fotos);
     }
   }

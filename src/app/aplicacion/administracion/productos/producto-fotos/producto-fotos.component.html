@@ -36,7 +36,7 @@
             <img [src]="item.url" alt="Miniatura"
               class="object-cover h-24 w-24 border-2 border-transparent hover:border-blue-500"
               (click)="seleccionarImagen(item)">
-            <button mat-mini-fab color="warn" (click)="eliminar(item)">
+            <button type="button" mat-mini-fab color="warn" (click)="eliminar(item)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -51,39 +51,3 @@
   </mat-dialog-actions>
 </form>
 }
-
-
-<!--
-
-<div class="flex flex-wrap -mx-2">
-  <div class="w-full md:w-1/2 px-2">
-
-
-  </div>
-  <div class="w-full md:w-1/2 px-2">
-
-  </div>
-</div>
-
-<div class="flex flex-wrap -mx-2">
-  <div class="w-full md:w-3/10 px-2">
-
-  </div>
-
-  <div class="w-full md:w-7/10 px-2">
-
-  </div>
-</div>
-
-<div class="flex flex-wrap -mx-2">
-  <div class="w-full md:w-1/3 px-2">
-
-  </div>
-  <div class="w-full md:w-1/3 px-2">
-
-  </div>
-  <div class="w-full md:w-1/3 px-2">
-
-  </div>
-</div>
--->

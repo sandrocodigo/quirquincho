@@ -1,7 +1,9 @@
-<div class="flex items-center justify-between py-4">
+<div class="flex flex-wrap items-center justify-between gap-3 py-4">
   <h1 class="titulo">Detalle de Producto</h1>
-  <button [routerLink]="'/administracion/productos'" class="ml-1 mr-1" mat-button matTooltip="Riesgos" type="button">
-    <mat-icon>list</mat-icon> Mas Productos
+  <button [routerLink]="'/administracion/productos'" class="inline-flex items-center gap-2 !px-4 !py-2" mat-flat-button
+    matTooltip="Ir al listado" type="button">
+    <mat-icon>list</mat-icon>
+    Más Productos
   </button>
 </div>
 
@@ -15,9 +17,13 @@
           [src]="producto.fotosUrl && producto.fotosUrl.length> 0 ? producto.fotosUrl[0].url : 'imagenes/sinfoto.png'"
           alt="Imagen del producto" class="w-full h-auto object-cover rounded-lg cursor-pointer"
           (click)="cargarFotos()">
-        <button (click)="cargarFotos()" color="primary" mat-flat-button>
-          <mat-icon>edit</mat-icon> Editar Fotos
-        </button>
+        <div class="mt-3 flex justify-center">
+          <button (click)="cargarFotos()" class="inline-flex items-center gap-2 !px-4 !py-2" color="primary"
+            mat-flat-button>
+            <mat-icon>edit</mat-icon>
+            Editar Fotos
+          </button>
+        </div>
       </div>
       <div class="w-full sm:w-2/3 px-2">
         <!-- Código -->
@@ -55,20 +61,22 @@
           <p class="italic text-sm text-gray-600 dark:text-gray-300">Detalle</p>
           <div class="text-gray-900 dark:text-white" [innerHTML]="sanitizeHtml(producto.detalle)">
           </div>
-          <p>
-            <button (click)="editor()" color="primary" mat-flat-button>
-              <mat-icon>edit</mat-icon> Editar detalle
+          <div class="mt-3 flex justify-start">
+            <button (click)="editor()" class="inline-flex items-center gap-2 !px-4 !py-2" color="primary" mat-flat-button>
+              <mat-icon>edit</mat-icon>
+              Editar detalle
             </button>
-          </p>
+          </div>
         </div>
         <!--                 <p>Bound value:</p>
           <p class="e2e-inner-html-interpolated">{{producto.detalle}}</p>
           <p>Result of binding to innerHTML:</p>
           <p class="e2e-inner-html-bound" [innerHTML]="producto.detalle"></p> -->
         <!-- Botones de acción -->
-        <div class="flex justify-end">
-          <button (click)="editar()" color="primary" mat-flat-button>
-            <mat-icon>edit</mat-icon> Editar
+        <div class="flex flex-wrap justify-end gap-2">
+          <button (click)="editar()" class="inline-flex items-center gap-2 !px-5 !py-2" color="primary" mat-flat-button>
+            <mat-icon>edit</mat-icon>
+            Editar Producto
           </button>
         </div>
       </div>
@@ -98,15 +106,19 @@
     <!-- Imagen Destacada -->
     <div class="w-full p-4 ">
       @if (producto.fichaTecnica) {
-      <a mat-flat-button target="_blank" [href]="producto.fichaTecnica" [download]="producto.codigo">
-        <mat-icon>download</mat-icon> Descargar Ficha Tecnica
+      <a class="inline-flex items-center gap-2 !px-5 !py-2" mat-flat-button target="_blank"
+        [href]="producto.fichaTecnica" [download]="producto.codigo">
+        <mat-icon>download</mat-icon>
+        Descargar Ficha Técnica
       </a>
       }
     </div>
     <!-- Miniaturas -->
-    <div class="flex space-x-4 p-4 overflow-auto">
-      <button (click)="seleccionarArchivo()" color="primary" mat-flat-button>
-        <mat-icon>edit</mat-icon> Buscar Ficha Tecnica
+    <div class="flex justify-center space-x-4 p-4">
+      <button (click)="seleccionarArchivo()" class="inline-flex items-center gap-2 !px-5 !py-2" color="primary"
+        mat-flat-button>
+        <mat-icon>upload_file</mat-icon>
+        Buscar Ficha Técnica
       </button>
     </div>
   </div>
@@ -114,95 +126,181 @@
 }
 
 
+<div class="space-y-8">
+  <div class="bg-white dark:bg-gray-700 shadow-lg rounded-xl border border-gray-100 dark:border-gray-600">
+    <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-600">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Kardex La Paz</h2>
+      <span class="text-xs font-medium uppercase tracking-wide text-blue-600 dark:text-blue-300">Inventario</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-600">
+        <thead class="bg-gray-50 dark:bg-gray-800">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Sucursal
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Fecha
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Tipo
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Motivo
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cod.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cant.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Acumul.
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white dark:divide-gray-700 dark:bg-gray-700">
+          @for (item of listaKardexLaPaz; track item; let isLast = $last) {
+          <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.fecha | date}}</td>
+            <td class="px-4 py-3 font-medium"
+              [ngClass]="item.tipo === 'INGRESO'
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : item.tipo === 'EGRESO'
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-gray-800 dark:text-gray-100'">
+              {{item.tipo}}
+            </td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.motivo}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.codigo}}</td>
+            <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100">{{item.cantidad}}</td>
+            <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100"
+              [ngClass]="{ 'text-2xl font-semibold text-blue-600 dark:text-blue-500': isLast }">
+              {{item.cantidadAcumulada}}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 
+  <div class="bg-white dark:bg-gray-700 shadow-lg rounded-xl border border-gray-100 dark:border-gray-600">
+    <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-600">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Kardex Santa Cruz</h2>
+      <span class="text-xs font-medium uppercase tracking-wide text-blue-600 dark:text-blue-300">Inventario</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-600">
+        <thead class="bg-gray-50 dark:bg-gray-800">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Sucursal
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Fecha
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Tipo
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Motivo
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cod.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cant.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Acumul.
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white dark:divide-gray-700 dark:bg-gray-700">
+          @for (item of listaKardexSantaCruz; track item; let isLast = $last) {
+          <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.fecha | date}}</td>
+            <td class="px-4 py-3 font-medium"
+              [ngClass]="item.tipo === 'INGRESO'
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : item.tipo === 'EGRESO'
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-gray-800 dark:text-gray-100'">
+              {{item.tipo}}
+            </td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.motivo}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.codigo}}</td>
+            <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100">{{item.cantidad}}</td>
+            <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100"
+              [ngClass]="{ 'text-2xl font-semibold text-blue-600 dark:text-blue-300': isLast }">
+              {{item.cantidadAcumulada}}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-
-<table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-  <thead class="bg-blue-500 text-white">
-    <tr>
-      <th colspan="7">KARDEX LA PAZ</th>
-    </tr>
-    <tr>
-      <th>SUCURSAL</th>
-      <th>FECHA</th>
-      <th>TIPO</th>
-      <th>MOTIVO</th>
-      <th>COD.</th>
-      <th>CANT.</th>
-      <th>ACUMUL.</th>
-    </tr>
-  </thead>
-  <tbody class="text-gray-700">
-    @for (item of listaKardexLaPaz; track item) {
-    <tr class="bg-gray-100 hover:bg-gray-200">
-      <td>{{item.sucursal}}</td>
-      <td>{{item.fecha | date}}</td>
-      <td>{{item.tipo}}</td>
-      <td>{{item.motivo}}</td>
-      <td>{{item.codigo}}</td>
-      <td>{{item.cantidad}}</td>
-      <td>{{item.cantidadAcumulada}}</td>
-    </tr>
-    }
-  </tbody>
-</table>
-
-<table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-  <thead class="bg-blue-500 text-white">
-    <tr>
-      <th colspan="7">KARDEX SANTA CRUZ</th>
-    </tr>
-    <tr>
-      <th>SUCURSAL</th>
-      <th>FECHA</th>
-      <th>TIPO</th>
-      <th>MOTIVO</th>
-      <th>COD.</th>
-      <th>CANT.</th>
-      <th>ACUMUL.</th>
-    </tr>
-  </thead>
-  <tbody class="text-gray-700">
-    @for (item of listaKardexSantaCruz; track item) {
-    <tr class="bg-gray-100 hover:bg-gray-200">
-      <td>{{item.sucursal}}</td>
-      <td>{{item.fecha | date}}</td>
-      <td>{{item.tipo}}</td>
-      <td>{{item.motivo}}</td>
-      <td>{{item.codigo}}</td>
-      <td>{{item.cantidad}}</td>
-      <td>{{item.cantidadAcumulada}}</td>
-    </tr>
-    }
-  </tbody>
-</table>
-
-<table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-  <thead class="bg-blue-500 text-white">
-    <tr>
-      <th colspan="7">KARDEX COCHABAMBA</th>
-    </tr>
-    <tr>
-      <th>SUCURSAL</th>
-      <th>FECHA</th>
-      <th>TIPO</th>
-      <th>MOTIVO</th>
-      <th>COD.</th>
-      <th>CANT.</th>
-      <th>ACUMUL.</th>
-    </tr>
-  </thead>
-  <tbody class="text-gray-700">
-    @for (item of listaKardexCochabamba; track item) {
-    <tr class="bg-gray-100 hover:bg-gray-200">
-      <td>{{item.sucursal}}</td>
-      <td>{{item.fecha | date}}</td>
-      <td>{{item.tipo}}</td>
-      <td>{{item.motivo}}</td>
-      <td>{{item.codigo}}</td>
-      <td>{{item.cantidad}}</td>
-      <td>{{item.cantidadAcumulada}}</td>
-    </tr>
-    }
-  </tbody>
-</table>
+  <div class="bg-white dark:bg-gray-700 shadow-lg rounded-xl border border-gray-100 dark:border-gray-600">
+    <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-600">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Kardex Cochabamba</h2>
+      <span class="text-xs font-medium uppercase tracking-wide text-blue-600 dark:text-blue-300">Inventario</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-600">
+        <thead class="bg-gray-50 dark:bg-gray-800">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Sucursal
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Fecha
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Tipo
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Motivo
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cod.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cant.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Acumul.
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white dark:divide-gray-700 dark:bg-gray-700">
+          @for (item of listaKardexCochabamba; track item; let isLast = $last) {
+          <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.fecha | date}}</td>
+            <td class="px-4 py-3 font-medium"
+              [ngClass]="item.tipo === 'INGRESO'
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : item.tipo === 'EGRESO'
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-gray-800 dark:text-gray-100'">
+              {{item.tipo}}
+            </td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.motivo}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.codigo}}</td>
+            <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100">{{item.cantidad}}</td>
+            <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100"
+              [ngClass]="{ 'text-2xl font-semibold text-blue-600 dark:text-blue-300': isLast }">
+              {{item.cantidadAcumulada}}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
