@@ -94,7 +94,7 @@ export class VehiculoFormComponent {
 
         tipo: [null, [Validators.required]],
         marca: [null, [Validators.required]],
-        modelo: [null, [Validators.required]],
+        // modelo: [null, [Validators.required]],
         carroceria: [null, [Validators.required]],
 
         chasis: [null, [Validators.required]],
@@ -135,7 +135,7 @@ export class VehiculoFormComponent {
   
           tipo: [respuesta.tipo, [Validators.required]],
           marca: [respuesta.marca, [Validators.required]],
-          modelo: [respuesta.modelo, [Validators.required]],
+          // modelo: [respuesta.modelo, [Validators.required]],
           carroceria: [respuesta.carroceria, [Validators.required]],
   
           chasis: [respuesta.chasis, [Validators.required]],
