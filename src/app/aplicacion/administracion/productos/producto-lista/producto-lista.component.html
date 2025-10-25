@@ -1,13 +1,15 @@
 <div class="flex items-center justify-between py-4">
   <div>
-    <h1 class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">Productos</h1>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      Productos
+    </h1>
     <p class="text-sm text-gray-500 dark:text-gray-300">Gestion de Repuestos, Insumos</p>
   </div>
   <div class="ml-auto">
 
-    <button (click)="filtros()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Filtros"
-      type="button">
-      <mat-icon>{{filtro?'filter_list_off':'filter_list'}}</mat-icon>
+    <button (click)="filtros()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Filtros" type="button">
+      <mat-icon>{{ filtro ? 'filter_list_off' : 'filter_list' }}</mat-icon>
     </button>
 
     <button (click)="obtenerConsulta()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Actualizar"
@@ -24,62 +26,55 @@
 
 
 @if (buscadorFormGroup && filtro) {
-  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
-    <div class="flex flex-wrap -mx-2">
-      <div class="w-full md:w-1/5 px-2">
-        <mat-form-field class="flex-auto w-full">
-          <mat-label>Categoria</mat-label>
-          <mat-select formControlName="categoria">
-            <mat-option value="TODOS"> TODOS </mat-option>
-            @for (item of listaCategorias; track item) {
-              <mat-option [value]="item.descripcion">
-                {{item.descripcion}}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="w-full md:w-1/5 px-2">
-        <mat-form-field class="flex-auto w-full">
-          <mat-label>TIPO</mat-label>
-          <mat-select formControlName="tipo">
-            <mat-option value="TODOS"> TODOS </mat-option>
-            @for (item of tipos; track item) {
-              <mat-option [value]="item">
-                {{item}}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="w-full md:w-1/5 px-2">
-        <mat-form-field class="flex-auto w-full">
-          <mat-label>ACTIVO</mat-label>
-          <mat-select formControlName="activo">
-            <mat-option value="TODOS"> TODOS </mat-option>
-            <mat-option value="true"> ACTIVOS </mat-option>
-            <mat-option value="false"> PASIVOS </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="w-full md:w-1/5 px-2">
-        <!--       <mat-form-field class="flex-auto w-full">
-        <mat-label>PUBLICADO</mat-label>
-        <mat-select formControlName="publicado">
+<form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+  <div class="flex flex-wrap -mx-2">
+    <div class="w-full md:w-1/5 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Categoria</mat-label>
+        <mat-select formControlName="categoria">
           <mat-option value="TODOS"> TODOS </mat-option>
-          <mat-option value="true"> PUBLICADO </mat-option>
-          <mat-option value="false"> PENDIENTE </mat-option>
+          @for (item of listaCategorias; track item) {
+          <mat-option [value]="item.descripcion">
+            {{ item.descripcion }}
+          </mat-option>
+          }
         </mat-select>
-      </mat-form-field> -->
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/5 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>TIPO</mat-label>
+        <mat-select formControlName="tipo">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          @for (item of tipos; track item) {
+          <mat-option [value]="item">
+            {{ item }}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/5 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>ACTIVO</mat-label>
+        <mat-select formControlName="activo">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> ACTIVOS </mat-option>
+          <mat-option value="false"> PASIVOS </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/5 px-2">
+      <!-- Espacio reservado para otros filtros -->
     </div>
     <div class="w-full md:w-1/5 px-2">
       <mat-form-field appearance="fill" style="width:100%">
-        <mat-label>Limite</mat-label>
+        <mat-label>Ítems por página</mat-label>
         <mat-select formControlName="limite">
-          @for (item of limites; track item) {
-            <mat-option [value]="item.id">
-              {{item.descripcion}}
-            </mat-option>
+          @for (opt of pageSizeOptions; track opt) {
+          <mat-option [value]="opt">
+            {{ opt }}
+          </mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -94,212 +89,119 @@
       class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-4 flex items-center w-full mr-2">
       <mat-icon>search</mat-icon>
       <input (keyup)="aplicarFiltro($event)"
-        class="px-4 py-3 border-0 outline-none w-full bg-transparent  dark:text-white" placeholder="Buscar...">
+        class="px-4 py-3 border-0 outline-none w-full bg-transparent dark:text-white"
+        placeholder="Buscar en la página actual...">
     </div>
   </div>
 </div>
 
+<div class="mat-elevation-z2 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+  <table mat-table [dataSource]="dataSource" matSort class="min-w-full text-sm dark:bg-slate-800 dark:text-white">
 
-
-
-<div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-  <table class="min-w-full text-sm text-left dark:text-white dark:bg-slate-800">
-    <thead class="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-gray-200">
-      <tr>
-        <th class="px-4 py-2"></th>
-        <th class="px-4 py-2">Codigo</th>
-        <th class="px-4 py-2">Descripcion</th>
-        <th class="px-4 py-2">Clasificación</th>
-        <th class="px-4 py-2">Activo</th>
-        <th class="px-4 py-2 text-right">Opciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of lista; track item) {
-        <tr
-          class="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-700">
-          <!--         <td class="px-4 py-2">
-          <img [src]="item.fotosUrl && item.fotosUrl.length> 0 ? item.fotosUrl[0].url : 'imagenes/sinfoto.png'"
-          alt="Imagen del producto"
-          style="width: 100%; max-width: 80px; height: auto; object-fit: cover; border-radius: 0.5rem; cursor: pointer;"
-          (click)="fotos(item)">
-        </td> -->
-        <td class="px-4 py-2">
-          <div style="width: 100%; max-width: 80px; height: 80px; position: relative;">
-            <!-- Loader visible si está cargando -->
-            <div [hidden]="!item.loading"
-              class="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 animate-pulse rounded">
-              <mat-icon class="text-gray-500 dark:text-gray-400">photo_camera</mat-icon>
-            </div>
-            <!-- Imagen visible cuando deja de cargar -->
-            <img [src]="item.fotosUrl && item.fotosUrl.length> 0 ? item.fotosUrl[0].url : 'imagenes/sinfoto.png'"
-            alt="Imagen del producto" class="w-full h-full object-cover rounded cursor-pointer" (click)="fotos(item)"
-            (load)="item.loading = false" (error)="item.loading = false" [hidden]="item.loading" />
+    <ng-container matColumnDef="foto">
+      <th mat-header-cell *matHeaderCellDef class="w-24"></th>
+      <td mat-cell *matCellDef="let element">
+        <div class="w-20 h-20 relative">
+          <div *ngIf="element.loading"
+            class="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded">
+            <mat-icon class="text-gray-500 dark:text-gray-400">photo_camera</mat-icon>
+          </div>
+          <img [src]="element.fotosUrl && element.fotosUrl.length > 0 ? element.fotosUrl[0].url : 'imagenes/sinfoto.png'"
+            alt="Imagen del producto" class="w-full h-full object-cover rounded cursor-pointer" (click)="fotos(element)"
+            (load)="element.loading = false" (error)="element.loading = false" [class.hidden]="element.loading" />
         </div>
       </td>
-      <td class="px-4 py-2 font-semibold text-red-600 dark:text-red-400">
-        <p [routerLink]="'detalle/'+ item.id"> <span
-              class="text-xs px-2 py-1 rounded-full capitalize text-white cursor-pointer" [ngClass]="{
-            'bg-slate-500': item.tipo === 'PRODUCTO',
-            'bg-yellow-500': item.tipo === 'SERVICIO',
-            'bg-green-500': item.tipo === 'INSUMO'}">
-          {{ item.codigo }}
-        </span>
-      </p>
-    </td>
-    <td class="px-4 py-2">
-      <div class="font-semibold">{{ item.descripcion }}</div>
-    </td>
-    <td class="px-4 py-2 text-xs text-gray-500 dark:text-gray-300">
-      Tipo: {{ item.tipo }}<br>
-      Categoria: {{ item.categoria }}<br>
-      Fabricante: {{ item.fabricante }}<br>
-      Proveedor: {{ item.proveedor }}<br>
-    </td>
-    <td class="px-4 py-2">
-          <span [ngClass]="{
-            'bg-green-500': item.activo,
-            'bg-red-500': !item.activo
+    </ng-container>
+
+    <ng-container matColumnDef="codigo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+      <td mat-cell *matCellDef="let element">
+        <a [routerLink]="'detalle/' + element.id"
+          class="inline-flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-300">
+          <span class="text-xs px-2 py-1 rounded-full text-white"
+            [ngClass]="{
+              'bg-slate-500': element.tipo === 'PRODUCTO',
+              'bg-yellow-500': element.tipo === 'SERVICIO',
+              'bg-green-500': element.tipo === 'INSUMO'
+            }">
+            {{ element.codigo }}
+          </span>
+          <span class="truncate max-w-xs">{{ element.descripcion }}</span>
+        </a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Detalle</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="text-xs text-gray-600 dark:text-gray-300">
+          <div>PV: <span class="font-semibold">{{ element.pv || '-' }}</span></div>
+          <div>Stock: <span class="font-semibold">{{ element.cantidadTotal || 0 }}</span></div>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="clasificacion">
+      <th mat-header-cell *matHeaderCellDef>Clasificación</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="text-xs text-gray-600 dark:text-gray-300 leading-5">
+          <div>Tipo: {{ element.tipo || '-' }}</div>
+          <div>Categoría: {{ element.categoria || '-' }}</div>
+          <div>Fabricante: {{ element.fabricante || '-' }}</div>
+          <div>Proveedor: {{ element.proveedor || '-' }}</div>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="activo">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let element">
+        <span [ngClass]="{
+            'bg-green-500': element.activo,
+            'bg-red-500': !element.activo
           }" class="text-white text-xs px-2 py-1 rounded-full">
-        {{ item.activo ? 'ACTIVO' : 'PASIVO' }}
-      </span>
-    </td>
-    <td class="px-4 py-2 text-right space-x-2">
+          {{ element.activo ? 'ACTIVO' : 'PASIVO' }}
+        </span>
+      </td>
+    </ng-container>
 
-      <a matButton="elevated" [routerLink]="'detalle/'+ item.id" target="_blank">Detalle</a>
+    <ng-container matColumnDef="opciones">
+      <th mat-header-cell *matHeaderCellDef class="text-right">Opciones</th>
+      <td mat-cell *matCellDef="let element" class="text-right">
+        <a mat-button color="primary" [routerLink]="'detalle/' + element.id" target="_blank">Detalle</a>
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Opciones">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="editar(element)">
+            <mat-icon color="primary">edit</mat-icon>
+            <span>Editar</span>
+          </button>
+          <button mat-menu-item (click)="eliminar(element)">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Eliminar</span>
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
 
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Opciones">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="editar(item)">
-          <mat-icon color="tertiary">edit</mat-icon>
-          <span>Editar</span>
-        </button>
-        <button mat-menu-item (click)="eliminar(item)">
-          <mat-icon color="warn">delete</mat-icon>
-          <span>Eliminar</span>
-        </button>
-      </mat-menu>
-      <!--
-      <button (click)="editar(item)" class="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-slate-700">
-        <mat-icon class="text-blue-600 dark:text-blue-400">edit</mat-icon>
-      </button>
-      <button (click)="eliminar(item)" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-slate-700">
-        <mat-icon class="text-red-600 dark:text-red-400">delete</mat-icon>
-      </button> -->
-    </td>
-  </tr>
-}
-</tbody>
-</table>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <tr class="mat-row" *ngIf="isLoadingResults">
+      <td class="text-center py-6" [attr.colspan]="displayedColumns.length">
+        <mat-spinner diameter="32"></mat-spinner>
+      </td>
+    </tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="text-center py-6 text-sm text-gray-500 dark:text-gray-300" [attr.colspan]="displayedColumns.length">
+        No se encontraron productos para los filtros seleccionados.
+      </td>
+    </tr>
+  </table>
+
+  <mat-paginator [length]="resultsLength" [pageSize]="pageSize" [pageIndex]="currentPageIndex"
+    [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" showFirstLastButtons>
+  </mat-paginator>
 </div>
-
-
-
-<!-- <section class="example-container mat-elevation-z8" tabindex="0">
-<table mat-table [dataSource]="dataSource" matSort class="w-full dark:bg-gray-800">
-
-  <ng-container matColumnDef="foto">
-    <th mat-header-cell *matHeaderCellDef class="dark:text-white"> Foto </th>
-    <td mat-cell *matCellDef="let element">
-      <img [src]="element.fotosUrl && element.fotosUrl.length> 0 ? element.fotosUrl[0].url : 'imagenes/sinfoto.png'"
-      alt="Imagen del producto"
-      style="width: 100%; max-width: 80px; height: auto; object-fit: cover; border-radius: 0.5rem; cursor: pointer;"
-      (click)="fotos(element)">
-
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="codigo">
-    <th mat-header-cell *matHeaderCellDef class="dark:text-white" mat-sort-header> Codigo </th>
-    <td mat-cell *matCellDef="let element">
-
-      <p [routerLink]="'detalle/'+ element.id"> <span
-            class="text-xs px-2 py-1 rounded-full capitalize text-white cursor-pointer" [ngClass]="{
-          'bg-slate-500': element.tipo === 'PRODUCTO',
-          'bg-yellow-500': element.tipo === 'SERVICIO',
-          'bg-green-500': element.tipo === 'INSUMO'}">
-        {{ element.codigo }}
-      </span>
-    </p>
-
-    <p class="text-sm px-2 py-1 dark:text-white">
-      {{ element.descripcion }} <mat-icon class="text-yellow-500" *ngIf="element.favorito">star_rate_half</mat-icon>
-    </p>
-
-
-
-
-  </td>
-</ng-container>
-
-<ng-container matColumnDef="codigoBarra">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Codigo Barra </th>
-  <td mat-cell *matCellDef="let element" class="dark:text-white">
-    {{ element.codigoBarra }}
-  </td>
-</ng-container>
-
-<ng-container matColumnDef="pv">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> P. Venta </th>
-  <td mat-cell *matCellDef="let element" class="dark:text-white">
-    {{ element.pv }}
-  </td>
-</ng-container>
-
-<ng-container matColumnDef="cantidadTotal">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Cant. Total </th>
-  <td mat-cell *matCellDef="let element" class="dark:text-white">
-    {{ element.cantidadTotal }}
-  </td>
-</ng-container>
-
-<ng-container matColumnDef="opciones">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
-  <td mat-cell *matCellDef="let element">
-
-
-    <div class="text-right">
-
-
-
-
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Opciones">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-
-
-      <mat-menu #menu="matMenu">
-
-        <button mat-menu-item [routerLink]="'detalle/'+ element.id"
-          class="bg-gray-200 p-2 rounded-full hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-300">
-          <mat-icon color="primary">info</mat-icon>
-          <span>Detalle</span>
-        </button>
-
-        <button mat-menu-item (click)="resumen(element)"
-          class="bg-gray-200 p-2 rounded-full hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-300">
-          <mat-icon color="primary">view_timeline</mat-icon>
-          <span>Resumen</span>
-        </button>
-        <button mat-menu-item (click)="editar(element)">
-          <mat-icon color="tertiary">edit</mat-icon>
-          <span>Editar</span>
-        </button>
-        <button mat-menu-item (click)="eliminar(element)">
-          <mat-icon color="warn">delete</mat-icon>
-          <span>Eliminar</span>
-        </button>
-
-      </mat-menu>
-
-    </div>
-  </td>
-</ng-container>
-
-<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-</table>
-</section> -->

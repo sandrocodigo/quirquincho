@@ -14,6 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 import { ProductoFormComponent } from '../producto-form/producto-form.component';
@@ -22,13 +24,13 @@ import { ProductoResumenComponent } from '../producto-resumen/producto-resumen.c
 import { ProductoService } from '../../../servicios/producto.service';
 import { RouterModule } from '@angular/router';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
 import { AuthService } from '../../../servicios/auth.service';
-import { limites } from '../../../datos/limites';
 import { ProductoCategoriaService } from '../../../servicios/producto-categoria.service';
 
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-producto-lista',
@@ -49,7 +51,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
     MatSelectModule,
     MatTableModule,
     MatSortModule,
-    MatTooltip,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
     MatMenuModule
   ],
 })
@@ -58,8 +62,6 @@ export class ProductoListaComponent {
   buscadorControl = false;
 
   tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
-  limites = limites;
-
   filtro = false;
 
   usuario: any | null = null;
@@ -70,13 +72,21 @@ export class ProductoListaComponent {
   dataSource = new MatTableDataSource<any>([]);
 
   // Nombre de las columnas que se mostrarán
-  displayedColumns: string[] = ['foto', 'codigo', 'codigoBarra', 'pv', 'cantidadTotal', 'opciones'];
+  displayedColumns: string[] = ['foto', 'codigo', 'descripcion', 'clasificacion', 'activo', 'opciones'];
 
   // ViewChild para manejar el ordenamiento
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   lista: any[] = [];
   listaOriginal: any[] = [];
+  pageSizeOptions: number[] = [10, 20, 50, 100];
+  pageSize = this.pageSizeOptions[1];
+  resultsLength = 0;
+  isLoadingResults = false;
+  currentPageIndex = 0;
+  private pageAnchors: (QueryDocumentSnapshot<DocumentData> | null)[] = [null];
+  private currentFilters: any = {};
 
   constructor(
     private fb: FormBuilder,
@@ -101,7 +111,7 @@ export class ProductoListaComponent {
       tipo: ['TODOS'],
       publicado: ['TODOS'],
       categoria: ['TODOS'],
-      limite: [1000],
+      limite: [this.pageSize],
     });
     // this.obtenerConsulta();
     this.establecerSuscripcionForm();
@@ -115,30 +125,38 @@ export class ProductoListaComponent {
       // console.log('Filtro:', this.filtro); // `true` si la pantalla es menor o igual a 768px
     });
 
-    this.obtenerCategorias()
+    this.obtenerCategorias();
+    this.obtenerConsulta();
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+    if (this.paginator) {
+      this.paginator.pageSize = this.pageSize;
+    }
   }
 
   get b(): any { return this.buscadorFormGroup.controls; }
 
   establecerSuscripcionForm() {
     this.b.categoria.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      this.onFiltersChanged();
     });
     this.b.tipo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      this.onFiltersChanged();
     });
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      this.onFiltersChanged();
     });
     this.b.publicado.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      this.onFiltersChanged();
     });
     this.b.limite.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      const parsed = Number(val);
+      if (!parsed || parsed <= 0) {
+        return;
+      }
+      this.onPageSizeSelect(parsed);
     });
   }
 
@@ -150,23 +168,7 @@ export class ProductoListaComponent {
   }
 
   obtenerConsulta(): void {
-    this.cargando.show();
-    this.productoServicio.obtenerConsulta(this.buscadorFormGroup.getRawValue()).then((respuesta: any) => {
-      console.log('CONSULTA CON SALDO: ', respuesta);
-
-      const resultadosOrdenados = respuesta
-        .sort((a: any, b: any) => b.codigo - a.codigo)
-        .map((item: any) => ({
-          ...item,
-          loading: true // 🔹 Agregamos estado de carga por imagen
-        }));
-
-      this.dataSource.data = resultadosOrdenados;
-      this.lista = resultadosOrdenados;
-      this.listaOriginal = [...resultadosOrdenados];
-
-      this.cargando.hide();
-    });
+    this.loadPage(0, this.pageSize, true);
   }
 
   nuevo() {
@@ -263,11 +265,9 @@ export class ProductoListaComponent {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-
   filtros() {
     this.filtro = !this.filtro;
   }
-
 
   aplicarFiltro(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -275,9 +275,11 @@ export class ProductoListaComponent {
     if (!filterValue.trim()) {
       // Si el filtro está vacío, restaura la lista original
       this.lista = [...this.listaOriginal];
+      this.dataSource.data = [...this.listaOriginal];
     } else {
       // Filtra la lista
       this.lista = this.buscarEnJson(this.listaOriginal, filterValue);
+      this.dataSource.data = this.lista;
     }
   }
 
@@ -289,6 +291,97 @@ export class ProductoListaComponent {
         (value ?? '').toString().toLowerCase().includes(lowerSearchTerm)
       )
     );
+  }
+
+  async onPageChange(event: PageEvent) {
+    if (event.pageSize !== this.pageSize) {
+      this.onPageSizeSelect(event.pageSize);
+      return;
+    }
+    await this.loadPage(event.pageIndex, event.pageSize);
+  }
+
+  private async onPageSizeSelect(size: number) {
+    this.pageSize = size;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    } else {
+      this.currentPageIndex = 0;
+    }
+    this.b.limite.setValue(size, { emitEvent: false });
+    await this.loadPage(0, this.pageSize, true);
+  }
+
+  private async onFiltersChanged() {
+    await this.loadPage(0, this.pageSize, true);
+  }
+
+  private obtenerFiltrosLimpiados() {
+    const { limite, ...resto } = this.buscadorFormGroup.getRawValue();
+    return resto;
+  }
+
+  private async loadPage(pageIndex: number, pageSize: number, resetAnchors = false) {
+    this.isLoadingResults = true;
+    this.cargando.show();
+    if (resetAnchors) {
+      this.pageAnchors = [null];
+      this.currentPageIndex = 0;
+      this.currentFilters = this.obtenerFiltrosLimpiados();
+    }
+
+    let hasValidCount = true;
+    try {
+      if (resetAnchors) {
+        try {
+          this.resultsLength = await this.productoServicio.obtenerConteoProductos(this.currentFilters);
+        } catch (error) {
+          console.warn('No fue posible obtener el conteo total de productos:', error);
+          hasValidCount = false;
+          this.resultsLength = 0;
+        }
+      }
+
+      const cursor = pageIndex > 0 ? this.pageAnchors[pageIndex] ?? undefined : undefined;
+      const { items, last } = await this.productoServicio.obtenerPaginaProductos(
+        this.currentFilters,
+        pageSize,
+        cursor
+      );
+
+      const resultados = items.map((item: any) => ({
+        ...item,
+        loading: true
+      }));
+
+      this.lista = resultados;
+      this.listaOriginal = [...resultados];
+      this.dataSource.data = resultados;
+      this.currentPageIndex = pageIndex;
+      if (!hasValidCount) {
+        const estimado = pageIndex * pageSize + (last ? pageSize * 2 : resultados.length);
+        this.resultsLength = Math.max(this.resultsLength, estimado);
+      } else {
+        this.resultsLength = resetAnchors && !this.resultsLength
+          ? resultados.length
+          : Math.max(this.resultsLength, pageIndex * pageSize + resultados.length);
+      }
+
+      if (this.paginator) {
+        this.paginator.pageIndex = pageIndex;
+        this.paginator.pageSize = pageSize;
+        this.paginator.length = this.resultsLength;
+      }
+
+      if (last) {
+        this.pageAnchors[pageIndex + 1] = last;
+      } else {
+        this.pageAnchors = this.pageAnchors.slice(0, pageIndex + 1);
+      }
+    } finally {
+      this.isLoadingResults = false;
+      this.cargando.hide();
+    }
   }
 
 }

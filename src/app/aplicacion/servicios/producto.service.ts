@@ -1,6 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Firestore, collectionData, collection, addDoc, doc, setDoc, getDoc, updateDoc, orderBy, onSnapshot, query, where, getDocs, CollectionReference, limit } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collectionData,
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  orderBy,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+  CollectionReference,
+  limit,
+  startAfter,
+  QueryDocumentSnapshot,
+  DocumentData,
+  getCountFromServer
+} from '@angular/fire/firestore';
 import { Producto } from '../modelos/producto';
 
 @Injectable({
@@ -85,30 +105,35 @@ export class ProductoService {
     );
   }
 
+  private construirFiltrosConsulta(datos: any) {
+    const condiciones: any[] = [];
+
+    if (datos?.hasOwnProperty('activo') && datos.activo !== 'TODOS') {
+      const activoBoolean = datos.activo === 'true' || datos.activo === true;
+      condiciones.push(where('activo', '==', activoBoolean));
+    }
+
+    if (datos?.categoria && datos.categoria !== 'TODOS') {
+      condiciones.push(where('categoria', '==', datos.categoria));
+    }
+
+    if (datos?.tipo && datos.tipo !== 'TODOS') {
+      condiciones.push(where('tipo', '==', datos.tipo));
+    }
+
+    if (datos?.publicado && datos.publicado !== 'TODOS') {
+      const publicadoBoolean = datos.publicado === 'true' || datos.publicado === true;
+      condiciones.push(where('publicado', '==', publicadoBoolean));
+    }
+
+    return condiciones;
+  }
+
   // OBTENER CONSULTA
   async obtenerConsulta(datos: any): Promise<Producto[]> {
 
     let coleccion = collection(this.firestore, `${this.url}`) as CollectionReference<Producto>;
-    let condiciones = [];
-
-    if (datos.hasOwnProperty('activo') && datos.activo !== 'TODOS') {
-      const activoBoolean = datos.activo === 'true'; // Asegúrate de que sea booleano
-      condiciones.push(where('activo', '==', activoBoolean));
-    }
-
-    // Aplicar condiciones solo si el usuario y el producto no son 'TODOS'
-    if (datos.categoria !== 'TODOS') {
-      condiciones.push(where('categoria', '==', datos.categoria));
-    }
-
-    if (datos.tipo !== 'TODOS') {
-      condiciones.push(where('tipo', '==', datos.tipo));
-    }
-
-    if (datos.publicado !== 'TODOS') {
-      const publicadoBoolean = datos.publicado === 'true'; // Asegúrate de que sea booleano
-      condiciones.push(where('publicado', '==', publicadoBoolean));
-    }
+    let condiciones = this.construirFiltrosConsulta(datos);
 
     // Orden predeterminado y rango de fechas
     let ordenYRango = [
@@ -123,6 +148,34 @@ export class ProductoService {
     const registros = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
     return registros;
+  }
+
+  async obtenerConteoProductos(datos: any): Promise<number> {
+    const coleccion = collection(this.firestore, `${this.url}`) as CollectionReference<Producto>;
+    const condiciones = this.construirFiltrosConsulta(datos);
+    const q = query(coleccion, ...condiciones);
+    const snapshot = await getCountFromServer(q);
+    return snapshot.data().count;
+  }
+
+  async obtenerPaginaProductos(
+    datos: any,
+    tam: number,
+    cursor?: QueryDocumentSnapshot<DocumentData>
+  ): Promise<{ items: Producto[]; last: QueryDocumentSnapshot<DocumentData> | null }> {
+    const coleccion = collection(this.firestore, `${this.url}`) as CollectionReference<Producto>;
+    const filtros = this.construirFiltrosConsulta(datos);
+    const baseConstraints = [...filtros, orderBy('codigo')];
+    const paginacion = cursor
+      ? [...baseConstraints, startAfter(cursor), limit(tam)]
+      : [...baseConstraints, limit(tam)];
+
+    const q = query(coleccion, ...paginacion);
+    const snap = await getDocs(q);
+    const items = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }) as Producto);
+    const last = snap.docs.at(-1) ?? null;
+
+    return { items, last };
   }
 
 
