@@ -406,6 +406,7 @@ export class IngresoDetalleComponent {
                 fechaAprobacion: fechaRegistro,
                 cantidadSaldo: item.cantidad,
                 finalizado: true,
+                finalizadoFecha: new Date(),
               }),
 
               // KARDEX
@@ -500,6 +501,9 @@ export class IngresoDetalleComponent {
             subtotal: precioCompra,
 
             fechaRegistro: fechaRegistro,
+
+            registroFecha: new Date(),
+            registroUsuario: this.usuario.email,
 
             finalizado: false,
             observado: false,

@@ -15,6 +15,8 @@ import { ProductoEditorComponent } from '../producto-editor/producto-editor.comp
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ArchivoSeleccionarComponent } from '../../archivos/archivo-seleccionar/archivo-seleccionar.component';
 import { KardexService } from '../../../servicios/karex.service';
+import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.service';
+import { EgresoDetalleService } from '../../../servicios/egreso-detalle.service';
 
 @Component({
   selector: 'app-producto-detalle',
@@ -37,15 +39,28 @@ export class ProductoDetalleComponent {
   fotoSeleccionado: any = null;
 
 
-  listaKardexLaPaz: any;
-  listaKardexSantaCruz: any;
-  listaKardexCochabamba: any;
+  listaKardexLaPaz: any[] = [];
+  listaKardexSantaCruz: any[] = [];
+  listaKardexCochabamba: any[] = [];
+
+
+  listaIngresosLaPaz: any[] = [];
+  listaIngresosSantaCruz: any[] = [];
+  listaIngresosCochabamba: any[] = [];
+
+
+  listaEgresosLaPaz: any[] = [];
+  listaEgresosSantaCruz: any[] = [];
+  listaEgresosCochabamba: any[] = [];
 
   constructor(
     private ruta: ActivatedRoute,
     private auth: AuthService,
     private pServicio: ProductoService,
     private kardexServicio: KardexService,
+    private ingresoDetalleServicio: IngresoDetalleService,
+    private egresoDetalleServicio: EgresoDetalleService,
+
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
     private cargando: SpinnerService,
@@ -60,7 +75,7 @@ export class ProductoDetalleComponent {
 
   ngOnInit() {
     this.obtenerProducto();
-    
+
   }
 
   obtenerProducto() {
@@ -79,6 +94,8 @@ export class ProductoDetalleComponent {
       }
 
       this.obtenerKardex();
+      this.obtenerIngresos();
+      this.obtenerEgresos();
     });
   }
 
@@ -202,4 +219,95 @@ export class ProductoDetalleComponent {
   sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
+
+  async obtenerIngresos(): Promise<void> {
+    this.cargando.show('Obteniendo Ingresos...');
+    try {
+      const sucursales = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
+
+      // 1) Traer todo en paralelo
+      const [lp, sc, cb] = await Promise.all(
+        sucursales.map(c => this.ingresoDetalleServicio.obtenerPorSucuraslYProducto(c, this.idProducto))
+      );
+
+      // 2) Procesador reutilizable
+      const procesar = (items: any[] = []) => {
+        let acc = 0;
+        return items
+          .slice()
+  /*         .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+          .map((i) => {
+            const cant = Number(i.cantidad) || 0;
+            const signo = i.tipo === 'INGRESO' ? 1 : i.tipo === 'EGRESO' ? -1 : 0;
+            acc += signo * cant;
+            return { ...i, cantidadAcumulada: acc };
+          }); */
+      };
+
+      // 3) Asignar
+      this.listaIngresosLaPaz = procesar(lp);
+      this.listaIngresosSantaCruz = procesar(sc);
+      this.listaIngresosCochabamba = procesar(cb);
+    } catch (err) {
+      console.error(err);
+      // this.snackBar?.open('Ocurrió un error al cargar el Kardex', 'Cerrar', { duration: 4000 });
+    } finally {
+      this.cargando.hide();
+    }
+  }
+
+    async obtenerEgresos(): Promise<void> {
+    this.cargando.show('Obteniendo Egresos...');
+    try {
+      const sucursales = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
+
+      // 1) Traer todo en paralelo
+      const [lp, sc, cb] = await Promise.all(
+        sucursales.map(c => this.egresoDetalleServicio.obtenerPorSucuraslYProducto(c, this.idProducto))
+      );
+
+      // 2) Procesador reutilizable
+      const procesar = (items: any[] = []) => {
+        let acc = 0;
+        return items
+          .slice()
+  /*         .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+          .map((i) => {
+            const cant = Number(i.cantidad) || 0;
+            const signo = i.tipo === 'INGRESO' ? 1 : i.tipo === 'EGRESO' ? -1 : 0;
+            acc += signo * cant;
+            return { ...i, cantidadAcumulada: acc };
+          }); */
+      };
+
+      // 3) Asignar
+      this.listaEgresosLaPaz = procesar(lp);
+      this.listaEgresosSantaCruz = procesar(sc);
+      this.listaEgresosCochabamba = procesar(cb);
+    } catch (err) {
+      console.error(err);
+      // this.snackBar?.open('Ocurrió un error al cargar el Kardex', 'Cerrar', { duration: 4000 });
+    } finally {
+      this.cargando.hide();
+    }
+  }
+
+
+/*   buscarIngresos(): void {
+    this.cargando.show();
+    this.ingresoDetalleServicio.obtenerPorProducto(this.idProducto).then((respuesta: any) => {
+      console.log('INGRESOS DE PRODUCTOS: ', respuesta);
+      this.listaIngresos = respuesta;
+      this.cargando.hide();
+    });
+  }
+
+  buscarEgresos(): void {
+    this.cargando.show();
+    this.egresoDetalleServicio.obtenerPorProducto(this.idProducto).then((respuesta: any) => {
+      console.log('EGRESOS DE PRODUCTOS: ', respuesta);
+      this.listaEgresos = respuesta;
+      this.cargando.hide();
+    });
+  } */
 }

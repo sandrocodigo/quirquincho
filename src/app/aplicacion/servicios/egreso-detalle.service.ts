@@ -205,7 +205,7 @@ export class EgresoDetalleService {
 
     return registros;
   }
-  
+
   // ELIMINAR
   async eliminar(ID: any) {
     const documento = doc(this.firestore, `${this.url}`, ID);
@@ -283,5 +283,22 @@ export class EgresoDetalleService {
     const registros = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
     return registros;
+  }
+
+  // OBTENER POR SUCURSAL PRODUCTO
+  async obtenerPorSucuraslYProducto(idSucursal: any, idProducto: any): Promise<any[]> {
+    let q = query(
+      collection(this.firestore, `${this.url}`) as CollectionReference<any>,
+      where('sucursal', '==', idSucursal),
+      where('productoId', '==', idProducto),
+      //orderBy('finalizadoFecha')
+    );
+    return getDocs(q).then((querySnapshot) => {
+      const registros: any[] = [];
+      querySnapshot.forEach((doc) => {
+        registros.push({ ...doc.data(), id: doc.id } as any);
+      });
+      return registros;
+    });
   }
 }

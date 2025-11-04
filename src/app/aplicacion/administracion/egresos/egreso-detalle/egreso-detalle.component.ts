@@ -463,7 +463,7 @@ export class EgresoDetalleComponent {
 
               // Actualizar cantidad pendiente y saldo disponible
               const nuevoSaldo = disponible - aDescontar;
-              await this.ingresoDetalleServicio.editar(ingresoDetalle.id, { cantidadSaldo: nuevoSaldo });
+              await this.ingresoDetalleServicio.editar(ingresoDetalle.id, { cantidadSaldo: nuevoSaldo, finalizadoFecha: new Date() });
 
               // Registrar en Kardex
               await this.kardexServicio.crear({
@@ -651,7 +651,7 @@ export class EgresoDetalleComponent {
             fechaRegistro: fechaRegistro,
 
             // Control
-            registroFecha: fechaRegistro,
+            registroFecha: new Date(),
             registroUsuario: this.usuario.email,
 
             finalizado: false,

@@ -338,4 +338,22 @@ export class IngresoDetalleService {
     await deleteDoc(documento);
   }
 
+
+  // OBTENER POR SUCURSAL PRODUCTO
+  async obtenerPorSucuraslYProducto(idSucursal: any, idProducto: any): Promise<any[]> {
+    let q = query(
+      collection(this.firestore, `${this.url}`) as CollectionReference<any>,
+      where('sucursal', '==', idSucursal),
+      where('productoId', '==', idProducto),
+      orderBy('fechaAprobacion')
+    );
+    return getDocs(q).then((querySnapshot) => {
+      const registros: any[] = [];
+      querySnapshot.forEach((doc) => {
+        registros.push({ ...doc.data(), id: doc.id } as any);
+      });
+      return registros;
+    });
+  }
+
 }
