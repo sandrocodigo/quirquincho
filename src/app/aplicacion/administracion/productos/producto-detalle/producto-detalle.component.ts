@@ -38,20 +38,15 @@ export class ProductoDetalleComponent {
   fotos: any[] = [];
   fotoSeleccionado: any = null;
 
+  private readonly sucursalesOrden = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
 
-  listaKardexLaPaz: any[] = [];
-  listaKardexSantaCruz: any[] = [];
-  listaKardexCochabamba: any[] = [];
-
-
-  listaIngresosLaPaz: any[] = [];
-  listaIngresosSantaCruz: any[] = [];
-  listaIngresosCochabamba: any[] = [];
-
-
-  listaEgresosLaPaz: any[] = [];
-  listaEgresosSantaCruz: any[] = [];
-  listaEgresosCochabamba: any[] = [];
+  sucursales = this.sucursalesOrden.map((id) => ({
+    id,
+    nombre: id === 'LA PAZ' ? 'La Paz' : id === 'SANTA CRUZ' ? 'Santa Cruz' : 'Cochabamba',
+    kardex: [] as any[],
+    ingresos: [] as any[],
+    egresos: [] as any[],
+  }));
 
   listaEgresos: any[] = [];
   listaIngresos: any[] = [];
@@ -186,11 +181,9 @@ export class ProductoDetalleComponent {
   async obtenerKardex(): Promise<void> {
     this.cargando.show('Cargando Kardex…');
     try {
-      const ciudades = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
-
       // 1) Traer todo en paralelo
       const [lp, sc, cb] = await Promise.all(
-        ciudades.map(c => this.kardexServicio.obtenerPorProducto(c, this.idProducto))
+        this.sucursalesOrden.map(c => this.kardexServicio.obtenerPorProducto(c, this.idProducto))
       );
 
       // 2) Procesador reutilizable
@@ -208,9 +201,9 @@ export class ProductoDetalleComponent {
       };
 
       // 3) Asignar
-      this.listaKardexLaPaz = procesar(lp);
-      this.listaKardexSantaCruz = procesar(sc);
-      this.listaKardexCochabamba = procesar(cb);
+      [lp, sc, cb].map(procesar).forEach((lista, idx) => {
+        this.actualizarSucursal(this.sucursalesOrden[idx], 'kardex', lista);
+      });
     } catch (err) {
       console.error(err);
       // this.snackBar?.open('Ocurrió un error al cargar el Kardex', 'Cerrar', { duration: 4000 });
@@ -228,11 +221,9 @@ export class ProductoDetalleComponent {
   async obtenerIngresos(): Promise<void> {
     this.cargando.show('Obteniendo Ingresos...');
     try {
-      const sucursales = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
-
       // 1) Traer todo en paralelo
       const [lp, sc, cb] = await Promise.all(
-        sucursales.map(c => this.ingresoDetalleServicio.obtenerPorSucuraslYProducto(c, this.idProducto))
+        this.sucursalesOrden.map(c => this.ingresoDetalleServicio.obtenerPorSucuraslYProducto(c, this.idProducto))
       );
 
       // 2) Procesador reutilizable
@@ -250,9 +241,9 @@ export class ProductoDetalleComponent {
       };
 
       // 3) Asignar
-      this.listaIngresosLaPaz = procesar(lp);
-      this.listaIngresosSantaCruz = procesar(sc);
-      this.listaIngresosCochabamba = procesar(cb);
+      [lp, sc, cb].map(procesar).forEach((lista, idx) => {
+        this.actualizarSucursal(this.sucursalesOrden[idx], 'ingresos', lista);
+      });
     } catch (err) {
       console.error(err);
       // this.snackBar?.open('Ocurrió un error al cargar el Kardex', 'Cerrar', { duration: 4000 });
@@ -264,11 +255,9 @@ export class ProductoDetalleComponent {
   async obtenerEgresos(): Promise<void> {
     this.cargando.show('Obteniendo Egresos...');
     try {
-      const sucursales = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
-
       // 1) Traer todo en paralelo
       const [lp, sc, cb] = await Promise.all(
-        sucursales.map(c => this.egresoDetalleServicio.obtenerPorSucuraslYProducto(c, this.idProducto))
+        this.sucursalesOrden.map(c => this.egresoDetalleServicio.obtenerPorSucuraslYProducto(c, this.idProducto))
       );
 
       // 2) Procesador reutilizable
@@ -286,9 +275,9 @@ export class ProductoDetalleComponent {
       };
 
       // 3) Asignar
-      this.listaEgresosLaPaz = procesar(lp);
-      this.listaEgresosSantaCruz = procesar(sc);
-      this.listaEgresosCochabamba = procesar(cb);
+      [lp, sc, cb].map(procesar).forEach((lista, idx) => {
+        this.actualizarSucursal(this.sucursalesOrden[idx], 'egresos', lista);
+      });
     } catch (err) {
       console.error(err);
       // this.snackBar?.open('Ocurrió un error al cargar el Kardex', 'Cerrar', { duration: 4000 });
@@ -311,5 +300,20 @@ export class ProductoDetalleComponent {
       this.cargando.hide();
       this.listaEgresos = respuesta;
     });
+  }
+
+  getTotal(items: any[] = [], campo: string): number {
+    return (items || []).reduce((acc, actual) => acc + (Number(actual?.[campo]) || 0), 0);
+  }
+
+  private actualizarSucursal(
+    id: (typeof this.sucursalesOrden)[number],
+    tipo: 'kardex' | 'ingresos' | 'egresos',
+    data: any[]
+  ): void {
+    const sucursal = this.sucursales.find((item) => item.id === id);
+    if (sucursal) {
+      sucursal[tipo] = data;
+    }
   }
 }
