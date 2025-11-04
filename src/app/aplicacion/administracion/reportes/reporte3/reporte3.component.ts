@@ -16,6 +16,7 @@ import { limites } from '../../../datos/limites';
 import { Title } from '@angular/platform-browser';
 import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.service';
 import { EgresoDetalleService } from '../../../servicios/egreso-detalle.service';
+import { EgresoService } from '../../../servicios/egreso.service';
 
 @Component({
   selector: 'app-reporte3',
@@ -54,6 +55,7 @@ export class Reporte3Component {
   constructor(
     private fb: FormBuilder,
     private cargando: SpinnerService,
+    private egresoServicio: EgresoService,
     private egresoDetalleServicio: EgresoDetalleService,
     private titleService: Title
   ) {
@@ -113,6 +115,19 @@ export class Reporte3Component {
 
     return sumas;  // Devolver un objeto con la suma de cada columna
   }
+
+  async corregir() {
+    this.cargando.show();
+
+    for (const element of this.lista) {
+      const egreso: any = await this.egresoServicio.obtenerPorId(element.egresoId);
+      await this.egresoDetalleServicio.editar(element.id, { sucursal: egreso.sucursal });
+      console.log('Corregido elemento ID:', element.id);
+    }
+
+    this.cargando.hide();
+  }
+
 
   imprimir() {
     let printContents: any, popupWin: any;

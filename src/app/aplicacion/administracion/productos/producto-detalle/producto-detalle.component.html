@@ -173,7 +173,13 @@
               {{item.tipo}}
             </td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.motivo}}</td>
-            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.codigo}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">
+
+              {{item.codigo}}
+
+
+
+            </td>
             <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100">{{item.cantidad}}</td>
             <td class="px-4 py-3 text-right text-gray-800 dark:text-gray-100"
               [ngClass]="{ 'text-2xl font-semibold text-blue-600 dark:text-blue-500': isLast }">
@@ -344,7 +350,10 @@
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.fecha | date}} <br>
               {{item.fechaAprobacion.toDate() | date:'short'}}</td>
-            <td class="px-4 py-3 font-medium"> {{item.ingresoCodigo}} </td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/ingresos/detalle/' + item.ingresoId"
+                target="_blank">{{item.ingresoCodigo}}</a>
+            </td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pc}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>
@@ -400,7 +409,10 @@
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.fecha | date}} <br>
               {{item.fechaAprobacion.toDate() | date:'short'}}</td>
-            <td class="px-4 py-3 font-medium"> {{item.ingresoCodigo}} </td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/ingresos/detalle/' + item.ingresoId"
+                target="_blank">{{item.ingresoCodigo}}</a>
+            </td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pc}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>
@@ -456,7 +468,10 @@
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.fecha | date}} <br>
               {{item.fechaAprobacion.toDate() | date:'short'}}</td>
-            <td class="px-4 py-3 font-medium"> {{item.ingresoCodigo}} </td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/ingresos/detalle/' + item.ingresoId"
+                target="_blank">{{item.ingresoCodigo}}</a>
+            </td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pc}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>
@@ -516,7 +531,10 @@
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">
               {{item.registroFecha?.toDate() | date:'short'}}</td>
-            <td class="px-4 py-3 font-medium"> {{item.egresoCodigo}} </td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/egresos/detalle/' + item.egresoId"
+                target="_blank">{{item.egresoCodigo}}</a>
+            </td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pv}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>
@@ -573,7 +591,10 @@
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">
               {{item.registroFecha?.toDate() | date:'short'}}</td>
-            <td class="px-4 py-3 font-medium"> {{item.egresoCodigo}} </td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/egresos/detalle/' + item.egresoId"
+                target="_blank">{{item.egresoCodigo}}</a>
+            </td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pv}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>
@@ -630,7 +651,138 @@
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100">
               {{item.registroFecha?.toDate() | date:'short'}}</td>
-            <td class="px-4 py-3 font-medium"> {{item.egresoCodigo}} </td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/egresos/detalle/' + item.egresoId"
+                target="_blank">{{item.egresoCodigo}}</a>
+            </td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pv}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>
+            <td class="px-4 py-3 font-medium text-end" [ngClass]="item.finalizado === true
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : item.finalizado === false
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-gray-800 dark:text-gray-100'">
+              {{item.finalizado?'FINALIZADO':'PENDIENTE'}} <br>
+              <span class="text-xs">{{item.finalizadoFecha?.toDate()|date:'short'}}</span>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<div class="space-y-8">
+  <div class="bg-white dark:bg-gray-700 shadow-lg rounded-xl border border-gray-100 dark:border-gray-600">
+    <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-600">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Ingresos En General</h2>
+      <span class="text-xs font-medium uppercase tracking-wide text-blue-600 dark:text-blue-300">Inventario</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-600">
+        <thead class="bg-gray-50 dark:bg-gray-800">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Sucursal
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Fecha
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Ingreso
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cantidad
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              P. C.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              SubTotal
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Finalizado
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white dark:divide-gray-700 dark:bg-gray-700">
+          @for (item of listaIngresos; track item; let isLast = $last) {
+          <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.fecha | date}} <br>
+              {{item.fechaAprobacion.toDate() | date:'short'}}</td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/ingresos/detalle/' + item.ingresoId"
+                target="_blank">{{item.ingresoCodigo}}</a>
+            </td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pc}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>
+            <td class="px-4 py-3 font-medium text-end" [ngClass]="item.finalizado === true
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : item.finalizado === false
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-gray-800 dark:text-gray-100'">
+              {{item.finalizado?'FINALIZADO':'PENDIENTE'}}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<br><br>
+
+<div class="space-y-8">
+  <div class="bg-white dark:bg-gray-700 shadow-lg rounded-xl border border-gray-100 dark:border-gray-600">
+    <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-600">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Egresos en General</h2>
+      <span class="text-xs font-medium uppercase tracking-wide text-blue-600 dark:text-blue-300">Inventario</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-600">
+        <thead class="bg-gray-50 dark:bg-gray-800">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Sucursal
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Fecha Registro
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Egreso
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Cantidad
+            </th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              P. C.
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              SubTotal
+            </th>
+            <th class="px-4 py-3 text-right font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
+              Finalizado
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white dark:divide-gray-700 dark:bg-gray-700">
+          @for (item of listaEgresos; track item; let isLast = $last) {
+          <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">{{item.sucursal}}</td>
+            <td class="px-4 py-3 text-gray-800 dark:text-gray-100">
+              {{item.registroFecha?.toDate() | date:'short'}}</td>
+            <td class="px-4 py-3 font-medium">
+              <a mat-button color="primary" [routerLink]="'/administracion/egresos/detalle/' + item.egresoId"
+                target="_blank">{{item.egresoCodigo}}</a>
+            </td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-center">{{item.cantidad}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text end">{{item.pv}}</td>
             <td class="px-4 py-3 text-gray-800 dark:text-gray-100 text-end">{{item.subtotal}}</td>

@@ -53,6 +53,9 @@ export class ProductoDetalleComponent {
   listaEgresosSantaCruz: any[] = [];
   listaEgresosCochabamba: any[] = [];
 
+  listaEgresos: any[] = [];
+  listaIngresos: any[] = [];
+
   constructor(
     private ruta: ActivatedRoute,
     private auth: AuthService,
@@ -96,6 +99,8 @@ export class ProductoDetalleComponent {
       this.obtenerKardex();
       this.obtenerIngresos();
       this.obtenerEgresos();
+      this.obtenerIngresosPorProducto();
+      this.obtenerEgresosPorProducto();
     });
   }
 
@@ -235,13 +240,13 @@ export class ProductoDetalleComponent {
         let acc = 0;
         return items
           .slice()
-  /*         .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
-          .map((i) => {
-            const cant = Number(i.cantidad) || 0;
-            const signo = i.tipo === 'INGRESO' ? 1 : i.tipo === 'EGRESO' ? -1 : 0;
-            acc += signo * cant;
-            return { ...i, cantidadAcumulada: acc };
-          }); */
+        /*         .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+                .map((i) => {
+                  const cant = Number(i.cantidad) || 0;
+                  const signo = i.tipo === 'INGRESO' ? 1 : i.tipo === 'EGRESO' ? -1 : 0;
+                  acc += signo * cant;
+                  return { ...i, cantidadAcumulada: acc };
+                }); */
       };
 
       // 3) Asignar
@@ -256,7 +261,7 @@ export class ProductoDetalleComponent {
     }
   }
 
-    async obtenerEgresos(): Promise<void> {
+  async obtenerEgresos(): Promise<void> {
     this.cargando.show('Obteniendo Egresos...');
     try {
       const sucursales = ['LA PAZ', 'SANTA CRUZ', 'COCHABAMBA'] as const;
@@ -271,13 +276,13 @@ export class ProductoDetalleComponent {
         let acc = 0;
         return items
           .slice()
-  /*         .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
-          .map((i) => {
-            const cant = Number(i.cantidad) || 0;
-            const signo = i.tipo === 'INGRESO' ? 1 : i.tipo === 'EGRESO' ? -1 : 0;
-            acc += signo * cant;
-            return { ...i, cantidadAcumulada: acc };
-          }); */
+        /*         .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+                .map((i) => {
+                  const cant = Number(i.cantidad) || 0;
+                  const signo = i.tipo === 'INGRESO' ? 1 : i.tipo === 'EGRESO' ? -1 : 0;
+                  acc += signo * cant;
+                  return { ...i, cantidadAcumulada: acc };
+                }); */
       };
 
       // 3) Asignar
@@ -292,22 +297,19 @@ export class ProductoDetalleComponent {
     }
   }
 
-
-/*   buscarIngresos(): void {
+  obtenerIngresosPorProducto(): void {
     this.cargando.show();
     this.ingresoDetalleServicio.obtenerPorProducto(this.idProducto).then((respuesta: any) => {
-      console.log('INGRESOS DE PRODUCTOS: ', respuesta);
-      this.listaIngresos = respuesta;
       this.cargando.hide();
+      this.listaIngresos = respuesta;
     });
   }
 
-  buscarEgresos(): void {
+  obtenerEgresosPorProducto(): void {
     this.cargando.show();
     this.egresoDetalleServicio.obtenerPorProducto(this.idProducto).then((respuesta: any) => {
-      console.log('EGRESOS DE PRODUCTOS: ', respuesta);
-      this.listaEgresos = respuesta;
       this.cargando.hide();
+      this.listaEgresos = respuesta;
     });
-  } */
+  }
 }

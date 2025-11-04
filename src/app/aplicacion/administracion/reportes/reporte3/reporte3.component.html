@@ -1,16 +1,19 @@
 <div class="flex items-center justify-between py-4">
   <h1 class="text-3xl font-semibold dark:text-white">3. Egresos de Productos</h1>
-  <button (click)="imprimir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz"
-    type="button">
+  <button (click)="imprimir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz" type="button">
     <mat-icon>print</mat-icon>
   </button>
+
+<!--     <button (click)="corregir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz" type="button">
+    <mat-icon>update</mat-icon>
+  </button> -->
 </div>
 
 @if (buscadorFormGroup ) {
-  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
-    <div class="flex flex-wrap -mx-2">
-      <div class="w-full md:w-1/4 px-2">
-        <!--             <mat-form-field class="flex-auto w-full">
+<form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+  <div class="flex flex-wrap -mx-2">
+    <div class="w-full md:w-1/4 px-2">
+      <!--             <mat-form-field class="flex-auto w-full">
         <mat-label>EMPRESA</mat-label>
         <mat-select formControlName="empresa">
           <mat-option value="TODOS"> TODOS </mat-option>
@@ -30,7 +33,7 @@
         <mat-option value="IGUAL_A_0">IGUAL A 0</mat-option>
       </mat-select>
     </mat-form-field> -->
-    <!--             <mat-form-field class="flex-auto w-full">
+      <!--             <mat-form-field class="flex-auto w-full">
     <mat-label>PUBLICADO</mat-label>
     <mat-select formControlName="publicado">
       <mat-option value="TODOS"> TODOS </mat-option>
@@ -38,30 +41,30 @@
       <mat-option value="false"> PENDIENTE </mat-option>
     </mat-select>
   </mat-form-field> -->
-</div>
-<div class="w-full md:w-1/4 px-2">
-  <mat-form-field class="flex-auto w-full">
-    <mat-label>Estado</mat-label>
-    <mat-select formControlName="finalizado">
-      <mat-option value="TODOS"> TODOS </mat-option>
-      <mat-option value="true"> FINALIZADO </mat-option>
-      <mat-option value="false"> PENDIENTE </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-<div class="w-full md:w-1/4 px-2">
-  <mat-form-field appearance="fill" style="width:100%">
-    <mat-label>Limite</mat-label>
-    <mat-select formControlName="limite">
-      @for (item of limites; track item) {
-        <mat-option [value]="item.id">
-          {{item.descripcion}}
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-</div>
-</div>
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="finalizado">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> FINALIZADO </mat-option>
+          <mat-option value="false"> PENDIENTE </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/4 px-2">
+      <mat-form-field appearance="fill" style="width:100%">
+        <mat-label>Limite</mat-label>
+        <mat-select formControlName="limite">
+          @for (item of limites; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
 </form>
 }
 
@@ -70,9 +73,10 @@
     <thead>
       <tr>
         <th colspan="3">EGRESOS</th>
-        <th colspan="3">{{fechaHoy| date}}</th>
+        <th colspan="4">{{fechaHoy| date}}</th>
       </tr>
       <tr>
+        <th>SUCURSAL</th>
         <th>CODIGO</th>
         <th>DESCRIPCION</th>
         <th>P.C.</th>
@@ -83,14 +87,15 @@
     </thead>
     <tbody>
       @for (item of lista; track item; let ultimo = $last) {
-        <tr>
-          <td style="text-align:start"> {{item.productoCodigo}} </td>
-          <td style="text-align:start">{{item.productoDescripcion}}</td>
-          <td style="text-align:start">{{item.pc}}</td>
-          <td style="text-align:start">{{item.pv}}</td>
-          <td style="text-align:start">{{item.cantidad}}</td>
-          <td style="text-align:start">{{item.subtotal}}</td>
-        </tr>
+      <tr>
+        <td style="text-align:start"> {{item.sucursal}} </td>
+        <td style="text-align:start"> {{item.productoCodigo}} </td>
+        <td style="text-align:start">{{item.productoDescripcion}}</td>
+        <td style="text-align:start">{{item.pc}}</td>
+        <td style="text-align:start">{{item.pv}}</td>
+        <td style="text-align:start">{{item.cantidad}}</td>
+        <td style="text-align:start">{{item.subtotal}}</td>
+      </tr>
       }
     </tbody>
     <!--         <tfoot *ngIf="totales">
@@ -107,5 +112,5 @@
       <th style="text-align:end"></th>
     </tr>
   </tfoot> -->
-</table>
+  </table>
 </div>

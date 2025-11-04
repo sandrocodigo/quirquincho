@@ -13,5 +13,5 @@ export const limites = [
     { id: 200, descripcion: '200' },
     { id: 500, descripcion: '500' },
     { id: 1000, descripcion: '1000' },
-    { id: 2000, descripcion: 'TODO' },
+    { id: 10000, descripcion: 'TODO' },
 ];

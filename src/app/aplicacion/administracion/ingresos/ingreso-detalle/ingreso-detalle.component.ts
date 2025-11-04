@@ -416,6 +416,7 @@ export class IngresoDetalleComponent {
                 tipo: 'INGRESO',
                 motivo: this.ingreso.tipo,
                 codigo: this.ingreso.codigo,
+                codigoId: this.idIngreso,
                 productoId: item.productoId,
                 productoCodigo: item.productoCodigo,
                 productoDescripcion: item.productoDescripcion,
@@ -423,6 +424,8 @@ export class IngresoDetalleComponent {
                 cantidadParcial: cantidadParcial,
                 usuario: this.usuario.email,
                 fechaRegistro: fechaRegistro,
+                registroFecha: new Date(),
+                registroUsuario: this.usuario.email,
               }),
 
               // PRODUCTO

@@ -473,6 +473,7 @@ export class EgresoDetalleComponent {
 
                 motivo: this.egreso.tipo,
                 codigo: this.egreso.codigo,
+                codigoId: this.idEgreso,
 
                 productoId: item.productoId,
                 productoCodigo: item.productoCodigo,
@@ -485,8 +486,8 @@ export class EgresoDetalleComponent {
                 fechaRegistro: fechaRegistro,
 
                 // Control
-                registroFecha: fechaRegistro,
-                registroUsuario: this.usuario.email
+                registroFecha: new Date(),
+                registroUsuario: this.usuario.email,
 
               });
 
@@ -620,6 +621,8 @@ export class EgresoDetalleComponent {
             egresoId: this.idEgreso,
             egresoCodigo: this.egreso.codigo,
             egresoDescripcion: this.egreso.descripcion,
+
+            sucursal: this.egreso.sucursal,
 
             //ingresoDetalleId: ingresoDetalle.id,
             //ingresoCantidadSaldo: ingresoDetalle.cantidadSaldo,
