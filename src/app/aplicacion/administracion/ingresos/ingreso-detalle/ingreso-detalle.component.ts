@@ -171,13 +171,18 @@ export class IngresoDetalleComponent {
   }
 
   obtenerIngresoDetalle(): void {
-    this.cargando.show();
-    this.ingresoDetalleServicio.obtenerPorIngreso(this.idIngreso).then(respuesta => {
-      console.log('DETALLE: ', respuesta);
-      this.detalle = respuesta;
-      this.total = this.calcularTotal();
-      this.cargando.hide();
-    });
+    this.cargando.show('Obteniendo detalle...');
+    this.ingresoDetalleServicio.obtenerPorIngreso(this.idIngreso)
+      .then(respuesta => {
+        console.log('DETALLE: ', respuesta);
+        this.detalle = respuesta;
+        this.total = this.calcularTotal();
+      })
+      .catch(err => {
+        console.error('obtenerEgresoDetalle error', err);
+        this.snackbar.open('Error al cargar el detalle', 'OK', { duration: 3000 });
+      })
+      .finally(() => this.cargando.hide());
   }
 
   obtenerProductos() {
@@ -458,7 +463,7 @@ export class IngresoDetalleComponent {
     const fechaRegistro = new Date();
     const fecha = new Date().toISOString().split('T')[0];
 
-    this.cargando.show();
+    this.cargando.show('Adicionando...');
     const detallePediente = this.buscarEnLaLista(this.detalle, "productoId", producto.id);
     if (detallePediente) {
       //console.log('DETALLE PENDIENTE: ', detallePediente);
@@ -512,9 +517,9 @@ export class IngresoDetalleComponent {
             finalizado: false,
             observado: false,
           }).then(res => {
+            this.cargando.hide();
             console.log('RESPUESTA: ', res);
             this.snackbar.open('Adicionado! [+1] : ' + producto.productoDescripcion, 'OK', { duration: 1000 });
-            this.cargando.show();
             this.obtenerIngresoDetalle();
             if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
             if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }

@@ -580,110 +580,106 @@ export class EgresoDetalleComponent {
     });
   }
 
-  adicionar(producto: any) {
-
+  async adicionar(producto: any) {
     const fechaRegistro = new Date();
     const fecha = new Date().toISOString().split('T')[0];
 
-    const detallePediente = this.buscarEnLaLista(this.detalle, "productoId", producto.id);
-    if (detallePediente) {
-      //console.log('DETALLE PENDIENTE: ', detallePediente);
-      this.sumar(detallePediente);
-      if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
-      if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }
-
-    } else {
-      this.cargando.show('Obteniendo detalle de ingresos...');
-      this.ingresoDetalleServicio.obtenerPorIdProducto(this.egreso.sucursal, producto.id).then(res => {
-        this.cargando.hide();
-        console.log('DETALLE DE INGRESOS ENCONTRADOS: ', res);
-
-        if (res.length > 0) {
-          // const ingresoDetalle = res[0];
-          const registros = res.length;
-          const totales: any = this.calculoServicio.sumarPorColumnas(res);
-
-          const cantidadSaldo = totales.cantidadSaldo;
-          const precioCompra = totales.pc / registros;
-          const precioVenta = totales.pv / registros;
-
-          console.log('REGISTROS: ', res.length);
-          console.log('CANTIDAD SALDO: ', cantidadSaldo);
-          console.log('PC: ', precioCompra);
-          console.log('PV: ', precioVenta);
-
-          this.cargando.show('Creando...');
-          this.egresoDetalleServicio.crear({
-
-            fecha: fecha,
-
-            egresoId: this.idEgreso,
-            egresoCodigo: this.egreso.codigo,
-            egresoDescripcion: this.egreso.descripcion,
-            egresoTipo: this.egreso.tipo,
-
-            sucursal: this.egreso.sucursal,
-
-            //ingresoDetalleId: ingresoDetalle.id,
-            //ingresoCantidadSaldo: ingresoDetalle.cantidadSaldo,
-
-            // DETALLE ORDEN Y VEHICULO
-            ordenId: this.egreso.ordenId || '',
-            ordenCodigo: this.egreso.ordenCodigo || 0,
-
-            vehiculoId: this.egreso.vehiculoId || '',
-            vehiculoInterno: this.egreso.vehiculoInterno || '',
-            vehiculoPlaca: this.egreso.vehiculoPlaca || '',
-            vehiculoEmpresa: this.egreso.vehiculoEmpresa || '',
-
-            mantenimientoTipo: this.egreso.mantenimientoTipo || '',
-            mantenimientoDescripcion: this.egreso.mantenimientoDescripcion || '',
-
-            productoId: producto.id,
-            productoTipo: producto.tipo,
-            productoCodigo: producto.codigo,
-            productoDescripcion: producto.descripcion,
-            productoCodigoBarra: producto.codigoBarra,
-            productoFotosUrl: producto.fotosUrl,
-
-            cantidad: 1,
-            cantidadSaldo: cantidadSaldo,
-            pc: precioCompra,
-            pv: precioVenta,
-            subtotal: precioVenta,
-            fechaRegistro: fechaRegistro,
-
-            // Control
-            registroFecha: new Date(),
-            registroUsuario: this.usuario.email,
-
-            finalizado: false,
-            observado: false,
-          }).then(res => {
-            this.cargando.hide();
-            console.log('RESPUESTA: ', res);
-            this.snackbar.open('Adicionado! [+1] : ' + producto.productoDescripcion, 'OK', { duration: 1000 });
-            this.obtenerEgresoDetalle();
-            if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
-            if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }
-          });
-        } else {
-          this.cargando.hide();
-          const dialogRef = this.dialog.open(MensajeComponent, {
-            data: {
-              titulo: 'SALDO INSUFICIENTE',
-              mensaje: 'Se recomienda ingresar mas cantidades de ' + producto.descripcion + ' en Ingresos',
-            },
-          });
-
-          dialogRef.afterClosed().subscribe(async result => {
-            if (result) {
-            }
-          });
-        }
-      });
-
+    const detallePendiente = this.buscarEnLaLista(this.detalle, 'productoId', producto.id);
+    if (detallePendiente) {
+      this.sumar(detallePendiente);
+      this.limpiarInputsProducto();
+      return;
     }
+
+    let ingresos: any[] = [];
+    this.cargando.show('Obteniendo detalle de ingresos...');
+    try {
+      ingresos = await this.ingresoDetalleServicio.obtenerPorIdProducto(this.egreso.sucursal, producto.id);
+      console.log('DETALLE DE INGRESOS ENCONTRADOS: ', ingresos);
+    } catch (error) {
+      console.error('Error al obtener detalle de ingresos', error);
+      this.snackbar.open('No se pudo obtener el detalle de ingresos', 'OK', { duration: 3000 });
+      return;
+    } finally {
+      this.cargando.hide();
+    }
+
+    if (!ingresos.length) {
+      this.mostrarSaldoInsuficiente(producto);
+      return;
+    }
+
+    const registros = ingresos.length;
+    const totales: any = this.calculoServicio.sumarPorColumnas(ingresos);
+
+    const cantidadSaldo = totales.cantidadSaldo;
+    const precioCompra = registros ? totales.pc / registros : 0;
+    const precioVenta = registros ? totales.pv / registros : 0;
+
+    console.log('REGISTROS: ', registros);
+    console.log('CANTIDAD SALDO: ', cantidadSaldo);
+    console.log('PC: ', precioCompra);
+    console.log('PV: ', precioVenta);
+
+    this.cargando.show('Creando...');
+    try {
+      await this.egresoDetalleServicio.crear({
+        fecha,
+        egresoId: this.idEgreso,
+        egresoCodigo: this.egreso.codigo,
+        egresoDescripcion: this.egreso.descripcion,
+        egresoTipo: this.egreso.tipo,
+        sucursal: this.egreso.sucursal,
+        ordenId: this.egreso.ordenId || '',
+        ordenCodigo: this.egreso.ordenCodigo || 0,
+        vehiculoId: this.egreso.vehiculoId || '',
+        vehiculoInterno: this.egreso.vehiculoInterno || '',
+        vehiculoPlaca: this.egreso.vehiculoPlaca || '',
+        vehiculoEmpresa: this.egreso.vehiculoEmpresa || '',
+        mantenimientoTipo: this.egreso.mantenimientoTipo || '',
+        mantenimientoDescripcion: this.egreso.mantenimientoDescripcion || '',
+        productoId: producto.id,
+        productoTipo: producto.tipo,
+        productoCodigo: producto.codigo,
+        productoDescripcion: producto.descripcion,
+        productoCodigoBarra: producto.codigoBarra,
+        productoFotosUrl: producto.fotosUrl,
+        cantidad: 1,
+        cantidadSaldo,
+        pc: precioCompra,
+        pv: precioVenta,
+        subtotal: precioVenta,
+        fechaRegistro,
+        registroFecha: new Date(),
+        registroUsuario: this.usuario.email,
+        finalizado: false,
+        observado: false,
+      });
+      this.snackbar.open('Adicionado! [+1] : ' + producto.descripcion, 'OK', { duration: 1000 });
+      this.obtenerEgresoDetalle();
+      this.limpiarInputsProducto();
+    } catch (error) {
+      console.error('Error al crear detalle de egreso', error);
+      this.snackbar.open('No se pudo adicionar el producto', 'OK', { duration: 3000 });
+    } finally {
+      this.cargando.hide();
+    }
+  }
+
+  private limpiarInputsProducto(): void {
+    if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
+    if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }
+  }
+
+  private mostrarSaldoInsuficiente(producto: any): void {
+    const dialogRef = this.dialog.open(MensajeComponent, {
+      data: {
+        titulo: 'SALDO INSUFICIENTE',
+        mensaje: 'Se recomienda ingresar mas cantidades de ' + producto.descripcion + ' en Ingresos',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(() => { });
   }
 
   nuevo() {
