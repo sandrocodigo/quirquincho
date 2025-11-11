@@ -1,81 +1,182 @@
-<body class="bg-gray-100 dark:bg-slate-900 dark:text-white h-screen">
-  <div class="flex h-full">
+<body class="min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
+  <div class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="relative min-h-screen overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 opacity-60">
+        <div class="absolute -top-32 left-16 h-96 w-96 rounded-full bg-emerald-600/60 blur-3xl"></div>
+        <div class="absolute -bottom-24 right-0 h-[420px] w-[420px] rounded-full bg-lime-500/40 blur-3xl"></div>
+      </div>
 
-    <button (click)="toggleMenu()"
-      class="fixed top-5 right-5 z-50 p-2 bg-blue-500 text-white rounded-full shadow-lg md:hidden">
-      <span class="material-icons">{{menuOpen?'close':'menu'}}</span>
-    </button>
+      <div class="relative z-10 flex min-h-screen flex-col">
+        <header class="border-b border-white/5 bg-slate-950/80 backdrop-blur">
+          <div class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-5 lg:px-6">
+            <a [routerLink]="'/'" class="flex items-center space-x-3">
+              <span
+                class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-300 shadow-lg shadow-emerald-900/40">
+                <span class="material-icons">storefront</span>
+              </span>
+              <div>
+                <p class="text-xs uppercase tracking-[0.25em] text-emerald-300/80">App</p>
+                <p class="text-lg font-semibold leading-tight">QuirquinchoPRO</p>
+              </div>
+            </a>
 
-    <nav [ngClass]="{'hidden': !menuOpen, 'block': menuOpen, 'md:block': true}"
-            class="w-20 bg-white dark:bg-slate-950 dark:border-gray-700 border-r border-gray-200 
-            md:relative md:translate-x-0 transform transition-transform duration-300 ease-in-out z-50 md:z-auto h-full">
+            <button type="button"
+              class="inline-flex items-center gap-1 rounded-xl border border-emerald-400/30 bg-slate-900/70 px-3 py-2 text-sm text-emerald-200 shadow md:hidden"
+              (click)="toggleMenu()">
+              <span class="material-icons text-base">{{ menuOpen ? 'close' : 'menu' }}</span>
+              <span>Menu</span>
+            </button>
 
-      <div class="flex flex-col items-center mt-10 space-y-4">
+            <nav
+              class="hidden flex-1 flex-wrap items-center justify-center gap-2 text-sm font-medium text-slate-300 md:flex">
+              @for (item of menuItems; track item) {
+              <a [routerLink]="item.link" routerLinkActive="active" (click)="closeMenuAfterNavigation()"
+                class="nav-pill">
+                <span class="material-icons text-base">{{ item.icon }}</span>
+                <span>{{ item.label }}</span>
+              </a>
+              }
 
-        @if (usuario) {
-          <button type="button" [matMenuTriggerFor]="menu"
-            class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
-            <span class="sr-only">Open user menu</span>
-            <img class="w-8 h-8 rounded-full" [src]="foto"
+              @if (usuario && usuarioDatos && usuarioDatos.adminTipo=='administrador') {
+              <a [routerLink]="'administracion'" routerLinkActive="active" (click)="closeMenuAfterNavigation()"
+                class="nav-pill">
+                <span class="material-icons text-base">computer</span>
+                <span>Administración</span>
+              </a>
+              }
+            </nav>
+
+            <div class="hidden items-center gap-3 md:flex">
+
+
+              @if (usuario) {
+              <button type="button" [matMenuTriggerFor]="menu"
+                class="flex items-center gap-2 rounded-full border border-emerald-400/30 bg-slate-900/60 px-3 py-1.5 text-sm text-slate-100 shadow">
+                <img class="h-8 w-8 rounded-full object-cover" [src]="foto"
+                  [alt]="usuario.displayName ? usuario.displayName : 'Avatar'">
+                <span class="max-w-[120px] truncate">{{ usuario.displayName || usuario.email }}</span>
+              </button>
+              }
+
+              @if(usuario) {
+              <button (click)="salir()" type="button"
+                class="rounded-full border border-emerald-400/40 px-4 py-2 text-xs font-semibold text-emerald-200 transition hover:bg-emerald-500/10">
+                Salir
+              </button>
+              }
+
+              @if(!usuario) {
+              <button [routerLink]="'login'" type="button"
+                class="rounded-full bg-gradient-to-r from-emerald-400 to-lime-300 px-5 py-2 text-xs font-semibold text-slate-950 shadow-lg shadow-emerald-900/40 transition hover:scale-[1.02]">
+                Iniciar
+              </button>
+              }
+
+              <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode($event)" class="text-xs text-slate-300">
+                <span class="text-[11px] text-slate-200">{{ darkMode ? 'Claro' : 'Oscuro' }}</span>
+              </mat-slide-toggle>
+
+            </div>
+          </div>
+        </header>
+
+        @if (menuOpen) {
+        <div class="fixed inset-0 z-30 bg-slate-950/80 backdrop-blur-sm md:hidden" (click)="toggleMenu()"
+          aria-hidden="true"></div>
+        <div
+          class="fixed inset-x-4 top-24 z-40 rounded-3xl border border-white/10 bg-slate-950/95 p-5 shadow-2xl md:hidden">
+          <div class="mb-4 flex items-center gap-3">
+            @if (usuario) {
+            <img class="h-12 w-12 rounded-full object-cover" [src]="foto"
               [alt]="usuario.displayName ? usuario.displayName : 'Avatar'">
-          </button>
+            <div>
+              <p class="text-sm font-semibold">{{ usuario.displayName || 'Usuario' }}</p>
+              <p class="text-xs text-slate-400">{{ usuario.email }}</p>
+            </div>
+            }
+            @else {
+            <p class="text-xs text-slate-400">Inicia sesión para acceder al menú</p>
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            @for (item of menuItems; track item) {
+            <a [routerLink]="item.link" routerLinkActive="active" (click)="closeMenuAfterNavigation()"
+              class="mobile-pill">
+              <span class="material-icons text-base">{{ item.icon }}</span>
+              <span>{{ item.label }}</span>
+            </a>
+            }
+
+            @if (usuario && usuarioDatos && usuarioDatos.adminTipo=='administrador') {
+            <a [routerLink]="'administracion'" routerLinkActive="active" (click)="closeMenuAfterNavigation()"
+              class="mobile-pill">
+              <span class="material-icons text-base">computer</span>
+              <span>Administración</span>
+            </a>
+            }
+          </div>
+
+          <div class="mt-4 flex items-center justify-between">
+            <span class="text-xs text-slate-400">Modo {{ darkMode ? 'claro' : 'oscuro' }}</span>
+            <mat-slide-toggle color="accent" [(ngModel)]="darkMode"
+              (change)="toggleDarkMode($event)"></mat-slide-toggle>
+          </div>
+
+          <div class="mt-4 flex flex-col gap-3">
+            @if(usuario) {
+            <button type="button" (click)="salir()"
+              class="rounded-xl border border-emerald-400/40 px-4 py-2 text-sm font-semibold text-emerald-200">
+              Salir
+            </button>
+            }
+
+            @if(!usuario) {
+            <button type="button" [routerLink]="'login'"
+              class="rounded-xl bg-gradient-to-r from-emerald-400 to-lime-300 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-900/50">
+              Iniciar
+            </button>
+            }
+
+
+          </div>
+        </div>
         }
 
-        <!-- [routerLinkActiveOptions]="{ exact: true }" -->
-        @for (item of menuItems; track item) {
-          <a [routerLink]="item.link" routerLinkActive="active"
-            class="flex flex-col items-center justify-center w-full h-14 hover:text-blue-500 dark:text-cyan-300 "
-            [ngClass]="item.color">
-            <span class="material-icons">{{ item.icon }}</span>
-            <span class="text-xs mt-1">{{ item.label }}</span>
-          </a>
-        }
+        <main class="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-16 pt-6 sm:px-6">
+          <div
+            class="w-full rounded-3xl border border-white/10 bg-slate-900/60 p-4 shadow-2xl shadow-emerald-900/30 backdrop-blur">
+            <router-outlet></router-outlet>
+          </div>
+        </main>
+      </div>
+    </div>
 
-        <!--
-        <a [routerLink]="'/'"
-          class="flex flex-col items-center justify-center w-full h-16 text-red-800 hover:text-blue-500 dark:text-lime-100">
-          <span class="material-icons">sunny</span>
-          <span class="text-xs mt-1">Inicio</span>
-        </a>
-
-        <a [routerLink]="'/viajes'"
-          class="flex flex-col items-center justify-center w-full h-16 text-red-700 hover:text-blue-500 dark:text-lime-200">
-          <span class="material-icons">car_rental</span>
-          <span class="text-xs mt-1">Viajes</span>
-        </a>
-
-        <a [routerLink]="'/contacto'"
-          class="flex flex-col items-center justify-center w-full h-16 text-red-600 hover:text-blue-500 dark:text-lime-500">
-          <span class="material-icons">phone</span>
-          <span class="text-xs mt-1">Contacto</span>
-        </a>
-        -->
-        
-        <div class="mt-10">
-          <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode($event)"></mat-slide-toggle>
+    <div class="border-t border-white/5 bg-slate-950/95 px-6 py-8 text-sm text-slate-500">
+      <div class="mx-auto flex max-w-6xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p>© QuirquinchoPro. Todos los derechos reservados.</p>
+        <div class="flex flex-wrap gap-4">
+          <a [routerLink]="'/terminos'" class="transition hover:text-emerald-200">Términos</a>
+          <a [routerLink]="'/privacidad'" class="transition hover:text-emerald-200">Privacidad</a>
+          <a [routerLink]="'/soporte'" class="transition hover:text-emerald-200">Soporte</a>
         </div>
       </div>
-    </nav>
-
-    <main class="flex-1 p-5 md:ml-0 h-full overflow-auto">
-      <router-outlet></router-outlet>
-    </main>
-
+    </div>
   </div>
 
   <mat-menu #menu="matMenu">
     @if (usuario) {
-      <button mat-menu-item>
-        <mat-icon>person</mat-icon>
-        <span>{{usuario.email}}</span>
-      </button>
+    <button mat-menu-item>
+      <mat-icon>person</mat-icon>
+      <span>{{usuario.email}}</span>
+    </button>
     }
 
     @if (usuario && usuarioDatos && usuarioDatos.adminTipo=='administrador') {
-      <button mat-menu-item [routerLink]="'administracion'">
-        <mat-icon>computer</mat-icon>
-        <span>App Administracion</span>
-      </button>
+    <button mat-menu-item [routerLink]="'administracion'">
+      <mat-icon>computer</mat-icon>
+      <span>App Administración</span>
+    </button>
     }
 
     <button mat-menu-item (click)="salir()">
@@ -83,6 +184,4 @@
       <span>Salir</span>
     </button>
   </mat-menu>
-
 </body>
-

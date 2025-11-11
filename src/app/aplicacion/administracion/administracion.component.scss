@@ -1,7 +1,96 @@
+:host {
+    --theme-primary: #2563eb;
+    --theme-primary-strong: #1e40af;
+    --theme-primary-soft: rgba(37, 99, 235, 0.14);
+    --theme-primary-contrast: #ffffff;
+}
+
+:host-context(.theme-orange) {
+    --theme-primary: #f97316;
+    --theme-primary-strong: #ea580c;
+    --theme-primary-soft: rgba(249, 115, 22, 0.16);
+}
+
+:host-context(.theme-cyan) {
+    --theme-primary: #06b6d4;
+    --theme-primary-strong: #0e7490;
+    --theme-primary-soft: rgba(6, 182, 212, 0.18);
+}
+
+:host-context(.theme-violet) {
+    --theme-primary: #8b5cf6;
+    --theme-primary-strong: #6d28d9;
+    --theme-primary-soft: rgba(139, 92, 246, 0.16);
+}
+
+:host-context(.theme-magenta) {
+    --theme-primary: #db2777;
+    --theme-primary-strong: #be185d;
+    --theme-primary-soft: rgba(219, 39, 119, 0.14);
+}
+
+:host-context(.theme-chartreuse) {
+    --theme-primary: #84cc16;
+    --theme-primary-strong: #4d7c0f;
+    --theme-primary-soft: rgba(132, 204, 22, 0.18);
+}
+
+:host-context(.theme-rose) {
+    --theme-primary: #f43f5e;
+    --theme-primary-strong: #be123c;
+    --theme-primary-soft: rgba(244, 63, 94, 0.16);
+}
+
+.themed-btn {
+    border-color: var(--theme-primary-soft);
+    color: var(--theme-primary);
+}
+
+.themed-btn:hover {
+    background-color: var(--theme-primary-soft);
+}
+
+.themed-surface {
+    border-color: var(--theme-primary-soft);
+}
+
+.menu-link {
+    color: rgba(15, 23, 42, 0.8);
+    background-color: transparent;
+}
+
+:host-context(.dark) .menu-link {
+    color: rgba(241, 245, 249, 0.85);
+}
+
+.menu-link:hover {
+    color: var(--theme-primary);
+    background-color: var(--theme-primary-soft);
+}
+
+.menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    padding: 0.35rem;
+    background-color: var(--theme-primary-soft);
+    color: var(--theme-primary);
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.menu-link:hover .menu-icon {
+    background-color: var(--theme-primary);
+    color: var(--theme-primary-contrast);
+}
 
 .active {
-    color: white;
-    /* Cambia a tu color preferido para el elemento activo */
-    //font-weight: bold;
-    background: linear-gradient(to right, #08b722, #04842d, #02441b, #011704);
+    color: var(--theme-primary-contrast) !important;
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-primary-strong)) !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18);
+}
+
+.active .menu-icon {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: var(--theme-primary-contrast) !important;
 }

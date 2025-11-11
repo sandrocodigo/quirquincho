@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../servicios/auth.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { UsuarioService } from '../servicios/usuario.service';
+import { filter } from 'rxjs';
 
 
 @Component({
@@ -86,6 +87,10 @@ export class AdministracionComponent {
         // console.log('USUARIO FOTO: ', this.foto);
       }
     });
+
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => this.closeMenuAfterNavigation());
   }
 
   ngOnInit(): void {
@@ -126,6 +131,12 @@ export class AdministracionComponent {
     this.menuOpen = !this.menuOpen;
   }
 
+  closeMenuAfterNavigation() {
+    if (this.isMobileView()) {
+      this.menuOpen = false;
+    }
+  }
+
   buscarEnLaListaMuchos<T>(list: T[], key: keyof T, value: any): T[] {
     return list.filter(item => item[key] === value);
   }
@@ -156,5 +167,9 @@ export class AdministracionComponent {
 
   isActive(id: string) {
     return this.colorTheme === id;
+  }
+
+  private isMobileView(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth < 768;
   }
 }

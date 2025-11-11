@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 
 // MATERIAL
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { UsuarioService } from '../servicios/usuario.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-sitio',
@@ -74,6 +75,10 @@ export class SitioComponent {
         // console.log('USUARIO FOTO: ', this.foto);
       }
     });
+
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => this.closeMenuAfterNavigation());
   }
 
 ngOnInit(): void {
@@ -114,6 +119,12 @@ ngOnInit(): void {
     this.menuOpen = !this.menuOpen;
   }
 
+  closeMenuAfterNavigation() {
+    if (this.menuOpen && this.isMobileView()) {
+      this.menuOpen = false;
+    }
+  }
+
   buscarEnLaListaMuchos<T>(list: T[], key: keyof T, value: any): T[] {
     return list.filter(item => item[key] === value);
   }
@@ -140,6 +151,10 @@ ngOnInit(): void {
     this.colorTheme = theme;
     localStorage.setItem('colorTheme', theme);
     this.syncThemeClasses();
+  }
+
+  private isMobileView(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth < 768;
   }
 
 }

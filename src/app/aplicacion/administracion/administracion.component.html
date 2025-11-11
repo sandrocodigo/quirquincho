@@ -1,61 +1,84 @@
-<!-- <body class="bg-gray-100 dark:bg-slate-900 dark:text-white h-screen"
-style="background-image: url('imagenes/fondo.webp'); background-size: cover; background-attachment: fixed;"> -->
-
-<body class="bg-gray-100 dark:bg-slate-900 dark:text-white h-screen">
-
-  <!-- Capa de opacidad encima del fondo -->
+<body class="min-h-screen overflow-x-hidden bg-gray-100 dark:bg-slate-900 dark:text-white">
   <div class="absolute inset-0 bg-black/10 dark:bg-black/30 z-0"></div>
 
-  <div class="relative flex h-full z-10">
-
-    <!-- Botón flotante (menú móvil) -->
-    <button (click)="toggleMenu()"
-      class="fixed bottom-5 right-5 z-50 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition duration-300 md:hidden">
-      <span class="material-icons">{{ menuOpen ? 'close' : 'menu' }}</span>
-    </button>
-
-    <!-- Menú lateral -->
-    <nav [ngClass]="{'hidden': !menuOpen, 'block': menuOpen, 'md:block': true}" class="w-20 bg-white dark:bg-slate-950 border-r border-gray-200 dark:border-slate-800 shadow-sm
-                md:relative md:translate-x-0 transform transition-transform duration-300 ease-in-out z-50 h-full">
-
-      <div class="flex flex-col items-center mt-8 space-y-5">
-
-        @if (usuario) {
-        <button type="button" [matMenuTriggerFor]="menu"
-          class="flex text-sm bg-gray-800 rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600">
-          <span class="sr-only">Open user menu</span>
-          <img class="w-8 h-8 rounded-full" [src]="foto" [alt]="usuario.displayName ? usuario.displayName : 'Avatar'">
+  <div class="relative z-10 flex min-h-screen flex-col bg-gradient-to-br from-white/70 via-white/40 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-slate-900">
+    <!-- Mobile header -->
+    <header
+      class="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-white/60 bg-white/80 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/70 md:hidden">
+      <div class="flex items-center gap-3">
+        <button type="button" (click)="toggleMenu()"
+          class="themed-btn inline-flex rounded-xl border bg-white/80 p-2 shadow-sm transition">
+          <span class="material-icons">{{ menuOpen ? 'close' : 'menu' }}</span>
+          <span class="sr-only">Abrir menú</span>
         </button>
-        }
-
-        <!-- [routerLinkActiveOptions]="{ exact: true }" -->
-        @for (item of menuItems; track item; let i = $index) {
-        <a [routerLink]="item.link" routerLinkActive="active"
-          class="flex flex-col items-center justify-center w-full h-16 text-gray-700 hover:text-blue-500 dark:text-cyan-300 transition-all"
-          [ngClass]="item.color">
-          <!-- ↑ opcional: “stagger” con delay por índice -->
-          <span class="material-icons !text-4xl">{{ item.icon }}</span>
-          <span class="text-xs mt-1">{{ item.label }}</span>
-        </a>
-        }
-        <a
-          class="flex flex-col items-center justify-center w-full h-14 hover:text-blue-500 dark:text-cyan-300 border-t border-gray-300 dark:border-gray-600">
-          <span class="text-xs mt-1">Version 2.0</span>
-        </a>
-
-
-        <!--                 <div class="mt-10">
-        <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode($event)"></mat-slide-toggle>
-      </div> -->
-
+        <div>
+          <p class="text-sm font-semibold text-slate-700 dark:text-white">Panel principal</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Gestiona toda la operación desde aquí</p>
+        </div>
       </div>
-    </nav>
 
-    <!-- Contenido principal -->
-    <main class="flex-1 p-6 overflow-y-auto backdrop-blur-sm bg-white/80 dark:bg-slate-900 rounded-l-3xl">
-      <router-outlet></router-outlet>
-    </main>
+      @if (usuario) {
+      <button type="button" [matMenuTriggerFor]="menu"
+        class="themed-surface flex items-center gap-2 rounded-full bg-white/90 p-1 pr-3 shadow-sm">
+        <img class="h-8 w-8 rounded-full object-cover" [src]="foto" [alt]="usuario.displayName ? usuario.displayName : 'Avatar'" />
+        <span class="text-xs font-medium text-slate-700 dark:text-slate-200">{{ usuario.displayName || 'Usuario' }}</span>
+      </button>
+      }
+    </header>
 
+    @if (menuOpen) {
+    <div class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden" (click)="toggleMenu()" aria-hidden="true"></div>
+    }
+
+    <div class="flex flex-1 flex-col md:flex-row">
+      <!-- Lateral menu -->
+      <nav
+        class="fixed inset-y-0 left-0 z-40 flex w-48 flex-col border-r border-white/60 bg-white/90 text-slate-700 shadow-xl transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-950/90 md:static md:w-44 lg:w-40 md:translate-x-0"
+        [class.-translate-x-full]="!menuOpen">
+        <div class="flex flex-col gap-8 overflow-y-auto px-3 py-5">
+          <div class="flex flex-col items-center gap-1.5 text-center">
+            @if (usuario) {
+            <button type="button" [matMenuTriggerFor]="menu"
+              class="themed-surface flex w-full max-w-full flex-col items-center gap-1.5 rounded-xl border bg-white/70 px-3 py-3 shadow-sm">
+              <img class="h-12 w-12 rounded-full object-cover" [src]="foto" [alt]="usuario.displayName ? usuario.displayName : 'Avatar'">
+              <div class="w-full max-w-full">
+                <p class="truncate text-xs font-semibold text-slate-700 dark:text-white">{{ usuario.displayName || 'Usuario'
+                  }}</p>
+                <p class="truncate text-[11px] text-slate-500 dark:text-slate-400">{{ usuario.email }}</p>
+              </div>
+            </button>
+            }
+            @else {
+            <div class="text-[11px] text-slate-500 dark:text-slate-400">Inicia sesión para ver accesos</div>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            @for (item of menuItems; track item; let i = $index) {
+            <a [routerLink]="item.link" routerLinkActive="active" (click)="closeMenuAfterNavigation()"
+              class="menu-link group flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[11px] font-semibold transition-all"
+              [ngClass]="item.color">
+              <span class="material-icons menu-icon !text-xl">
+                {{ item.icon }}
+              </span>
+              <span class="truncate">{{ item.label }}</span>
+            </a>
+            }
+          </div>
+        </div>
+
+        <div class="mt-auto border-t border-white/60 px-4 py-4 text-center text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+          Version 3.0
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <main class="flex-1 overflow-y-auto px-3 py-5 md:px-6 md:py-8 lg:px-10">
+        <div class="themed-surface mx-auto w-full rounded-2xl border border-white/40 bg-white/80 p-3 md:p-5 shadow-lg backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+    </div>
   </div>
 
   <mat-menu #menu="matMenu">
@@ -81,7 +104,7 @@ style="background-image: url('imagenes/fondo.webp'); background-size: cover; bac
     <mat-divider></mat-divider>
 
     <div class="px-3 py-2">
-      <div class="flex items-center justify-between mb-2">
+      <div class="mb-2 flex items-center justify-between">
         <div class="text-xs text-gray-600 dark:text-gray-300">Color principal</div>
         <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode($event)">
           <span class="text-xs text-gray-600 dark:text-gray-300">
@@ -105,5 +128,4 @@ style="background-image: url('imagenes/fondo.webp'); background-size: cover; bac
     </div>
 
   </mat-menu>
-
 </body>
