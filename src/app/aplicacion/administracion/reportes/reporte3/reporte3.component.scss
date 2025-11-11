@@ -2,8 +2,8 @@
 .tabla-estilizada {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 0.875rem;
+    margin: 10px 0;
+    font-size: 10px;
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -18,8 +18,14 @@
     text-align: left;
 }
 
+.tabla-estilizada tfoot {
+    background-color: #222425;
+    color: #fff;
+    text-align: left;
+}
+
 .tabla-estilizada th {
-    padding: 15px;
+    padding: 10px;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -27,7 +33,7 @@
 
 /* Cuerpo de la tabla */
 .tabla-estilizada td {
-    padding: 15px;
+    padding: 10px;
     color: #333;
 }
 

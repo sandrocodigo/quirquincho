@@ -1,62 +1,33 @@
 <div class="flex items-center justify-between py-4">
-  <h1 class="text-3xl font-semibold dark:text-white">3. Egresos de Productos</h1>
+  <h1 class="text-3xl font-semibold dark:text-white">3. DETALLE DE EGRESOS</h1>
   <button (click)="imprimir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz" type="button">
     <mat-icon>print</mat-icon>
   </button>
 
-<!--     <button (click)="corregir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz" type="button">
+  <!--     <button (click)="corregir()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar Matriz" type="button">
     <mat-icon>update</mat-icon>
   </button> -->
 </div>
 
 @if (buscadorFormGroup ) {
-<form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+<form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerReporte()">
+
+
   <div class="flex flex-wrap -mx-2">
-    <div class="w-full md:w-1/4 px-2">
-      <!--             <mat-form-field class="flex-auto w-full">
-        <mat-label>EMPRESA</mat-label>
-        <mat-select formControlName="empresa">
-          <mat-option value="TODOS"> TODOS </mat-option>
-          <mat-option *ngFor="let item of empresas" [value]="item.id">
-            {{item.descripcion}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field> -->
+    <div class="w-full md:w-1/5 px-2">
+      <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaInicio" name="fechaInicio"
+        formControlName="fechaInicio">
     </div>
-    <div class="w-full md:w-1/4 px-2">
-      <!--             <mat-form-field class="flex-auto w-full">
-      <mat-label>SALDO</mat-label>
-      <mat-select formControlName="saldo">
-        <mat-option value="TODOS">TODOS</mat-option>
-        <mat-option value="MAYOR_A_0">MAYOR A 0</mat-option>
-        <mat-option value="MENOR_A_0">MENOR A 0</mat-option>
-        <mat-option value="IGUAL_A_0">IGUAL A 0</mat-option>
-      </mat-select>
-    </mat-form-field> -->
-      <!--             <mat-form-field class="flex-auto w-full">
-    <mat-label>PUBLICADO</mat-label>
-    <mat-select formControlName="publicado">
-      <mat-option value="TODOS"> TODOS </mat-option>
-      <mat-option value="true"> PUBLICADO </mat-option>
-      <mat-option value="false"> PENDIENTE </mat-option>
-    </mat-select>
-  </mat-form-field> -->
+    <div class="w-full md:w-1/5 px-2">
+      <input type="date" class="dark:bg-gray-900 text-gray-800 dark:text-white" id="fechaFinal" name="fechaFinal"
+        formControlName="fechaFinal">
     </div>
-    <div class="w-full md:w-1/4 px-2">
+    <div class="w-full md:w-1/5 px-2">
       <mat-form-field class="flex-auto w-full">
-        <mat-label>Estado</mat-label>
-        <mat-select formControlName="finalizado">
+        <mat-label>Sucursal</mat-label>
+        <mat-select formControlName="sucursal">
           <mat-option value="TODOS"> TODOS </mat-option>
-          <mat-option value="true"> FINALIZADO </mat-option>
-          <mat-option value="false"> PENDIENTE </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="w-full md:w-1/4 px-2">
-      <mat-form-field appearance="fill" style="width:100%">
-        <mat-label>Limite</mat-label>
-        <mat-select formControlName="limite">
-          @for (item of limites; track item) {
+          @for (item of listaSucursales; track item) {
           <mat-option [value]="item.id">
             {{item.descripcion}}
           </mat-option>
@@ -64,6 +35,61 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <div class="w-full md:w-1/5 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>TIPO</mat-label>
+        <mat-select formControlName="tipo">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          @for (item of listaTipos; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-1/5 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>FINALIZADO</mat-label>
+        <mat-select formControlName="finalizado">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> FINALIZADO </mat-option>
+          <mat-option value="false"> PENDIENTE </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+  </div>
+
+  <div class="flex flex-wrap -mx-2">
+
+    <div class="w-full md:w-1/5 px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>EMPRESA</mat-label>
+        <mat-select formControlName="empresa">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          @for (item of listaEmpresas; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="w-full md:w-2/5 px-2">
+      <ng-select [items]="listaProductos" bindLabel="dato" bindValue="id" appendTo="body" formControlName="producto"
+        name="productoId" #productoSelect placeholder="Buscar producto por codigo o descripcion..."
+        panelClass="pos-ngselect">
+      </ng-select>
+    </div>
+    <div class="w-full md:w-2/5 px-2">
+      <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculo" appendTo="body"
+        placeholder="Placa de Vehiculo">
+      </ng-select>
+    </div>
+
+
   </div>
 </form>
 }
@@ -72,45 +98,65 @@
   <table class="tabla-estilizada" #tabla>
     <thead>
       <tr>
-        <th colspan="3">EGRESOS</th>
-        <th colspan="4">{{fechaHoy| date}}</th>
+        <th colspan="9">DETALLE DE EGRESOS</th>
+        <th colspan="5">{{fechaHoy| date}}</th>
       </tr>
       <tr>
         <th>SUCURSAL</th>
+        <th>FECHA</th>
+        <th>TIPO</th>
         <th>CODIGO</th>
         <th>DESCRIPCION</th>
-        <th>P.C.</th>
-        <th>P.V.</th>
         <th>CANTIDAD</th>
+        <th style="text-align:end">P.C.</th>
+        <th style="text-align:end">P.V.</th>
         <th>SUBTOTAL</th>
+        <th>SALDO</th>
+        <th>EMPRESA</th>
+        <th>INTERNO</th>
+        <th>PLACA</th>
+        <th>FINALIZADO</th>
       </tr>
     </thead>
     <tbody>
       @for (item of lista; track item; let ultimo = $last) {
       <tr>
         <td style="text-align:start"> {{item.sucursal}} </td>
+        <td style="text-align:start"> {{item.fecha | date}} </td>
+        <td style="text-align:start"> {{item.tipo}} </td>
         <td style="text-align:start"> {{item.productoCodigo}} </td>
         <td style="text-align:start">{{item.productoDescripcion}}</td>
-        <td style="text-align:start">{{item.pc}}</td>
-        <td style="text-align:start">{{item.pv}}</td>
-        <td style="text-align:start">{{item.cantidad}}</td>
-        <td style="text-align:start">{{item.subtotal}}</td>
+        <td style="text-align:center"> {{item.cantidad}} </td>
+        <td style="text-align:end"> {{item.pc| number:'1.2-2': 'EN'}} </td>
+        <td style="text-align:end"> {{item.pv| number:'1.2-2': 'EN'}} </td>
+        <td style="text-align:end">{{item.subtotal| number:'1.2-2': 'EN'}}</td>
+        <td style="text-align:center"> {{item.cantidadSaldo}} </td>
+        <td style="text-align:start"> {{item.vehiculoEmpresa}} </td>
+        <td style="text-align:center"> {{item.vehiculoInterno}} </td>
+        <td style="text-align:center"> {{item.vehiculoPlaca}} </td>
+        <td style="text-align:start"> {{item.finalizado?'Finalizado':'Pendiente'}} </td>
       </tr>
       }
     </tbody>
-    <!--         <tfoot *ngIf="totales">
-    <tr>
-      <th>{{lista.length}}</th>
-      <th>USUARIO</th>
-      <th>TURNO</th>
-      <th>DISP.</th>
-      <th>PROD.</th>
-      <th>INICIO</th>
-      <th>FIN</th>
-      <th style="text-align:end">{{totales?.litros}}</th>
-      <th style="text-align:end">{{totales.dinero | number:'1.2-2': 'EN'}}</th>
-      <th style="text-align:end"></th>
-    </tr>
-  </tfoot> -->
+    @if(totales){
+    <tfoot>
+      <tr>
+        <th>{{lista.length}}</th>
+        <th>--</th>
+        <th>-</th>
+        <th>-</th>
+        <th>-</th>
+        <th style="text-align:center">{{totales.cantidad}}</th>
+        <th style="text-align:end">{{totales.pc | number:'1.2-2': 'EN'}}</th>
+        <th style="text-align:end">{{totales.pv | number:'1.2-2': 'EN'}}</th>
+        <th style="text-align:end">{{totales.subtotal | number:'1.2-2': 'EN'}}</th>
+        <th style="text-align:center">-</th>
+        <th>-</th>
+        <th>-</th>
+        <th>-</th>
+        <th>-</th>
+      </tr>
+    </tfoot>
+    }
   </table>
 </div>

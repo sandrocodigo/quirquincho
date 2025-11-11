@@ -489,6 +489,7 @@ export class IngresoDetalleComponent {
             ingresoId: this.idIngreso,
             ingresoCodigo: this.ingreso.codigo,
             ingresoDescripcion: this.ingreso.descripcion,
+            ingresoTipo: this.ingreso.tipo,
 
             productoId: producto.id,
             productoTipo: producto.tipo,

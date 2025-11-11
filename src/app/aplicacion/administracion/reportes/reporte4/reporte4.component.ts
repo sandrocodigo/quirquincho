@@ -97,7 +97,7 @@ export class Reporte4Component {
 
   ngOnInit(): void {
     this.titleService.setTitle('Reporte de Ordenes');
-    this.obtenerVehiculos()
+    this.obtenerVehiculos();
   }
 
   ngAfterViewInit() { }

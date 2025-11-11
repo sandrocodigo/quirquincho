@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Firestore, collectionData, collection, addDoc, doc, setDoc, getDoc, updateDoc, orderBy, onSnapshot, query, where, getDocs, CollectionReference, deleteDoc, limit } from '@angular/fire/firestore';
+import { Firestore, collectionData, collection, addDoc, doc, setDoc, getDoc, updateDoc, orderBy, onSnapshot, query, where, getDocs, CollectionReference, deleteDoc, limit, startAt, endAt } from '@angular/fire/firestore';
 import { IngresoDetalle } from '../modelos/ingreso-detalle';
 
 @Injectable({
@@ -354,6 +354,47 @@ export class IngresoDetalleService {
       });
       return registros;
     });
+  }
+
+  async obtenerReporte(datos: any): Promise<IngresoDetalle[]> {
+
+    console.log('DATOS PARA BUSCAR: ', datos);
+
+    let coleccion = collection(this.firestore, `${this.url}`) as CollectionReference<IngresoDetalle>;
+    let condiciones = [];
+
+    if (datos.sucursal !== 'TODOS') {
+      condiciones.push(where('sucursal', '==', datos.sucursal));
+    }
+
+    if (datos.tipo !== 'TODOS') {
+      condiciones.push(where('ingresoTipo', '==', datos.tipo));
+    }
+
+    if (datos.producto !== 'TODOS') {
+      condiciones.push(where('productoId', '==', datos.producto));
+    }
+
+    if (datos.finalizado !== 'TODOS') {
+      const datoBoolean = datos.finalizado === 'true'; // Asegúrate de que sea booleano
+      condiciones.push(where('finalizado', '==', datoBoolean));
+    }
+
+    // Orden predeterminado y rango de fechas
+    const ordenYRango = [
+      orderBy('fecha', 'asc'),
+      startAt(datos.fechaInicio),
+      endAt(datos.fechaFinal),
+    ];
+
+    // Combinar condiciones, orden y rango para crear la consulta
+    let q = query(coleccion, ...condiciones, ...ordenYRango);
+
+    // Ejecutar la consulta y procesar los resultados
+    const querySnapshot = await getDocs(q);
+    const registros = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+
+    return registros;
   }
 
 }

@@ -301,4 +301,53 @@ export class EgresoDetalleService {
       return registros;
     });
   }
+
+  async obtenerReporte(datos: any): Promise<EgresoDetalle[]> {
+
+    console.log('DATOS PARA BUSCAR: ', datos);
+
+    let coleccion = collection(this.firestore, `${this.url}`) as CollectionReference<EgresoDetalle>;
+    let condiciones = [];
+
+    if (datos.sucursal !== 'TODOS') {
+      condiciones.push(where('sucursal', '==', datos.sucursal));
+    }
+
+    if (datos.tipo !== 'TODOS') {
+      condiciones.push(where('egresoTipo', '==', datos.tipo));
+    }
+
+    if (datos.vehiculo !== 'TODOS') {
+      condiciones.push(where('vehiculoId', '==', datos.vehiculo));
+    }
+
+    if (datos.producto !== 'TODOS') {
+      condiciones.push(where('productoId', '==', datos.producto));
+    }
+
+    if (datos.empresa !== 'TODOS') {
+      condiciones.push(where('vehiculoEmpresa', '==', datos.empresa));
+    }
+
+    if (datos.finalizado !== 'TODOS') {
+      const datoBoolean = datos.finalizado === 'true'; // Asegúrate de que sea booleano
+      condiciones.push(where('finalizado', '==', datoBoolean));
+    }
+
+    // Orden predeterminado y rango de fechas
+    const ordenYRango = [
+      orderBy('fecha', 'asc'),
+      startAt(datos.fechaInicio),
+      endAt(datos.fechaFinal),
+    ];
+
+    // Combinar condiciones, orden y rango para crear la consulta
+    let q = query(coleccion, ...condiciones, ...ordenYRango);
+
+    // Ejecutar la consulta y procesar los resultados
+    const querySnapshot = await getDocs(q);
+    const registros = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+
+    return registros;
+  }
 }

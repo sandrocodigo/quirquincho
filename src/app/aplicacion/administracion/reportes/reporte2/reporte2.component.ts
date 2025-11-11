@@ -5,6 +5,8 @@ import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { NgSelectComponent } from '@ng-select/ng-select';
+
 // ANGULAR MATERIAL
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -15,6 +17,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { limites } from '../../../datos/limites';
 import { Title } from '@angular/platform-browser';
 import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.service';
+import { sucursales } from '../../../datos/sucursales';
+import { VehiculoService } from '../../../servicios/vehiculo.service';
+import { ProductoService } from '../../../servicios/producto.service';
+import { tiposEgresos, tiposIngresos } from '../../../modelos/tipos';
+import { CalculoService } from '../../../servicios/calculo.service';
 
 
 @Component({
@@ -26,6 +33,8 @@ import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.servic
     CommonModule,
     RouterModule,
     FormsModule, ReactiveFormsModule,
+
+    NgSelectComponent,
 
     // MATERIAL
     MatIconModule,
@@ -49,19 +58,34 @@ export class Reporte2Component {
 
   @ViewChild('tabla') tabla!: ElementRef;
 
+  listaTipos = tiposIngresos;
+  listaSucursales = sucursales;
+  listaVehiculos: any = [];
+  listaProductos: any = [];
+
   constructor(
     private fb: FormBuilder,
     private cargando: SpinnerService,
     private ingresoDetalleServicio: IngresoDetalleService,
+    private vehiculoServicio: VehiculoService,
+    private productoServicio: ProductoService,
+    private calculoServicio: CalculoService,
     private titleService: Title
   ) {
     this.buscadorFormGroup = this.fb.group({
+
+      fechaInicio: [this.fechaHoy],
+      fechaFinal: [this.fechaHoy],
+
       tipo: ['TODOS'],
-      finalizado: ['true'],
-      saldo: ['TODOS'],
-      limite: [100],
+      sucursal: ['TODOS'],
+      producto: ['TODOS'],
+      finalizado: ['TODOS'],
+
     });
     this.establecerSuscripcionForm();
+    this.obtenerVehiculos();
+    this.cargarProductos();
   }
 
   ngOnInit(): void {
@@ -72,53 +96,54 @@ export class Reporte2Component {
   get b(): any { return this.buscadorFormGroup.controls; }
 
   establecerSuscripcionForm() {
-    /*     this.b.tipo.valueChanges.subscribe((val: any) => {
-          this.obtenerConsulta();
-        }); */
-    this.b.saldo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+    this.b.fechaInicio.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.fechaFinal.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.sucursal.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.tipo.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.producto.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
     });
     this.b.finalizado.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      this.obtenerReporte();
     });
-    this.b.limite.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
+
   }
 
-  obtenerConsulta(): void {
+  obtenerReporte(): void {
     this.cargando.show();
-    this.ingresoDetalleServicio.obtenerConsulta(this.buscadorFormGroup.getRawValue()).then((respuesta: any) => {
+    this.ingresoDetalleServicio.obtenerReporte(this.buscadorFormGroup.getRawValue()).then((respuesta: any) => {
       console.log('CONSULTA CON SALDO: ', respuesta);
       // this.dataSource.data = respuesta;
       this.lista = respuesta;
+      this.totales = this.calculoServicio.sumarPorColumnas(respuesta);
       this.cargando.hide();
     });
   }
 
-  sumarPorColumnas(datos: any[]): { [key: string]: number } {
-    const sumas: { [key: string]: number } = {};
+  obtenerVehiculos(): void {
+    this.cargando.show();
+    this.vehiculoServicio.obtenerTodosActivos().then(res => {
 
-    datos.forEach(item => {
-      Object.keys(item).forEach(key => {
-        const valor = item[key];
-
-        if (typeof valor === 'number') {
-          if (!sumas[key]) {
-            sumas[key] = 0;  // Inicializar la suma para esta columna si es la primera vez que se ve
-          }
-
-          sumas[key] += valor;  // Sumar el valor a la suma acumulada de esta columna
-        }
-      });
+      this.listaVehiculos = [
+        { id: 'TODOS', dato: 'TODOS' },
+        ...res.map((res: any) => {
+          res.dato = res.interno + ' - ' + res.placa;
+          return res;
+        })
+      ];
+      // this.listaVehiculos = res;
+      // console.log('VEHICULOS', res);
+      this.cargando.hide();
     });
-    Object.keys(sumas).forEach(key => {
-      sumas[key] = parseFloat(sumas[key].toFixed(2));
-    });
-
-    return sumas;  // Devolver un objeto con la suma de cada columna
   }
-
 
   // Método para agrupar por fecha y sumar el campo totalDinero
   obtenerTotalDineroPorFecha(datos: any[]): any[] {
@@ -223,5 +248,56 @@ export class Reporte2Component {
         popupWin.document.close();
       }
     }, 0);
+  }
+
+
+  cargarProductos() {
+    try {
+      const raw = localStorage.getItem('listaProductos');
+      if (raw) {
+        const lista = JSON.parse(raw);
+        if (Array.isArray(lista)) {
+
+          this.listaProductos = [{ id: 'TODOS', dato: 'TODOS' }, ...lista];
+          return; // listo: cargado desde cache
+        }
+      }
+    } catch (e) {
+      console.warn('No se pudo leer listaProductos del localStorage:', e);
+    }
+    // si no hay cache válido, traer del servidor
+    this.obtenerProductos();
+  }
+
+  obtenerProductos() {
+    console.log('CARGANDO PRODUCTOS DESDE SERVIDOR...');
+    this.cargando.show('Cargando productos desde el Servidor...');
+    this.productoServicio.obtenerConsulta({
+      tipo: 'TODOS',
+      activo: 'true',
+      publicado: 'TODOS',
+      categoria: 'TODOS',
+      limite: 1000
+    }).then((respuesta: any[]) => {
+
+      const productoLista = (respuesta || [])
+        .sort((a, b) => (a?.descripcion || '').localeCompare(b?.descripcion || ''))
+        .map(producto => ({
+          ...producto,
+          dato: `${producto.codigo} - ${producto.descripcion}`
+        }));
+
+      this.listaProductos = [{ id: 'TODOS', dato: 'TODOS' }, ...productoLista];
+
+      try {
+        localStorage.setItem('listaProductos', JSON.stringify(productoLista));
+      } catch (e) {
+        console.warn('No se pudo guardar listaProductos en localStorage:', e);
+      }
+
+      this.cargando.hide();
+    }).catch(error => {
+      console.error('Error al obtener productos:', error);
+    });
   }
 }

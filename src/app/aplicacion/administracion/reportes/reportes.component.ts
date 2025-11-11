@@ -20,8 +20,8 @@ import { MatMenuModule } from '@angular/material/menu';
 export class ReportesComponent {
   menuReportes = [
     { link: 'reporte1', icon: 'inventory', label: '1: Inventario Físico' },
-    { link: 'reporte2', icon: 'add_box', label: '2: Ingresos' },
-    { link: 'reporte3', icon: 'indeterminate_check_box', label: '3: Egresos' },
+    { link: 'reporte2', icon: 'add_box', label: '2: Detalle de Ingresos' },
+    { link: 'reporte3', icon: 'indeterminate_check_box', label: '3: Detalle de Egresos' },
     { link: 'reporte4', icon: 'settings', label: '4: Ordenes' },
     { link: 'reporte5', icon: 'settings', label: '5: Saldo Minimo' },
     { link: 'reporte6', icon: 'settings', label: '6: Egresos de Ordenes' },

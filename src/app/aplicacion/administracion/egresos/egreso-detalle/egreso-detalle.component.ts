@@ -269,7 +269,6 @@ export class EgresoDetalleComponent {
     });
   }
 
-
   egresarConCodigoDeBarra(): void {
     if (this.b.codigoBarra.value) {
       const barraBuscar = this.b.codigoBarra.value;
@@ -621,6 +620,7 @@ export class EgresoDetalleComponent {
             egresoId: this.idEgreso,
             egresoCodigo: this.egreso.codigo,
             egresoDescripcion: this.egreso.descripcion,
+            egresoTipo: this.egreso.tipo,
 
             sucursal: this.egreso.sucursal,
 
