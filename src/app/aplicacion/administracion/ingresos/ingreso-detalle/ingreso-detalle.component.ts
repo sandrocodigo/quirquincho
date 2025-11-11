@@ -458,112 +458,121 @@ export class IngresoDetalleComponent {
   }
 
   // 7771609000205
-  adicionar(producto: any) {
+  async adicionar(producto: any) {
 
     const fechaRegistro = new Date();
     const fecha = new Date().toISOString().split('T')[0];
 
-    this.cargando.show('Adicionando...');
     const detallePediente = this.buscarEnLaLista(this.detalle, "productoId", producto.id);
     if (detallePediente) {
-      //console.log('DETALLE PENDIENTE: ', detallePediente);
       this.sumar(detallePediente);
-      if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
-      if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }
+      this.limpiarCamposProducto();
+      return;
+    }
 
+    let historial: any[] = [];
+    this.cargando.show('Revisando historial del producto...');
+    try {
+      historial = await this.ingresoDetalleServicio.obtenerPorIdProducto(this.ingreso.sucursal, producto.id);
+      console.log('DETALLE DE INGRESO ENCONTRADO: ', historial);
+    } catch (error) {
+      console.error('Error al obtener detalle de ingreso: ', error);
+      this.snackbar.open('No se pudo obtener el historial del producto', 'OK', { duration: 3000 });
+      return;
+    } finally {
+      this.cargando.hide();
+    }
 
-    } else {
-      // console.log('INGRESAR NUEVO DETALLE: ');
+    if (historial.length > 0) {
+      const registros = historial.length;
+      const totales: any = this.calculoServicio.sumarPorColumnas(historial);
 
-      this.ingresoDetalleServicio.obtenerPorIdProducto(this.ingreso.sucursal, producto.id).then(res => {
-        console.log('DETALLE DE INGRESO ENCONTRADO: ', res);
+      const cantidadSaldo = totales.cantidadSaldo;
+      const precioCompra = registros ? totales.pc / registros : 0;
+      const precioVenta = registros ? totales.pv / registros : 0;
 
-        if (res.length > 0) {
-          const registros = res.length;
-          const totales: any = this.calculoServicio.sumarPorColumnas(res);
+      await this.crearDetalleIngreso({
+        fecha: fecha,
+        sucursal: this.ingreso.sucursal,
 
-          const cantidadSaldo = totales.cantidadSaldo;
-          const precioCompra = totales.pc / registros;
-          const precioVenta = totales.pv / registros;
+        ingresoId: this.idIngreso,
+        ingresoCodigo: this.ingreso.codigo,
+        ingresoDescripcion: this.ingreso.descripcion,
+        ingresoTipo: this.ingreso.tipo,
 
-          // Crear con Ingresos Anteriores
-          this.ingresoDetalleServicio.crear({
-            fecha: fecha,
-            sucursal: this.ingreso.sucursal,
+        productoId: producto.id,
+        productoTipo: producto.tipo,
+        productoCodigo: producto.codigo,
+        productoDescripcion: producto.descripcion,
+        productoCodigoBarra: producto.codigoBarra,
+        productoFotosUrl: producto.fotosUrl,
 
-            ingresoId: this.idIngreso,
-            ingresoCodigo: this.ingreso.codigo,
-            ingresoDescripcion: this.ingreso.descripcion,
-            ingresoTipo: this.ingreso.tipo,
+        cantidad: 1,
+        cantidadSaldo: cantidadSaldo,
+        pc: precioCompra,
+        pv: precioVenta,
+        subtotal: precioCompra,
 
-            productoId: producto.id,
-            productoTipo: producto.tipo,
-            productoCodigo: producto.codigo,
-            productoDescripcion: producto.descripcion,
-            productoCodigoBarra: producto.codigoBarra,
-            productoFotosUrl: producto.fotosUrl,
+        fechaRegistro: fechaRegistro,
 
-            cantidad: 1,
-            cantidadSaldo: cantidadSaldo,
-            pc: precioCompra,
-            pv: precioVenta,
-            subtotal: precioCompra,
+        registroFecha: new Date(),
+        registroUsuario: this.usuario.email,
 
-            fechaRegistro: fechaRegistro,
+        finalizado: false,
+        observado: false,
+      }, producto.descripcion);
+      return;
+    }
 
-            registroFecha: new Date(),
-            registroUsuario: this.usuario.email,
+    await this.crearDetalleIngreso({
+      fecha: fecha,
+      sucursal: this.ingreso.sucursal,
 
-            finalizado: false,
-            observado: false,
-          }).then(res => {
-            this.cargando.hide();
-            console.log('RESPUESTA: ', res);
-            this.snackbar.open('Adicionado! [+1] : ' + producto.productoDescripcion, 'OK', { duration: 1000 });
-            this.obtenerIngresoDetalle();
-            if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
-            if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }
-          });
-        } else {
-          // Crear por primera vez
-          this.cargando.show();
-          this.ingresoDetalleServicio.crear({
-            fecha: fecha,
-            sucursal: this.ingreso.sucursal,
+      ingresoId: this.idIngreso,
+      ingresoCodigo: this.ingreso.codigo,
+      ingresoDescripcion: this.ingreso.descripcion,
 
-            ingresoId: this.idIngreso,
-            ingresoCodigo: this.ingreso.codigo,
-            ingresoDescripcion: this.ingreso.descripcion,
+      productoId: producto.id,
+      productoTipo: producto.tipo,
+      productoCodigo: producto.codigo,
+      productoDescripcion: producto.descripcion,
+      productoCodigoBarra: producto.codigoBarra,
+      productoFotosUrl: producto.fotosUrl,
 
-            productoId: producto.id,
-            productoTipo: producto.tipo,
-            productoCodigo: producto.codigo,
-            productoDescripcion: producto.descripcion,
-            productoCodigoBarra: producto.codigoBarra,
-            productoFotosUrl: producto.fotosUrl,
+      cantidad: 1,
+      cantidadSaldo: 0,
+      pc: producto.pc || 0,
+      pv: producto.pv || 0,
+      subtotal: producto.pc || 0,
 
-            cantidad: 1,
-            cantidadSaldo: 0,
-            pc: producto.pc || 0,
-            pv: producto.pv || 0,
-            subtotal: producto.pc || 0,
+      fechaRegistro: fechaRegistro,
+      registroFecha: new Date(),
+      registroUsuario: this.usuario?.email,
+      finalizado: false,
+      observado: false,
+    }, producto.descripcion);
+  }
 
-            fechaRegistro: fechaRegistro,
-
-            finalizado: false,
-          }).then(res => {
-            console.log('RESPUESTA: ', res);
-            this.snackbar.open('Adicionado! [+1] : ' + producto.descripcion, 'OK', { duration: 1000 });
-            this.cargando.hide();
-            this.obtenerIngresoDetalle();
-            if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
-            if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }
-          });
-        }
-      });
-
+  private async crearDetalleIngreso(payload: any, productoDescripcion: string) {
+    this.cargando.show('Adicionando...');
+    try {
+      await this.ingresoDetalleServicio.crear(payload);
+      this.snackbar.open('Adicionado! [+1] : ' + productoDescripcion, 'OK', { duration: 1000 });
+      this.obtenerIngresoDetalle();
+      this.limpiarCamposProducto();
+    } catch (error) {
+      console.error('Error al crear detalle de ingreso: ', error);
+      this.snackbar.open('No se pudo adicionar el producto', 'OK', { duration: 3000 });
+    } finally {
+      this.cargando.hide();
     }
   }
+
+  private limpiarCamposProducto() {
+    if (this.b.codigoBarra.value !== null) { this.b.codigoBarra.setValue(null); }
+    if (this.p.productoId.value !== null) { this.p.productoId.setValue(null); }
+  }
+
 
   onSeleccionar() {
 
