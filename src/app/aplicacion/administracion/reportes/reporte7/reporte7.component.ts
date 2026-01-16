@@ -1,11 +1,343 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SpinnerService } from '../../../sistema/spinner/spinner.service';
+
+import { RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { NgSelectComponent } from '@ng-select/ng-select';
+
+// ANGULAR MATERIAL
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+
+import { limites } from '../../../datos/limites';
+import { Title } from '@angular/platform-browser';
+import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.service';
+import { EgresoDetalleService } from '../../../servicios/egreso-detalle.service';
+import { EgresoService } from '../../../servicios/egreso.service';
+import { sucursales } from '../../../datos/sucursales';
+import { ProductoService } from '../../../servicios/producto.service';
+import { VehiculoService } from '../../../servicios/vehiculo.service';
+import { tiposEgresos } from '../../../modelos/tipos';
+import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
+import { CalculoService } from '../../../servicios/calculo.service';
 
 @Component({
   selector: 'app-reporte7',
-  imports: [],
   templateUrl: './reporte7.component.html',
-  styleUrl: './reporte7.component.scss'
+  styleUrl: './reporte7.component.scss',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule, ReactiveFormsModule,
+
+    NgSelectComponent,
+
+    // MATERIAL
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatDividerModule
+  ],
 })
 export class Reporte7Component {
+  buscadorFormGroup: FormGroup;
+  buscadorControl = false;
 
+  listaIngresos: any = [];
+  listaEgresos: any = [];
+
+  fechaHoy = new Date().toISOString().split('T')[0];
+
+  totales: any;
+
+  totalDineroPorFecha: any[] = [];
+  resumenEmpresas: { id: string; descripcion: string; ingresos: number; egresos: number; balance: number }[] = [];
+
+  tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
+
+  listaTipos = tiposEgresos;
+  listaSucursales = sucursales;
+  listaEmpresas = vehiculoEmpresas;
+  listaVehiculos: any = [];
+  listaProductos: any = [];
+
+  limites = limites;
+
+  @ViewChild('tabla') tabla!: ElementRef;
+
+  constructor(
+    private fb: FormBuilder,
+    private cargando: SpinnerService,
+    private egresoServicio: EgresoService,
+
+    private egresoDetalleServicio: EgresoDetalleService,
+    private ingresoDetalleServicio: IngresoDetalleService,
+
+    private vehiculoServicio: VehiculoService,
+    private productoServicio: ProductoService,
+    private calculoServicio: CalculoService,
+    private titleService: Title
+  ) {
+    this.buscadorFormGroup = this.fb.group({
+
+      fechaInicio: [this.fechaHoy],
+      fechaFinal: [this.fechaHoy],
+
+      sucursal: ['TODOS'],
+      vehiculo: ['TODOS'],
+      producto: ['TODOS'],
+
+      empresa: ['TODOS'],
+
+      tipo: ['TODOS'],
+      finalizado: ['true'],
+
+    });
+    this.establecerSuscripcionForm();
+    this.obtenerVehiculos();
+    this.cargarProductos();
+  }
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Reporte 3');
+  }
+
+  // FORM
+  get b(): any { return this.buscadorFormGroup.controls; }
+
+  establecerSuscripcionForm() {
+    this.b.fechaInicio.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.fechaFinal.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.vehiculo.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.sucursal.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.tipo.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.producto.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.empresa.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+    this.b.finalizado.valueChanges.subscribe((val: any) => {
+      this.obtenerReporte();
+    });
+
+  }
+
+  obtenerReporte(): void {
+    this.cargando.show('Obteniendo ingresos...');
+    this.ingresoDetalleServicio.obtenerReporte(this.buscadorFormGroup.getRawValue()).then((respuesta: any) => {
+      this.cargando.hide();
+      this.listaIngresos = respuesta;
+      console.log('INGRESOS: ', respuesta);
+
+      this.cargando.show('Obteniendo egresos...');
+      this.egresoDetalleServicio.obtenerReporte(this.buscadorFormGroup.getRawValue()).then((respuesta: any) => {
+        this.cargando.hide();
+        this.listaEgresos = respuesta;
+        console.log('EGRESOS: ', respuesta);
+
+        this.procesarDatos();
+      })
+    });
+  }
+
+  procesarDatos() {
+    const resumen = this.listaEmpresas.map(emp => {
+      const ingresos = this.sumarSubtotalPorEmpresa(this.listaIngresos, emp.id);
+      const egresos = this.sumarSubtotalPorEmpresa(this.listaEgresos, emp.id);
+
+      return {
+        ...emp,
+        ingresos: parseFloat(ingresos.toFixed(2)),
+        egresos: parseFloat(egresos.toFixed(2)),
+        balance: parseFloat((ingresos - egresos).toFixed(2)),
+      };
+    });
+
+    this.resumenEmpresas = resumen;
+  }
+
+  private sumarSubtotalPorEmpresa(lista: any[], empresaId: string): number {
+    if (!Array.isArray(lista)) { return 0; }
+
+    return lista.reduce((acum, item) => {
+      const empresa = this.obtenerEmpresaDeRegistro(item);
+      const subtotal = typeof item?.subtotal === 'number' ? item.subtotal : parseFloat(item?.subtotal) || 0;
+
+      return empresa === empresaId ? acum + subtotal : acum;
+    }, 0);
+  }
+
+  private obtenerEmpresaDeRegistro(item: any): string {
+    return item?.vehiculoEmpresa || item?.ingresoEmpresa || item?.empresa || '';
+  }
+
+
+  obtenerVehiculos(): void {
+    this.cargando.show();
+    this.vehiculoServicio.obtenerTodosActivos().then(res => {
+
+      this.listaVehiculos = [
+        { id: 'TODOS', dato: 'TODOS' },
+        ...res.map((res: any) => {
+          res.dato = res.interno + ' - ' + res.placa;
+          return res;
+        })
+      ];
+      // this.listaVehiculos = res;
+      // console.log('VEHICULOS', res);
+      this.cargando.hide();
+    });
+  }
+
+
+
+  imprimir() {
+    let printContents: any, popupWin: any;
+    printContents = this.tabla.nativeElement.outerHTML;
+    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+
+    setTimeout(() => {
+      if (popupWin) {
+        popupWin.document.open();
+        popupWin.document.write(`
+                <html>
+                    <head>
+                        <title>Detalle de Ingresos: `+ this.fechaHoy + `</title>
+                        <style>
+                        .no-imprimir {
+                          display: none;
+                        }
+
+                        /* Clase de estilo para una tabla moderna y bonita */
+                        .tabla-estilizada {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 20px 0;
+                            font-size: 0.875rem;
+                            font-family: Arial, sans-serif;
+                            background-color: #f8f9fa;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            border-radius: 8px;
+                            overflow: hidden;
+                        }
+
+                        /* Encabezado de la tabla */
+                        .tabla-estilizada thead {
+                            background-color: #11cc0b;
+                            color: #fff;
+                            text-align: left;
+                        }
+
+                        .tabla-estilizada th {
+                            padding: 15px;
+                            font-weight: bold;
+                            text-transform: uppercase;
+                            letter-spacing: 0.03em;
+                        }
+
+                        /* Cuerpo de la tabla */
+                        .tabla-estilizada td {
+                            padding: 15px;
+                            color: #333;
+                        }
+
+                        /* Filas alternas */
+                        .tabla-estilizada tbody tr:nth-child(odd) {
+                            background-color: #e9ecef;
+                        }
+
+                        /* Filas al pasar el ratón */
+                        .tabla-estilizada tbody tr:hover {
+                            background-color: #d6e4f0;
+                            cursor: pointer;
+                        }
+
+                        /* Bordes de la tabla */
+                        .tabla-estilizada th,
+                        .tabla-estilizada td {
+                            border-bottom: 1px solid #dee2e6;
+                        }
+
+                        /* Última fila sin borde */
+                        .tabla-estilizada tbody tr:last-child td {
+                            border-bottom: none;
+                        }
+                      
+                        </style>
+                    </head>
+                    <body onload="window.print();window.close()">${printContents}</body>
+                </html>`
+        );
+        popupWin.document.close();
+      }
+    }, 0);
+  }
+
+  cargarProductos() {
+    try {
+      const raw = localStorage.getItem('listaProductos');
+      if (raw) {
+        const lista = JSON.parse(raw);
+        if (Array.isArray(lista)) {
+
+          this.listaProductos = [{ id: 'TODOS', dato: 'TODOS' }, ...lista];
+          return; // listo: cargado desde cache
+        }
+      }
+    } catch (e) {
+      console.warn('No se pudo leer listaProductos del localStorage:', e);
+    }
+    // si no hay cache válido, traer del servidor
+    this.obtenerProductos();
+  }
+
+  obtenerProductos() {
+    console.log('CARGANDO PRODUCTOS DESDE SERVIDOR...');
+    this.cargando.show('Cargando productos desde el Servidor...');
+    this.productoServicio.obtenerConsulta({
+      tipo: 'TODOS',
+      activo: 'true',
+      publicado: 'TODOS',
+      categoria: 'TODOS',
+      limite: 1000
+    }).then((respuesta: any[]) => {
+
+      const productoLista = (respuesta || [])
+        .sort((a, b) => (a?.descripcion || '').localeCompare(b?.descripcion || ''))
+        .map(producto => ({
+          ...producto,
+          dato: `${producto.codigo} - ${producto.descripcion}`
+        }));
+
+      this.listaProductos = [{ id: 'TODOS', dato: 'TODOS' }, ...productoLista];
+
+      try {
+        localStorage.setItem('listaProductos', JSON.stringify(productoLista));
+      } catch (e) {
+        console.warn('No se pudo guardar listaProductos en localStorage:', e);
+      }
+
+      this.cargando.hide();
+    }).catch(error => {
+      console.error('Error al obtener productos:', error);
+    });
+  }
 }

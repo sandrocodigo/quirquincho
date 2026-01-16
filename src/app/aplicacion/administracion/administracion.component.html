@@ -33,18 +33,18 @@
     <div class="flex flex-1 flex-col md:flex-row">
       <!-- Lateral menu -->
       <nav
-        class="fixed inset-y-0 left-0 z-40 flex w-48 flex-col border-r border-white/60 bg-white/90 text-slate-700 shadow-xl transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-950/90 md:static md:w-44 lg:w-40 md:translate-x-0"
+        class="fixed inset-y-0 left-0 z-40 flex w-48 flex-col border-r border-white/60 bg-white/95 text-slate-800 shadow-xl transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-950 md:static md:w-44 lg:w-40 md:translate-x-0"
         [class.-translate-x-full]="!menuOpen">
-        <div class="flex flex-col gap-8 overflow-y-auto px-3 py-5">
+        <div class="flex flex-col gap-8 overflow-y-auto px-3 py-5 font-sans antialiased">
           <div class="flex flex-col items-center gap-1.5 text-center">
             @if (usuario) {
             <button type="button" [matMenuTriggerFor]="menu"
-              class="themed-surface flex w-full max-w-full flex-col items-center gap-1.5 rounded-xl border bg-white/70 px-3 py-3 shadow-sm">
+              class="themed-surface flex w-full max-w-full flex-col items-center gap-1.5 rounded-xl border bg-white px-3 py-3 shadow-sm">
               <img class="h-12 w-12 rounded-full object-cover" [src]="foto" [alt]="usuario.displayName ? usuario.displayName : 'Avatar'">
               <div class="w-full max-w-full">
-                <p class="truncate text-xs font-semibold text-slate-700 dark:text-white">{{ usuario.displayName || 'Usuario'
+                <p class="truncate text-sm font-semibold text-slate-800 dark:text-white">{{ usuario.displayName || 'Usuario'
                   }}</p>
-                <p class="truncate text-[11px] text-slate-500 dark:text-slate-400">{{ usuario.email }}</p>
+                <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ usuario.email }}</p>
               </div>
             </button>
             }
@@ -56,7 +56,7 @@
           <div class="flex flex-col gap-1.5">
             @for (item of menuItems; track item; let i = $index) {
             <a [routerLink]="item.link" routerLinkActive="active" (click)="closeMenuAfterNavigation()"
-              class="menu-link group flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[11px] font-semibold transition-all"
+              class="menu-link group flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-semibold tracking-tight transition-all"
               [ngClass]="item.color">
               <span class="material-icons menu-icon !text-xl">
                 {{ item.icon }}
@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <div class="mt-auto border-t border-white/60 px-4 py-4 text-center text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+        <div class="mt-auto border-t border-white/60 px-4 py-4 text-center text-xs font-medium text-slate-500 dark:border-slate-800 dark:text-slate-400">
           Version 3.0
         </div>
       </nav>

@@ -20,6 +20,7 @@ import { IngresoService } from '../../../servicios/ingreso.service';
 import { UsuarioService } from '../../../servicios/usuario.service';
 import { tiposIngresos } from '../../../modelos/tipos';
 import { sucursales } from '../../../datos/sucursales';
+import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
 
 @Component({
   selector: 'app-ingreso-form',
@@ -51,6 +52,7 @@ export class IngresoFormComponent {
   listaTipos = tiposIngresos;
 
   listaSucursales = sucursales;
+  listaEmpresas = [...vehiculoEmpresas, { id: 'SIN EMPRESA', descripcion: 'SIN EMPRESA' }];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -78,6 +80,11 @@ export class IngresoFormComponent {
         descripcion: [null, [Validators.required]],
         total: [0, [Validators.required]],
 
+
+        empresa: [null],
+        factura: [null],
+
+
         finalizado: [false],
         aprobado: [false],
 
@@ -103,6 +110,9 @@ export class IngresoFormComponent {
           descripcion: [res.descripcion, [Validators.required]],
 
           total: [res.total, [Validators.required]],
+
+          empresa: [res.empresa],
+          factura: [res.factura],
 
           usuarioEditor: [this.auth.obtenerUsuario.email],
           fechaActualizacion: [this.fechaHoy],

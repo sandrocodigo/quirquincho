@@ -106,10 +106,21 @@
         <div class="w-full md:w-2/3 px-2">
           @if (productoFormGroup) {
           <form (ngSubmit)="onSeleccionar()" [formGroup]="productoFormGroup" #aFormSeleccionar>
-            <ng-select [items]="listaProductos" bindLabel="dato" bindValue="id" appendTo="body"
-              formControlName="productoId" name="productoId" #productoSelect
-              placeholder="Buscar producto por codigo o descripcion..." panelClass="pos-ngselect">
-            </ng-select>
+              <ng-select class="mt-1 text-slate-900" [items]="listaProductos" bindLabel="dato" bindValue="id"
+                formControlName="productoId" appendTo="body" placeholder="Código o descripción" [searchable]="true"
+                [clearable]="true" [virtualScroll]="true" #productoSelect>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="flex items-center justify-between">
+                    <div class="flex flex-col">
+                      <span class="font-semibold text-sm">{{ item.descripcion }}</span>
+                      <span class="text-[11px] text-slate-500">{{ item.codigo }} · {{ item.tipo
+                        }}</span>
+                    </div>
+                    <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{{
+                      item.categoria }}</span>
+                  </div>
+                </ng-template>
+              </ng-select>
           </form>
           }
         </div>
