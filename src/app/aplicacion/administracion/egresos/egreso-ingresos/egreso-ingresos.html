@@ -1,0 +1,102 @@
+<div class="flex flex-col h-full max-h-[90vh] overflow-hidden bg-white dark:bg-gray-900 rounded-3xl">
+
+    <!-- Header: Product Info -->
+    <div class="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30">
+        <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-2xl text-orange-600 dark:text-orange-400">
+                    <mat-icon class="!text-3xl">inventory</mat-icon>
+                </div>
+                <div>
+                    <h2 class="text-xl font-black text-gray-800 dark:text-white leading-tight">Ingresos Disponibles</h2>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ productInfo().codigo }}
+                    </p>
+                </div>
+            </div>
+            <button (click)="cerrar()"
+                class="!w-10 !h-10 !rounded-xl hover:!bg-gray-100 dark:hover:!bg-gray-800 transition-colors">
+                <mat-icon class="text-gray-400">close</mat-icon>
+            </button>
+        </div>
+
+        <div
+            class="mt-4 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 class="text-sm font-bold text-gray-700 dark:text-gray-200">{{ productInfo().descripcion }}</h3>
+            <div class="flex items-center gap-4 mt-2">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Stock Total: <span
+                            class="text-gray-800 dark:text-white">{{ totalStock() | number:'1.0-0' }}</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content: Incomes List -->
+    <div class="flex-grow overflow-y-auto p-6 space-y-4 custom-scrollbar">
+
+        @if (isLoading()) {
+        <div class="flex flex-col items-center justify-center py-20 animate-pulse">
+            <div class="w-12 h-12 rounded-full border-4 border-orange-100 border-t-orange-500 animate-spin mb-4"></div>
+            <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Cargando ingresos...</p>
+        </div>
+        } @else {
+        @for (item of ingresos(); track item.id) {
+        <div
+            class="group relative bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-900/40 hover:shadow-md transition-all flex flex-col sm:flex-row items-center gap-4">
+
+            <div class="flex-grow">
+                <div class="flex items-center gap-2 mb-1">
+                    <span
+                        class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 uppercase">
+                        #{{ item.ingresoCodigo }}
+                    </span>
+                    <span class="text-[10px] font-bold text-gray-400">{{ item.fechaRegistro?.toDate() | date:'short'
+                        }}</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <div>
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Disponible</p>
+                        <p class="text-lg font-black text-green-600 dark:text-green-400 leading-none">{{
+                            item.cantidadSaldo }} <span class="text-[10px] opacity-70">Uds</span></p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Precio Venta</p>
+                        <p class="text-sm font-bold text-gray-800 dark:text-gray-100">{{ item.pv | number:'1.2-2' }}
+                            <span class="text-[10px] opacity-70">BS</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button (click)="seleccionar(item)"
+                    class="w-full sm:w-auto !bg-orange-600 hover:!bg-orange-700 !text-white !rounded-xl !px-6 !py-2.5 !flex !items-center !justify-center !gap-2 !font-bold !transition-all"
+                    mat-flat-button>
+                    <mat-icon class="!text-sm">check_circle</mat-icon>
+                    SELECCIONAR
+                </button>
+            </div>
+        </div>
+        } @empty {
+        <div
+            class="flex flex-col items-center justify-center py-20 bg-gray-50/50 dark:bg-gray-800/20 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+            <mat-icon class="!text-6xl text-gray-300 dark:text-gray-600 mb-4">inventory_2</mat-icon>
+            <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">No hay ingresos con saldo para este
+                producto</p>
+        </div>
+        }
+        }
+    </div>
+
+    <!-- Footer Actions -->
+    <div
+        class="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 flex justify-end gap-3">
+        <button (click)="cerrar()"
+            class="!rounded-xl !px-8 !py-2.5 !font-bold hover:!bg-gray-200 dark:hover:!bg-gray-700 transition-colors"
+            mat-button>
+            CANCELAR
+        </button>
+    </div>
+
+</div>

@@ -1,0 +1,119 @@
+@use "sass:color";
+
+// --- Base Premium ng-select Styles ---
+::ng-deep .custom-premium-select {
+    .ng-select-container {
+        background-color: #f9fafb !important; // bg-gray-50
+        border: none !important;
+        border-radius: 1.5rem !important; // 24px
+        padding: 0.5rem 0.5rem !important;
+        box-shadow: none !important;
+        transition: all 0.3s ease !important;
+        min-height: 52px !important;
+
+        .ng-placeholder {
+            color: #9ca3af !important; // gray-400
+            font-size: 0.875rem !important;
+            font-weight: 500 !important;
+            padding-left: 0.5rem !important;
+        }
+    }
+
+    &.ng-select-focused .ng-select-container {
+        box-shadow: 0 0 0 2px #f97316 !important; // ring-orange-500
+        background-color: #ffffff !important;
+    }
+}
+
+// --- Dark Mode Input Container ---
+:host-context(.dark) ::ng-deep .custom-premium-select,
+.dark ::ng-deep .custom-premium-select {
+    .ng-select-container {
+        background-color: #1f2937 !important; // gray-800
+        color: white !important;
+
+        .ng-value-container .ng-input input {
+            color: white !important;
+        }
+    }
+
+    &.ng-select-focused .ng-select-container {
+        background-color: #111827 !important; // gray-900
+    }
+}
+
+// --- Dropdown Panel (handle appendTo="body") ---
+::ng-deep .ng-dropdown-panel.custom-premium-dropdown {
+    background-color: #ffffff !important;
+    border-radius: 1.5rem !important;
+    margin-top: 0.5rem !important;
+    border: none !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    overflow: hidden !important;
+
+    .ng-dropdown-panel-items .ng-option {
+        background-color: transparent !important;
+        color: #374151 !important; // gray-700
+        border-radius: 0.75rem !important;
+        margin: 0.25rem 0.5rem !important;
+        padding: 8px 12px !important;
+        transition: all 0.2s ease !important;
+
+        &.ng-option-marked {
+            background-color: #fff7ed !important; // orange-50
+            color: #c2410c !important; // orange-700
+        }
+
+        &.ng-option-selected {
+            background-color: #ea580c !important; // orange-600
+            color: #ffffff !important;
+            font-weight: 700 !important;
+        }
+    }
+}
+
+// --- Dark Mode Dropdown Panel (The critical part) ---
+body.dark ::ng-deep .ng-dropdown-panel.custom-premium-dropdown,
+html.dark ::ng-deep .ng-dropdown-panel.custom-premium-dropdown,
+.dark ::ng-deep .ng-dropdown-panel.custom-premium-dropdown {
+    background-color: #111827 !important; // gray-900 (High contrast)
+    border: 1px solid #374151 !important; // gray-700
+
+    .ng-dropdown-panel-items .ng-option {
+        color: #ffffff !important; // PURE WHITE
+
+        // Target the specific labels in the template
+        .text-gray-800,
+        .dark\:text-gray-200 {
+            color: #06de14 !important;
+            font-weight: 800 !important;
+        }
+
+        .text-gray-500 {
+            color: #ec0c0c !important; // gray-300
+        }
+
+        // Category background
+        .bg-orange-50 {
+            background-color: rgba(234, 88, 12, 0.3) !important;
+            color: #ffedd5 !important; // orange-100 (phosphorescent feel)
+        }
+
+        &.ng-option-marked {
+            background-color: #1f2937 !important; // gray-800
+            color: #e904bf !important;
+
+            .text-gray-800,
+            .dark\:text-gray-200 {
+                color: #facc15 !important;
+            }
+
+            // YELLOW (phosphorescent) on hover
+        }
+
+        &.ng-option-selected {
+            background-color: #ea580c !important;
+            color: #ffffff !important;
+        }
+    }
+}

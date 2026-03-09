@@ -6,38 +6,38 @@
 </button> -->
 </div>
 @if (buscadorFormGroup) {
-  <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
-    <div class="flex flex-wrap -mx-2">
-      <div class="w-full md:w-[60%] px-2">
-        <ng-select [items]="listaProductos" bindLabel="dato" bindValue="id" appendTo="body"
-          formControlName="productoId" name="productoId" #productoSelect
-          placeholder="Buscar producto por codigo o descripcion..." panelClass="pos-ngselect">
-        </ng-select>
-      </div>
-      <div class="w-full md:w-[20%] px-2">
-        <mat-form-field class="flex-auto w-full">
-          <mat-label>Estado</mat-label>
-          <mat-select formControlName="finalizado">
-            <mat-option value="TODOS"> TODOS </mat-option>
-            <mat-option value="true"> FINALIZADO </mat-option>
-            <mat-option value="false"> PENDIENTE </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="w-full md:w-[20%] px-2">
-        <mat-form-field appearance="fill" style="width:100%">
-          <mat-label>Limite</mat-label>
-          <mat-select formControlName="limite">
-            @for (item of limites; track item) {
-              <mat-option [value]="item.id">
-                {{item.descripcion}}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
+<form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+  <div class="flex flex-wrap -mx-2">
+    <div class="w-full md:w-[60%] px-2">
+      <ng-select [items]="listaProductos" bindLabel="dato" bindValue="id" appendTo="body" formControlName="productoId"
+        name="productoId" #productoSelect placeholder="Buscar producto por codigo o descripcion..."
+        panelClass="pos-ngselect">
+      </ng-select>
     </div>
-  </form>
+    <div class="w-full md:w-[20%] px-2">
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="finalizado">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> FINALIZADO </mat-option>
+          <mat-option value="false"> PENDIENTE </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full md:w-[20%] px-2">
+      <mat-form-field appearance="fill" style="width:100%">
+        <mat-label>Limite</mat-label>
+        <mat-select formControlName="limite">
+          @for (item of limites; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
 }
 
 
@@ -46,10 +46,11 @@
   <table class="tabla-estilizada" #tabla>
     <thead>
       <tr>
-        <th colspan="7">DETALLE DE EGRESOS</th>
+        <th colspan="8">DETALLE DE EGRESOS</th>
         <th colspan="4">{{fechaHoy| date}}</th>
       </tr>
       <tr>
+        <th>SUCURSAL</th>
         <th>CODIGO</th>
         <th>DESCRIPCION</th>
         <th>BARRA</th>
@@ -65,25 +66,26 @@
     </thead>
     <tbody>
       @for (item of lista; track $index) {
-        <tr>
-          <td style="text-align:start"> {{item.productoCodigo}} </td>
-          <td style="text-align:start">{{item.productoDescripcion}}</td>
-          <td style="text-align:start">{{item.productoCodigoBarra}}</td>
-          <td style="text-align:start">{{item.pc}}</td>
-          <td style="text-align:start">{{item.pv}}</td>
-          <td style="text-align:end">{{item.cantidad}}</td>
-          <td style="text-align:end">{{item.subtotal}}</td>
-          <td style="text-align:start">{{item.cantidadSaldo}}</td>
-          <td style="text-align:start">{{item.fechaRegistro.toDate() | date:'short'}}</td>
-          <td style="text-align:start">{{item.finalizado?'FINALIZADO':'PENDIENTE'}}</td>
-          <td style="text-align:start">
-            
+      <tr>
+        <td style="text-align:start"> {{item.sucursal}} </td>
+        <td style="text-align:start"> {{item.productoCodigo}} </td>
+        <td style="text-align:start">{{item.productoDescripcion}}</td>
+        <td style="text-align:start">{{item.productoCodigoBarra}}</td>
+        <td style="text-align:start">{{item.pc}}</td>
+        <td style="text-align:start">{{item.pv}}</td>
+        <td style="text-align:end">{{item.cantidad}}</td>
+        <td style="text-align:end">{{item.subtotal}}</td>
+        <td style="text-align:start">{{item.cantidadSaldo}}</td>
+        <td style="text-align:start">{{item.fechaRegistro.toDate() | date:'short'}}</td>
+        <td style="text-align:start">{{item.finalizado?'FINALIZADO':'PENDIENTE'}}</td>
+        <td style="text-align:start">
+
         </td>
       </tr>
-    }
+      }
 
-  </tbody>
-  @if (totales) {
+    </tbody>
+    @if (totales) {
     <tfoot>
       <tr>
         <th>{{lista.length}}</th>
@@ -99,7 +101,7 @@
         <th></th>
       </tr>
     </tfoot>
-  }
+    }
 
-</table>
+  </table>
 </div>

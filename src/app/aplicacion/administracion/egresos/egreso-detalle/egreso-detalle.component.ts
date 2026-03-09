@@ -40,6 +40,7 @@ import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { EgresoTraspasoComponent } from '../egreso-traspaso/egreso-traspaso.component';
 import { EgresoImprimirTraspaso } from '../egreso-imprimir-traspaso/egreso-imprimir-traspaso';
+import { EgresoIngresos } from '../egreso-ingresos/egreso-ingresos';
 
 @Component({
   selector: 'app-egreso-detalle',
@@ -613,6 +614,8 @@ export class EgresoDetalleComponent {
     const totales: any = this.calculoServicio.sumarPorColumnas(ingresos);
 
     const cantidadSaldo = totales.cantidadSaldo;
+    console.log('CANTIDAD SALDO: ', cantidadSaldo);
+
     const precioCompra = registros ? totales.pc / registros : 0;
     const precioVenta = registros ? totales.pv / registros : 0;
 
@@ -820,6 +823,42 @@ export class EgresoDetalleComponent {
       if (result) {
         // this.obtenerEgreso();
         // this.obtenerEgresoDetalle();
+      }
+    });
+  }
+
+
+  verIngresos(item: any): void {
+    console.log('item: ', item);
+    const dialogRef = this.dialog.open(EgresoIngresos, {
+      width: '800px',
+      data: {
+        sucursal: this.egreso.sucursal,
+        productoId: item.productoId,
+        productoCodigo: item.productoCodigo,
+        productoDescripcion: item.productoDescripcion,
+      },
+      disableClose: false
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Ingreso seleccionado para cambio de precio:', result);
+        const subtotal = item.cantidad * result.pv;
+
+        this.cargando.show('Actualizando precio...');
+        this.egresoDetalleServicio.editar(item.id, {
+          pv: result.pv,
+          pc: result.pc,
+          subtotal: subtotal
+        }).then(() => {
+          this.snackbar.open('Precio actualizado correctamente', 'OK', { duration: 2000 });
+          this.obtenerEgresoDetalle();
+        }).catch(err => {
+          console.error('Error al actualizar precio:', err);
+          this.snackbar.open('Error al actualizar precio', 'OK', { duration: 3000 });
+        }).finally(() => {
+          this.cargando.hide();
+        });
       }
     });
   }

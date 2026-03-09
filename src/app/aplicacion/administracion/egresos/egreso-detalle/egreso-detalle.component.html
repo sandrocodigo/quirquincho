@@ -1,420 +1,419 @@
-<div class="flex items-center justify-between">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
   <div>
     <h1
-      class="text-3xl font-semibold bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 inline-block text-transparent bg-clip-text">
-      Egreso - @if (egreso) {<span>{{ egreso.codigo }}</span>}
-
+      class="text-4xl font-extrabold bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 inline-block text-transparent bg-clip-text drop-shadow-sm">
+      Egreso @if (egreso) {<span class="font-mono text-3xl">#{{ egreso.codigo }}</span>}
     </h1>
-    <p class="text-sm text-gray-500 dark:text-gray-300">Detalle de Venta</p>
+    <div class="flex items-center gap-2 mt-1">
+      <span class="w-8 h-0.5 bg-orange-500 rounded-full"></span>
+      <p class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest">Detalle de Operación</p>
+    </div>
   </div>
-  <div class="ml-auto">
 
-    <button [routerLink]="'/administracion/egresos'" class="ml-1 mr-1" color="primary" mat-mini-fab
-      matTooltip="Mas Egresos" type="button">
-      <mat-icon>list</mat-icon>
+  <div
+    class="flex items-center gap-2 bg-white dark:bg-gray-800 p-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+    <button [routerLink]="'/administracion/egresos'"
+      class="!flex items-center justify-center w-10 h-10 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
+      matTooltip="Volver a la lista">
+      <mat-icon>keyboard_backspace</mat-icon>
     </button>
-
-    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" matFab extended matTooltip="Adicionar" type="button">
-      <mat-icon>add</mat-icon> Nuevo
+    <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+    <button (click)="nuevo()"
+      class="!bg-orange-600 hover:!bg-orange-700 !text-white !rounded-xl !px-6 !py-2.5 !flex !items-center !gap-2 !font-bold !shadow-lg !shadow-orange-200 dark:!shadow-none !transition-all"
+      mat-flat-button>
+      <mat-icon>add</mat-icon>
+      NUEVO EGRESO
     </button>
-
   </div>
 </div>
 
+<!-- Info Banner Section -->
 @if (egreso) {
-<div
-  class="bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200 p-4 rounded-lg shadow-lg flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
-
-
-  <div class="flex items-center space-x-2">
-    <span class="material-icons text-green-500">home</span>
-    <span>{{ egreso.sucursal }}</span>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div
+    class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 group hover:shadow-md transition-shadow">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 bg-green-50 dark:bg-green-900/30 rounded-xl text-green-600 dark:text-green-400">
+        <mat-icon>storefront</mat-icon>
+      </div>
+      <div>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Sucursal</p>
+        <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ egreso.sucursal }}</p>
+      </div>
+    </div>
   </div>
 
-  <div class="flex items-center space-x-2 border-l">
-    <span class="material-icons text-yellow-500">update</span>
-    <span>{{ egreso.tipo }}</span>
+  <div
+    class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 group hover:shadow-md transition-shadow">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 bg-yellow-50 dark:bg-yellow-900/30 rounded-xl text-yellow-600 dark:text-yellow-400">
+        <mat-icon>category</mat-icon>
+      </div>
+      <div>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Tipo de Operación</p>
+        <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ egreso.tipo }}</p>
+      </div>
+    </div>
   </div>
 
-  <!-- Información del cliente -->
-  <div class="flex items-center space-x-2 border-l">
-    <!-- Empresa -->
-    <span class="material-icons text-blue-500">business</span>
-    <span class="font-medium">{{ egreso.clienteEmpresa }} - {{ egreso.clienteResponsable }}</span>
+  <div
+    class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 group hover:shadow-md transition-shadow lg:col-span-2">
+    <div class="flex items-center gap-3 w-full">
+      <div class="p-2.5 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="flex-grow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Cliente / Responsable</p>
+            <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{{ egreso.clienteEmpresa }} - {{
+              egreso.clienteResponsable }}</p>
+          </div>
+          @if (!egreso.finalizado && !egreso.traspaso) {
+          <button (click)="editarEgreso()" [disabled]="egreso.tipo === 'MANTENIMIENTO'"
+            class="!text-blue-500 !bg-blue-50 dark:!bg-blue-900/20 !rounded-lg !px-3 !py-1 !flex !items-center !gap-1 !text-xs !font-bold hover:!bg-blue-100 dark:hover:!bg-blue-900/40 transition-colors disabled:!opacity-50">
+            <mat-icon class="!text-sm">edit</mat-icon> Editar
+          </button>
+          }
+          @if (!egreso.finalizado && egreso.traspaso) {
+          <button (click)="editarTraspaso(egreso)"
+            class="!text-green-500 !bg-green-50 dark:!bg-green-900/20 !rounded-lg !px-3 !py-1 !flex !items-center !gap-1 !text-xs !font-bold hover:!bg-green-100 dark:hover:!bg-green-900/40 transition-colors">
+            <mat-icon class="!text-sm">edit</mat-icon> Editar Traspaso
+          </button>
+          }
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="flex items-center space-x-2 flex-1 border-l">
-    <span class="material-icons text-purple-500">description</span>
-    <span>{{ egreso.descripcion }}</span>
-  </div>
-
-  <div class="flex items-center px-4 py-2 md:ml-auto">
-    <!--     <mat-slide-toggle [(ngModel)]="qr" name="qr" (change)="onQrChange($event)" [disabled]="egreso?.finalizado === true">
-      Pagará con QR
-    </mat-slide-toggle> -->
-  </div>
-  <div class="flex items-center px-4 py-2 md:ml-auto">
-    <!--     <mat-slide-toggle [(ngModel)]="parraLlevar" name="parraLlevar" [disabled]="egreso?.finalizado === true"
-      (change)="onLLevarChange($event)">
-      Para LLevar
-    </mat-slide-toggle> -->
-  </div>
-
-  <!-- Botón de Editar -->
-  @if (!egreso.finalizado && !egreso.traspaso) {
-  <button (click)="editarEgreso()" [disabled]="egreso.tipo === 'MANTENIMIENTO'"
-    class="flex items-center text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg shadow-lg transition duration-200 md:ml-auto disabled:opacity-50 disabled:cursor-not-allowed">
-    <span class="material-icons mr-1">edit</span>
-    Editar
-  </button>
-  }
-  @if (!egreso.finalizado && egreso.traspaso) {
-  <button (click)="editarTraspaso(egreso)"
-    class="flex items-center text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg shadow-lg transition duration-200 md:ml-auto disabled:opacity-50 disabled:cursor-not-allowed">
-    <span class="material-icons mr-1">edit</span>
-    Editar
-  </button>
-  }
 </div>
 }
 
-<div class="container mx-auto mt-2 p-4 md:p-0 dark:bg-gray-800 dark:text-white">
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="container mx-auto">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-    <!-- Cart Items -->
-    <div class="col-span-3 bg-white p-4 rounded shadow-md dark:bg-gray-700 dark:text-white">
+    <!-- Main Cart Content -->
+    <div class="lg:col-span-8 space-y-4">
 
-      @if (egreso && !egreso.finalizado && listaProductos) {
-      <br>
-
-      <div class="flex flex-wrap -mx-2">
-        <div class="w-full md:w-1/3 px-2">
-          @if (buscadorFormGroup) {
-          <form [formGroup]="buscadorFormGroup" (ngSubmit)="egresarConCodigoDeBarra()" class="flex-grow" #aForm>
-            <div class="flex h-10 items-center px-1 bg-app-bar">
-              <div class="flex-grow flex m-0">
-                <div class="flex items-center mr-2 px-2 border rounded-full bg-foreground w-full">
-                  <mat-icon>search</mat-icon>
-                  <input formControlName="codigoBarra" name="codigoBarra"
-                    class="w-full px-2 py-3 border-0 outline-none bg-transparent" placeholder="Codigo de Barra...">
+      <!-- Search and Filters -->
+      <div class="bg-white dark:bg-gray-900 p-4 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800">
+        @if (egreso && !egreso.finalizado && listaProductos) {
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <!-- Barcode Scanner Input -->
+          <div class="md:col-span-4">
+            @if (buscadorFormGroup) {
+            <form [formGroup]="buscadorFormGroup" (ngSubmit)="egresarConCodigoDeBarra()" #aForm>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <mat-icon
+                    class="text-gray-400 group-focus-within:text-orange-500 transition-colors">qr_code_scanner</mat-icon>
                 </div>
+                <input formControlName="codigoBarra"
+                  class="block w-full pl-10 pr-3 py-3 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl text-sm focus:ring-2 focus:ring-orange-500 dark:text-white transition-all outline-none"
+                  placeholder="Escanear Código...">
               </div>
-            </div>
-          </form>
-          }
-        </div>
-        <div class="w-full md:w-2/3 px-2">
-          @if (productoFormGroup) {
-          <form (ngSubmit)="onSeleccionar()" [formGroup]="productoFormGroup" #aFormSeleccionar>
-              <ng-select class="mt-1 text-slate-900" [items]="listaProductos" bindLabel="dato" bindValue="id"
-                formControlName="productoId" appendTo="body" placeholder="Código o descripción" [searchable]="true"
-                [clearable]="true" [virtualScroll]="true" #productoSelect>
+            </form>
+            }
+          </div>
+
+          <!-- Product Select -->
+          <div class="md:col-span-8">
+            @if (productoFormGroup) {
+            <form (ngSubmit)="onSeleccionar()" [formGroup]="productoFormGroup" #aFormSeleccionar>
+
+              <ng-select class="custom-premium-select" [items]="listaProductos" bindLabel="dato" bindValue="id"
+                formControlName="productoId" appendTo="body" dropdownPanelClass="custom-premium-dropdown"
+                placeholder="Buscar por código o descripción..." [searchable]="true" [clearable]="true"
+                [virtualScroll]="true" #productoSelect>
                 <ng-template ng-option-tmp let-item="item">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between p-1">
                     <div class="flex flex-col">
-                      <span class="font-semibold text-sm">{{ item.descripcion }}</span>
-                      <span class="text-[11px] text-slate-500">{{ item.codigo }} · {{ item.tipo
-                        }}</span>
+                      <span class="font-bold text-sm text-gray-800 dark:text-orange-400">{{ item.descripcion }}</span>
+                      <span class="text-[10px] text-gray-500 font-mono">{{ item.codigo }} | {{ item.tipo }}</span>
                     </div>
-                    <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{{
-                      item.categoria }}</span>
+                    <span
+                      class="text-[10px] px-2 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-300 font-bold uppercase tracking-wider">
+                      {{ item.categoria }}
+                    </span>
                   </div>
                 </ng-template>
               </ng-select>
-          </form>
-          }
+
+            </form>
+            }
+          </div>
         </div>
+        } @else {
+        <div class="flex items-center gap-3 text-gray-400 py-2">
+          <mat-icon>lock</mat-icon>
+          <span class="text-sm font-medium uppercase tracking-widest">Este documento ha sido finalizado y no permite
+            ediciones</span>
+        </div>
+        }
       </div>
 
-      <br>
+      <!-- Items List -->
+      <div class="space-y-3">
+        @for (item of detalle; track $index) {
+        <div
+          class="group relative bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-900/40 transition-all flex flex-col sm:flex-row items-center gap-4">
 
-      }
-
-      @for (item of detalle; track $index) {
-      <div class="flex flex-col md:flex-row items-center gap-2 p-2 border-b hover:bg-gray-100 dark:hover:bg-gray-500">
-
-        <div class="flex flex-grow gap-4 items-center">
-          <div class="w-16 h-24" (click)="fotos(item.producto)">
+          <!-- Product Image -->
+          <div
+            class="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 cursor-pointer"
+            (click)="fotos(item.producto)">
             <img
               [src]="item.productoFotosUrl && item.productoFotosUrl.length > 0 ? item.productoFotosUrl[0].url : 'assets/imagenes/sinfoto.png'"
-              alt="Imagen del producto" class="w-full h-auto object-cover rounded-md cursor-pointer">
+              alt="Imagen" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
           </div>
-          <div class="flex flex-col justify-between">
-            <span class="text-[10px]">{{item.productoCodigo}}</span>
-            <span class="text-sm font-bold">{{item.productoDescripcion}}</span>
-            <!--  <span class="text-xs text-red-500">{{item.productoBarra}} </span> -->
-            <span class="text-xs italic text-orange-600 dark:text-orange-300">{{item.detalle}}</span>
+
+          <!-- Product Info -->
+          <div class="flex-grow text-center sm:text-left">
+            <span
+              class="inline-block text-[10px] font-mono font-bold text-gray-400 uppercase mb-0.5">{{item.productoCodigo}}</span>
+            <h3 class="text-sm font-bold text-gray-800 dark:text-gray-100 leading-tight mb-1">
+              {{item.productoDescripcion}}</h3>
+            @if (item.detalle) {
+            <span
+              class="text-[11px] font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded-md">{{item.detalle}}</span>
+            }
           </div>
-        </div>
 
+          <!-- Quantity & Actions for Editable -->
+          @if (egreso && !egreso.finalizado) {
+          <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-900/50 p-1.5 rounded-2xl">
+            <button (click)="restar(item)" [disabled]="item.cantidad <= 1"
+              class="w-8 h-8 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 text-red-500 shadow-sm hover:bg-red-50 transition-colors disabled:opacity-30 border border-gray-100 dark:border-gray-700">
+              <mat-icon class="!text-lg">remove</mat-icon>
+            </button>
 
+            <div class="flex flex-col items-center px-3 min-w-[50px]">
+              <span class="text-lg font-black text-gray-800 dark:text-white leading-none">{{item.cantidad}}</span>
+              <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">de
+                {{item.cantidadSaldo}}</span>
+            </div>
 
-        @if (egreso && !egreso.finalizado) {
-        <div class="flex flex-row md:flex-col items-center gap-2">
-          <!-- Botón SUMAR -->
-          <button mat-icon-button type="button" (click)="sumar(item)" [disabled]="item.cantidad >= item.cantidadSaldo">
-            <mat-icon class="!text-green-500">add_circle</mat-icon>
-          </button>
+            <button (click)="sumar(item)" [disabled]="item.cantidad >= item.cantidadSaldo"
+              class="w-8 h-8 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 text-green-500 shadow-sm hover:bg-green-50 transition-colors disabled:opacity-30 border border-gray-100 dark:border-gray-700">
+              <mat-icon class="!text-lg">add</mat-icon>
+            </button>
+          </div>
 
-          <!-- Botón RESTAR -->
-          <button mat-icon-button type="button" (click)="restar(item)" [disabled]="item.cantidad <= 1">
-            <mat-icon class="!text-red-500">remove_circle</mat-icon>
-          </button>
-        </div>
-        }
+          <div class="flex sm:flex-col items-center gap-2">
+            <button mat-icon-button (click)="verIngresos(item)" matTooltip="Ver Ingresos"
+              class="!text-blue-500 hover:!bg-blue-50">
+              <mat-icon>inventory_2</mat-icon>
+            </button>
+            <div class="flex items-center gap-1">
+              <button mat-icon-button (click)="editar(item)" class="!text-yellow-600 hover:!bg-yellow-50">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="eliminar(item)" class="!text-red-600 hover:!bg-red-50">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+          } @else {
+          <!-- Quantity for Non-Editable -->
+          <div class="px-6 py-2 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700">
+            <span class="text-xs text-gray-400 uppercase font-black block text-center leading-none mb-1">CANT</span>
+            <span class="text-xl font-black text-gray-800 dark:text-white">{{item.cantidad}}</span>
+          </div>
+          }
 
-
-        <div class="flex flex-row justify-between items-center gap-2">
-
-          <div class="flex flex-col items-center justify-center w-16">
-            <span class="text-lg font-semibold">
-              {{item.cantidad}}
-
-              @if (egreso && !egreso.finalizado) {
-              <span style="font-size:10px"> / {{item.cantidadSaldo}} </span>
-              }
-
+          <!-- Pricing -->
+          <div class="flex flex-col items-end min-w-[100px]">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mb-1">Subtotal</p>
+            <span class="text-lg font-black text-orange-600 dark:text-orange-400 leading-none">
+              {{item.subtotal | number:'1.2-2'}}
             </span>
-          </div>
-
-          <div class="text-right">
-            <p class="text-xs text-gray-400">P. Venta</p>
-            <span class="text-sm font-semibold">{{item.pv | number:'1.2-2'}}</span>
-          </div>
-
-          <div class="text-right">
-            <p class="text-xs text-gray-400">Sub total</p>
-            <span class="text-sm font-semibold">{{item.subtotal | number:'1.2-2'}}</span>
+            <span class="text-[10px] font-medium text-gray-400 mt-1">Precio: {{item.pv | number:'1.2-2'}}</span>
           </div>
         </div>
-
-        @if (egreso && !egreso.finalizado) {
-        <div class="flex flex-row md:flex-col items-center gap-2">
-          <button mat-icon-button type="button" (click)="editar(item)">
-            <mat-icon class="!text-green-500">edit</mat-icon>
-          </button>
-          <button mat-icon-button type="button" (click)="eliminar(item)">
-            <mat-icon class="!text-red-500">delete</mat-icon>
-          </button>
+        } @empty {
+        <div
+          class="flex flex-col items-center justify-center py-20 bg-gray-50/50 dark:bg-gray-800/20 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+          <mat-icon class="!text-6xl text-gray-300 dark:text-gray-600 mb-4">shopping_cart</mat-icon>
+          <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">El carrito está vacío</p>
         </div>
         }
-
       </div>
 
-      }
-
+      <!-- Audit Section -->
       @if (egreso) {
-      <div class="mt-4 space-y-1 text-sm text-gray-700 dark:text-gray-200">
-        <p class="flex items-center gap-1">
-          <span class="font-medium text-gray-500 dark:text-gray-300">Creado por</span>
-          <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.registroUsuario }}</span>
-          <span class="text-gray-400">a las</span>
-          <span>{{ egreso.registroFecha?.toDate() | date:'short' }}</span>
-        </p>
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
+          <h4
+            class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">
+            Registro y Auditoría</h4>
+          <ul class="space-y-3">
+            <li class="flex items-center justify-between text-xs">
+              <span class="text-gray-500">Creado por:</span>
+              <span class="font-bold text-gray-700 dark:text-gray-300">{{ egreso.registroUsuario }} <br> <span
+                  class="text-[10px] text-gray-400 font-normal">{{ egreso.registroFecha?.toDate() | date:'short'
+                  }}</span></span>
+            </li>
+            <li class="flex items-center justify-between text-xs border-t border-gray-100 dark:border-gray-800 pt-2">
+              <span class="text-gray-500">Actualizado por:</span>
+              <span class="font-bold text-gray-700 dark:text-gray-300">{{ egreso.edicionUsuario }} <br> <span
+                  class="text-[10px] text-gray-400 font-normal">{{ egreso.edicionFecha?.toDate() | date:'short'
+                  }}</span></span>
+            </li>
+            @if (egreso.finalizado) {
+            <li class="flex items-center justify-between text-xs border-t border-gray-100 dark:border-gray-800 pt-2">
+              <span class="text-gray-500 font-bold text-red-500">Finalizado por:</span>
+              <span class="font-bold text-red-600">{{ egreso.finalizadoUsuario }} <br> <span
+                  class="text-[10px] text-red-400 font-normal">{{ egreso.finalizadoFecha?.toDate() | date:'short'
+                  }}</span></span>
+            </li>
+            }
+          </ul>
+        </div>
 
-        <p class="flex items-center gap-1">
-          <span class="font-medium text-gray-500 dark:text-gray-300">Actualizado por</span>
-          <span class="font-semibold text-yellow-600 dark:text-yellow-400">{{ egreso.edicionUsuario }}</span>
-          <span class="text-gray-400">a las</span>
-          <span>{{ egreso.edicionFecha?.toDate() | date:'short' }}</span>
-        </p>
-
-        @if (egreso.finalizado) {
-        <p class="flex items-center gap-1">
-          <span class="font-medium text-gray-500 dark:text-gray-300">Finalizado por</span>
-          <span class="font-semibold text-red-600 dark:text-red-400">{{ egreso.finalizadoUsuario }}</span>
-          <span class="text-gray-400">a las</span>
-          <span>{{ egreso.finalizadoFecha?.toDate() | date:'short' }}</span>
-        </p>
-        }
-
-        @if (egreso.pagado) {
-        <p class="flex items-center gap-1">
-          <span class="font-medium text-gray-500 dark:text-gray-300">Cobrado por</span>
-          <span class="font-semibold text-green-600 dark:text-green-400">{{ egreso.pagadoUsuario }}</span>
-          <span class="text-gray-400">a las</span>
-          <span>{{ egreso.pagadoFecha?.toDate() | date:'short' }}</span>
-        </p>
-        }
-
-        @if (egreso && egreso.traspaso) {
-        <div class="mt-4 space-y-1 text-sm text-gray-700 dark:text-gray-200">
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Sucursal Origen</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.sucursal }}</span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Sucursal Destino</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.sucursalDestino }}</span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoInterno }} - {{
-              egreso.vehiculoPlaca }}</span>
-          </p>
-
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Traspasado</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">
-              {{ egreso.traspasado?'CONFIRMADO':'PENDIENTE' }}
-            </span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Traspasado Usuario</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">
-              {{ egreso.traspasadoUsuario }}
-            </span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Traspasado Fecha</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">
-              {{ egreso.traspasadoFecha?.toDate() | date:'short' }}
-            </span>
-          </p>
-
+        @if (egreso.traspaso || egreso.ordenCodigo) {
+        <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
+          <h4
+            class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">
+            Detalles Adicionales</h4>
+          @if (egreso.traspaso) {
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Destino:</span>
+              <span class="font-bold text-blue-600">{{ egreso.sucursalDestino }}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Estado Traspaso:</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-black"
+                [ngClass]="egreso.traspasado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
+                {{ egreso.traspasado ? 'CONFIRMADO' : 'PENDIENTE' }}
+              </span>
+            </div>
+          </div>
+          }
+          @if (egreso.ordenCodigo) {
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Orden:</span>
+              <span class="font-bold text-blue-600">{{ egreso.ordenCodigo }}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Mantenimiento:</span>
+              <span class="font-bold text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{{
+                egreso.mantenimientoTipo }}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Vehículo:</span>
+              <span class="text-[10px] font-black px-2 py-0.5 rounded-md" [ngClass]="{
+                      'text-orange-700 bg-orange-100': egreso.vehiculoEmpresa == 'QUIRQUINCHO',
+                      'text-blue-700 bg-blue-100': egreso.vehiculoEmpresa == 'URKUPIÑA',
+                      'text-green-700 bg-green-100': egreso.vehiculoEmpresa == 'PUMA',
+                      'text-purple-700 bg-purple-100': egreso.vehiculoEmpresa == 'PULLMAN'
+                    }">{{ egreso.vehiculoPlaca }}</span>
+            </div>
+          </div>
+          }
         </div>
         }
-
-
-        @if (egreso && egreso.ordenCodigo) {
-        <div class="mt-4 space-y-1 text-sm text-gray-700 dark:text-gray-200">
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Orden</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.ordenCodigo }}</span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Mantenimiento Tipo</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.mantenimientoTipo }}</span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Mantenimiento Descripion</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.mantenimientoDescripcion }}</span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo Empresa</span>
-    <span class="text-xs px-2 py-1 rounded-full capitalize font-bold" [ngClass]="{
-                            'text-orange-700 bg-orange-100': egreso.vehiculoEmpresa == 'QUIRQUINCHO',
-                            'text-blue-700 bg-blue-100': egreso.vehiculoEmpresa == 'URKUPIÑA',
-                            'text-green-700 bg-green-100': egreso.vehiculoEmpresa == 'PUMA',
-                            'text-purple-700 bg-purple-100': egreso.vehiculoEmpresa == 'PULLMAN',
-                        }">
-            {{ egreso.vehiculoEmpresa }}
-          </span>
-          </p>
-
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo Interno</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoInterno }}</span>
-          </p>
-
-          <p class="flex items-center gap-1">
-            <span class="font-medium text-gray-500 dark:text-gray-300">Vehiculo Placa</span>
-            <span class="font-semibold text-blue-600 dark:text-blue-400">{{ egreso.vehiculoPlaca }}</span>
-          </p>
-
-        </div>
-        }
-
       </div>
+      }
 
-      @if (!egreso.finalizado && listaProductos) {
-      <!-- <button matButton="elevated" (click)="openBottomSheet()">Productos Favoritos</button> -->
-      <button matButton="elevated" (click)="obtenerProductos()">Recargar Productos</button>
-      }
-      }
+      <div class="flex flex-wrap gap-3 mt-6">
+        @if (egreso && !egreso.finalizado && listaProductos) {
+        <button (click)="obtenerProductos()" class="!rounded-xl !text-xs !font-bold !px-6 hover:!bg-gray-100"
+          mat-stroked-button>
+          <mat-icon class="!text-sm">refresh</mat-icon> RECARGAR PRODUCTOS
+        </button>
+        }
+      </div>
 
     </div>
 
-    <!-- Order Summary -->
-    @if ( egreso && detalle) {
-    <div class="col-span-1 bg-white p-4 rounded shadow-md dark:bg-gray-700 dark:text-white">
-      <h1 class="text-2xl font-semibold border-b pb-4">Resumen</h1>
+    <!-- Sidebar Summary -->
+    <div class="lg:col-span-4 sticky top-6">
+      @if (egreso && detalle) {
+      <div
+        class="bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl shadow-orange-100 dark:shadow-none border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-2xl font-black text-gray-800 dark:text-white flex items-center gap-3 mb-6">
+            <mat-icon class="!text-orange-500">receipt_long</mat-icon>
+            Resumen
+          </h2>
 
-      <div class="flex justify-between mt-4 text-sm font-semibold">
-        <span class="uppercase">{{detalle.length}} Items</span>
-        <span>{{total | number:'1.2-2': 'EN'}}</span>
-      </div>
+          <!-- Summary Details -->
+          <div class="space-y-4">
+            <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-800/50 p-3 rounded-2xl">
+              <span class="text-xs font-black text-gray-400 uppercase tracking-widest">{{detalle.length}} ITEMS</span>
+              <span class="text-base font-bold text-gray-800 dark:text-gray-200">{{total | number:'1.2-2': 'EN'}}</span>
+            </div>
 
-      <div class="flex justify-between mt-2 text-sm font-semibold">
-        <span class="uppercase">Descuento {{egreso.porcentajeDescuento}}%</span>
-        <span>{{descuento | number:'1.2-2': 'EN'}}</span>
-      </div>
+            <div class="flex justify-between items-center px-3">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-tighter">Descuento
+                ({{egreso.porcentajeDescuento}}%)</span>
+              <span class="text-base font-bold text-red-500">- {{descuento | number:'1.2-2': 'EN'}}</span>
+            </div>
 
-      <div class="flex justify-between mt-2 text-sm font-semibold">
-        <span class="uppercase">SUB TOTAL</span>
-        <span>{{nuevoTotal | number:'1.2-2': 'EN'}}</span>
-      </div>
+            <div
+              class="flex justify-between items-center px-3 font-black text-gray-800 dark:text-gray-100 border-t border-dashed border-gray-200 dark:border-gray-700 pt-4">
+              <span class="text-xs uppercase tracking-widest">SUB TOTAL</span>
+              <span class="text-lg">{{nuevoTotal | number:'1.2-2': 'EN'}}</span>
+            </div>
 
-      <div class="flex justify-between mt-2 text-sm font-semibold">
-        <span class="uppercase">I.T.B.M.S. {{egreso.porcentajeImpuesto}}%</span>
-        <span>{{itbms | number:'1.2-2': 'EN'}}</span>
-      </div>
+            <div class="flex justify-between items-center px-3 text-gray-500">
+              <span class="text-[10px] font-bold uppercase tracking-tighter">I.T.B.M.S.
+                ({{egreso.porcentajeImpuesto}}%)</span>
+              <span class="text-sm font-bold">{{itbms | number:'1.2-2': 'EN'}}</span>
+            </div>
+          </div>
 
-      <div class="border-t mt-4 pt-4">
-        <div class="flex justify-between py-2 text-3xl font-semibold uppercase">
-          <span>Total</span>
-          <span>{{totalGeneral | number:'1.2-2': 'EN'}}</span>
+          <!-- Total Block -->
+          <div
+            class="mt-8 bg-gradient-to-br from-gray-900 to-black dark:from-orange-600 dark:to-orange-800 p-6 rounded-3xl text-white shadow-xl shadow-gray-200 dark:shadow-none">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-1 block">Total General</span>
+            <div class="flex items-baseline gap-1">
+              <span class="text-4xl font-black">{{totalGeneral | number:'1.2-2': 'EN'}}</span>
+              <span class="text-xs opacity-60 font-bold uppercase">BS.</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-8 space-y-3">
+            @if (!egreso.finalizado) {
+            <button (click)="finalizar()" [disabled]="!detalle || detalle.length === 0"
+              class="w-full !bg-orange-600 hover:!bg-orange-700 !text-white !rounded-2xl !py-7 !text-lg !font-black !uppercase !tracking-widest !shadow-xl !shadow-orange-200 dark:!shadow-none !transition-all !flex !items-center !justify-center !gap-3 disabled:!opacity-50 disabled:!grayscale"
+              mat-flat-button>
+              <mat-icon class="!text-2xl">check_circle</mat-icon>
+              Finalizar Egreso
+            </button>
+            } @else {
+            <div class="grid grid-cols-1 gap-3">
+              @if(!egreso.traspaso) {
+              <button (click)="imprimir()"
+                class="!w-full !bg-gray-800 dark:!bg-gray-700 !text-white !rounded-2xl !py-4 hover:!bg-black transition-colors !flex !items-center !justify-center !gap-2 !font-bold"
+                mat-flat-button>
+                <mat-icon>print</mat-icon> IMPRIMIR RECIBO
+              </button>
+              }
+              @if (egreso.traspaso) {
+              <button (click)="imprimirTraspaso()"
+                class="!w-full !bg-blue-600 !text-white !rounded-2xl !py-4 hover:!bg-blue-700 transition-colors !flex !items-center !justify-center !gap-2 !font-bold"
+                mat-flat-button>
+                <mat-icon>local_shipping</mat-icon> IMPRIMIR TRASPASO
+              </button>
+              }
+            </div>
+
+            <div
+              class="mt-6 flex flex-col items-center gap-2 text-center p-4 bg-green-50 dark:bg-green-900/10 rounded-2xl border border-green-100 dark:border-green-900/30">
+              <mat-icon class="text-green-500">verified</mat-icon>
+              <p class="text-[10px] font-black text-green-700 dark:text-green-400 uppercase tracking-widest">Documento
+                Finalizado Correctamente</p>
+            </div>
+            }
+          </div>
         </div>
-
-        @if (!egreso.finalizado) {
-
-        <button (click)="finalizar()" [disabled]="!detalle || detalle.length === 0" class="w-full flex items-center justify-center gap-3 
-         bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-400 
-         px-6 py-4 text-lg font-bold text-white uppercase 
-         rounded-xl mt-4 shadow-md transition transform hover:scale-105 disabled:cursor-not-allowed">
-          <mat-icon class="!text-2xl">check_circle</mat-icon>
-          Finalizar
-        </button>
-
-
-        } @else {
-
-        @if(!egreso.traspaso) {
-        <button (click)="imprimir()"
-          class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
-          <mat-icon>print</mat-icon>
-          Imprimir
-        </button>
-        }
-
-        @if (egreso.traspaso) {
-        <button (click)="imprimirTraspaso()"
-          class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
-          <mat-icon>print</mat-icon>
-          Imprimir Traspaso
-        </button>
-        }
-
-
-        <!--         <button (click)="imprime()"
-          class="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 p-2 text-sm text-white uppercase rounded mt-2">
-          <mat-icon>print</mat-icon>
-          Imprimir Ticket
-        </button> -->
-        }
-
-        <!--         @if (egreso.finalizado && !egreso.pagado && egreso.tipo !== 'AJUSTE') {
-        <button (click)="cobrar()"
-          class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-800 p-2 text-sm text-white uppercase rounded mt-2">
-          <mat-icon>point_of_sale</mat-icon>
-          Cobrar
-        </button>
-        } -->
-
       </div>
+      }
     </div>
-    }
 
   </div>
 </div>

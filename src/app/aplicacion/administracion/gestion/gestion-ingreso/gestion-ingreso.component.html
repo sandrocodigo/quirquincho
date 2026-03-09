@@ -67,10 +67,11 @@
   <table class="tabla-estilizada" #tabla>
     <thead>
       <tr>
-        <th colspan="7">DETALLE DE INGRESOS</th>
+        <th colspan="8">DETALLE DE INGRESOS</th>
         <th colspan="4">{{fechaHoy| date}}</th>
       </tr>
       <tr>
+        <th>SUCURSAL</th>
         <th>CODIGO</th>
         <th>DESCRIPCION</th>
         <th>BARRA</th>
@@ -87,6 +88,7 @@
     <tbody>
       @for (item of lista; track $index) {
       <tr>
+        <td style="text-align:start"> {{item.sucursal}} </td>
         <td style="text-align:start"> {{item.productoCodigo}} </td>
         <td style="text-align:start">{{item.productoDescripcion}}</td>
         <td style="text-align:start">{{item.productoCodigoBarra}}</td>
@@ -111,6 +113,7 @@
     <tfoot>
       <tr>
         <th>{{lista.length}}</th>
+        <th>-</th>
         <th>-</th>
         <th>-</th>
         <th>-</th>
