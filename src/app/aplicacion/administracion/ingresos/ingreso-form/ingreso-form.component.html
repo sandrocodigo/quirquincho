@@ -4,21 +4,36 @@
 @if (registroFormGroup) {
 <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
   <mat-dialog-content>
-    <mat-form-field class="flex-auto w-full">
-      <mat-label>Sucursal</mat-label>
-      <mat-select formControlName="sucursal">
-        @for (item of listaSucursales; track item) {
-        <mat-option [value]="item.id">
-          {{item.descripcion}}
-        </mat-option>
-        }
-      </mat-select>
-      @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
-      <mat-error>
-        Se requiere la Sucursal
-      </mat-error>
-      }
-    </mat-form-field>
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Fecha</mat-label>
+          <input matInput type="date" formControlName="fecha">
+          @if (registroControl && r.fecha.errors && r.fecha.errors.required) {
+          <mat-error>
+            Se requiere la fecha de ingreso
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal</mat-label>
+          <mat-select formControlName="sucursal">
+            @for (item of listaSucursales; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+            }
+          </mat-select>
+          @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
+          <mat-error>
+            Se requiere la Sucursal
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
     <mat-form-field class="flex-auto w-full">
       <mat-label>Tipo</mat-label>
       <mat-select formControlName="tipo">
@@ -40,6 +55,16 @@
       @if (registroControl && r.descripcion.errors && r.descripcion.errors.required) {
       <mat-error>
         Se requieren la descripcion
+      </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Total</mat-label>
+      <input type="number" matInput placeholder="Total" formControlName="total">
+      @if (registroControl && r.total.errors && r.total.errors.required) {
+      <mat-error>
+        Se requiere el total
       </mat-error>
       }
     </mat-form-field>

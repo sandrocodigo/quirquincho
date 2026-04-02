@@ -28,7 +28,7 @@
     <span class="material-icons text-green-500">list</span>
     <span>{{ ingreso.tipo }}</span>
   </div>
-    <div class="flex items-center space-x-2 border-l">
+  <div class="flex items-center space-x-2 border-l">
     <!-- Teléfono -->
     <span class="material-icons text-blue-500">folder</span>
     <span>{{ ingreso.factura }} - {{ ingreso.empresa }}</span>
@@ -138,7 +138,7 @@
             <span class="text-xs text-red-500">{{item.productoCodigoBarra}}
             </span>
             <span class="text-xs text-gray-500">
-              P. Venta ({{item.pv | number:'1.2-2'}})
+              P. Venta ({{item.pv | number:'1.2-2'}}) [{{item.fecha | date:'dd/MM/yyyy'}}]
             </span>
           </div>
         </div>

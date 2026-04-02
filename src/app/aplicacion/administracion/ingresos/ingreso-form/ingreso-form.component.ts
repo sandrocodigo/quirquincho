@@ -101,7 +101,7 @@ export class IngresoFormComponent {
     } else {
       this.ingresoServicio.obtenerPorId(data.id).then(res => {
         this.registroFormGroup = this.fb.group({
-          fecha: [res.fecha, [Validators.required]],
+          fecha: [res.fecha?.toDate ? res.fecha.toDate().toISOString().split('T')[0] : res.fecha, [Validators.required]],
 
           sucursal: [{ value: res.sucursal, disabled: true }, [Validators.required]],
 

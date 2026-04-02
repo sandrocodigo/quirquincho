@@ -71,6 +71,8 @@ export class IngresoDetalleFormComponent {
           [Validators.required, Validators.min(0), Validators.pattern('^[0-9]*\\.?[0-9]*$')]
         ],
         subtotal: [{ value: respuesta.subtotal, disabled: true }],
+
+        fecha: [this.data.ingreso.fecha]
         // lote: [respuesta.lote, [Validators.required]],
         // loteFecha: [          respuesta.loteFecha,          [Validators.required, this.fechaFuturaValidator]        ]
       });
