@@ -632,6 +632,7 @@ export class EgresoDetalleComponent {
         egresoCodigo: this.egreso.codigo,
         egresoDescripcion: this.egreso.descripcion,
         egresoTipo: this.egreso.tipo,
+        egresoEmpresa: this.egreso.empresa,
         sucursal: this.egreso.sucursal,
         ordenId: this.egreso.ordenId || '',
         ordenCodigo: this.egreso.ordenCodigo || 0,

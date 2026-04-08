@@ -81,7 +81,7 @@ export class IngresoFormComponent {
         total: [0, [Validators.required]],
 
 
-        empresa: [null],
+        empresa: ['SIN EMPRESA'],
         factura: [null],
 
 

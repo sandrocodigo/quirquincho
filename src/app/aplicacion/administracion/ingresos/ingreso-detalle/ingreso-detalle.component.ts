@@ -499,8 +499,8 @@ export class IngresoDetalleComponent {
         ingresoCodigo: this.ingreso.codigo,
         ingresoDescripcion: this.ingreso.descripcion,
         ingresoTipo: this.ingreso.tipo,
-        ingresoFactura:this.ingreso.factura || '0',
-        ingresoEmpresa:this.ingreso.empresa || 'SIN EMPRESA',
+        ingresoFactura: this.ingreso.factura || '0',
+        ingresoEmpresa: this.ingreso.empresa || 'SIN EMPRESA',
 
         productoId: producto.id,
         productoTipo: producto.tipo,
@@ -533,6 +533,7 @@ export class IngresoDetalleComponent {
       ingresoId: this.idIngreso,
       ingresoCodigo: this.ingreso.codigo,
       ingresoDescripcion: this.ingreso.descripcion,
+      ingresoTipo: this.ingreso.tipo,
 
       productoId: producto.id,
       productoTipo: producto.tipo,

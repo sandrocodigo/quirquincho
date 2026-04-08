@@ -25,7 +25,7 @@ export class ReportesComponent {
     { link: 'reporte4', icon: 'settings', label: '4: Ordenes' },
     { link: 'reporte5', icon: 'settings', label: '5: Saldo Minimo' },
     { link: 'reporte6', icon: 'settings', label: '6: Egresos de Ordenes' },
-    { link: 'reporte7', icon: 'settings', label: '7: Reporte' },
+    { link: 'reporte7', icon: 'settings', label: '7: Ingresos/Egresos x Empresa' },
     { link: 'reporte8', icon: 'settings', label: '8: Reporte' },
     { link: 'reporte9', icon: 'settings', label: '9: Reporte' },
     { link: 'reporte10', icon: 'settings', label: '10: Reporte' },

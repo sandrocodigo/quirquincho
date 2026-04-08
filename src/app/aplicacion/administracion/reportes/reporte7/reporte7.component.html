@@ -96,13 +96,15 @@
 
 @if(resumenEmpresas.length){
 <div class="mt-6">
-  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+  <div
+    class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
     <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-slate-800">
       <h2 class="text-lg font-semibold dark:text-white">Balance por empresa</h2>
     </div>
     <div class="overflow-x-auto">
       <table class="min-w-full text-sm text-left">
-        <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:bg-slate-800 dark:text-gray-300">
+        <thead
+          class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:bg-slate-800 dark:text-gray-300">
           <tr>
             <th class="px-4 py-3">Empresa</th>
             <th class="px-4 py-3 text-right">Ingresos</th>
@@ -114,8 +116,10 @@
           @for (item of resumenEmpresas; track item.id) {
           <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/60">
             <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{{item.descripcion}}</td>
-            <td class="px-4 py-3 text-right text-emerald-600 dark:text-emerald-400">{{item.ingresos | number:'1.2-2':'EN'}}</td>
-            <td class="px-4 py-3 text-right text-rose-600 dark:text-rose-400">{{item.egresos | number:'1.2-2':'EN'}}</td>
+            <td class="px-4 py-3 text-right text-emerald-600 dark:text-emerald-400">{{item.ingresos |
+              number:'1.2-2':'EN'}}</td>
+            <td class="px-4 py-3 text-right text-rose-600 dark:text-rose-400">{{item.egresos | number:'1.2-2':'EN'}}
+            </td>
             <td class="px-4 py-3 text-right font-semibold"
               [ngClass]="item.balance >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'">
               {{item.balance | number:'1.2-2':'EN'}}
@@ -135,13 +139,15 @@
   <table class="tabla-estilizada" #tabla>
     <thead>
       <tr>
-        <th colspan="8">DETALLE DE INGRESOS</th>
+        <th colspan="10">DETALLE DE INGRESOS</th>
         <th colspan="3">{{fechaHoy| date}}</th>
       </tr>
       <tr>
+        <th>INGRESO</th>
         <th>SUCURSAL</th>
         <th>FECHA</th>
         <th>TIPO</th>
+        <th>EMPRESA</th>
         <th>CODIGO</th>
         <th>DESCRIPCION</th>
         <th>CANTIDAD</th>
@@ -155,9 +161,27 @@
     <tbody>
       @for (item of listaIngresos; track item; let ultimo = $last) {
       <tr>
+        <td style="text-align:start"> {{item.ingresoCodigo}} </td>
         <td style="text-align:start"> {{item.sucursal}} </td>
         <td style="text-align:start"> {{item.fecha | date}} </td>
-        <td style="text-align:start"> {{item.ingresoTipo}} </td>
+        <td style="text-align:start">
+
+          @if(item.ingresoTipo){
+          {{item.ingresoTipo}}
+          } @else{
+          <button (click)="corregir(item)" class="text-red-400">Corregir</button>
+          }
+
+        </td>
+        <td style="text-align:start">
+
+          @if(item.ingresoEmpresa){
+          {{item.ingresoEmpresa}}
+          } @else{
+          <button (click)="corregirEmpresa(item)" class="text-red-400">Corregir</button>
+          }
+
+        </td>
         <td style="text-align:start"> {{item.productoCodigo}} </td>
         <td style="text-align:start"> {{item.productoDescripcion}} </td>
         <td style="text-align:center"> {{item.cantidad}} </td>
@@ -195,10 +219,11 @@
   <table class="tabla-estilizada" #tabla>
     <thead>
       <tr>
-        <th colspan="9">DETALLE DE EGRESOS</th>
+        <th colspan="10">DETALLE DE EGRESOS</th>
         <th colspan="5">{{fechaHoy| date}}</th>
       </tr>
       <tr>
+        <th>EGRESO</th>
         <th>SUCURSAL</th>
         <th>FECHA</th>
         <th>TIPO</th>
@@ -218,9 +243,16 @@
     <tbody>
       @for (item of listaEgresos; track item; let ultimo = $last) {
       <tr>
+        <td style="text-align:start"> {{item.egresoCodigo}} </td>
         <td style="text-align:start"> {{item.sucursal}} </td>
         <td style="text-align:start"> {{item.fecha | date}} </td>
-        <td style="text-align:start"> {{item.tipo}} </td>
+        <td style="text-align:start">
+          @if(item.egresoTipo){
+          {{item.egresoTipo}}
+          } @else{
+          <button (click)="corregirEgresoTipo(item)" class="text-red-400">Corregir</button>
+          }
+        </td>
         <td style="text-align:start"> {{item.productoCodigo}} </td>
         <td style="text-align:start">{{item.productoDescripcion}}</td>
         <td style="text-align:center"> {{item.cantidad}} </td>

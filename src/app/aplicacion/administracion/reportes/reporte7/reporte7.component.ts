@@ -25,6 +25,7 @@ import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { tiposEgresos } from '../../../modelos/tipos';
 import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
 import { CalculoService } from '../../../servicios/calculo.service';
+import { IngresoService } from '../../../servicios/ingreso.service';
 
 @Component({
   selector: 'app-reporte7',
@@ -75,7 +76,9 @@ export class Reporte7Component {
   constructor(
     private fb: FormBuilder,
     private cargando: SpinnerService,
+
     private egresoServicio: EgresoService,
+    private ingresoServicio: IngresoService,
 
     private egresoDetalleServicio: EgresoDetalleService,
     private ingresoDetalleServicio: IngresoDetalleService,
@@ -106,7 +109,7 @@ export class Reporte7Component {
   }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Reporte 3');
+    this.titleService.setTitle('Reporte 7');
   }
 
   // FORM
@@ -339,5 +342,66 @@ export class Reporte7Component {
     }).catch(error => {
       console.error('Error al obtener productos:', error);
     });
+  }
+
+  corregir(detalle: any) {
+    this.cargando.show('Obteniendo ingreso...');
+    this.ingresoServicio.obtenerPorId(detalle.ingresoId).then((respuesta: any) => {
+
+      console.log('INGRESOS: ', respuesta);
+
+      if (respuesta) {
+        this.ingresoDetalleServicio.editar(detalle.id, { ingresoTipo: respuesta.tipo }).then((respuesta2: any) => {
+          console.log('EGRESOS: ', respuesta2);
+          this.cargando.hide();
+          this.obtenerReporte();
+        })
+      } else {
+        this.cargando.hide();
+        console.error('No se encontró el ingreso con ID:', detalle.ingresoId);
+      }
+
+    })
+  }
+
+  corregirEmpresa(detalle: any) {
+    this.cargando.show('Obteniendo ingreso...');
+    this.ingresoServicio.obtenerPorId(detalle.ingresoId).then((respuesta: any) => {
+
+      console.log('INGRESOS: ', respuesta);
+
+      if (respuesta && respuesta.empresa) {
+        this.ingresoDetalleServicio.editar(detalle.id, { ingresoEmpresa: respuesta.empresa }).then((respuesta2: any) => {
+          console.log('EGRESOS: ', respuesta2);
+          this.cargando.hide();
+          this.obtenerReporte();
+        })
+      } else {
+        this.cargando.hide();
+        console.error('No se encontró el ingreso con ID:', detalle.ingresoId);
+      }
+
+    })
+  }
+
+
+  corregirEgresoTipo(detalle: any) {
+    this.cargando.show('Obteniendo egreso...');
+    this.egresoServicio.obtenerPorId(detalle.egresoId).then((respuesta: any) => {
+
+      console.log('EGRESOS: ', respuesta);
+
+      if (respuesta && respuesta.tipo) {
+        this.egresoDetalleServicio.editar(detalle.id, { egresoTipo: respuesta.tipo }).then((respuesta2: any) => {
+          console.log('EGRESOS: ', respuesta2);
+          this.cargando.hide();
+          this.obtenerReporte();
+        })
+      } else {
+        this.cargando.hide();
+        console.error('No se encontró el ingreso con ID:', detalle.ingresoId);
+      }
+
+    })
   }
 }
