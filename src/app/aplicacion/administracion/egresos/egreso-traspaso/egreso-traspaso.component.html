@@ -2,45 +2,45 @@
 <mat-divider></mat-divider>
 
 @if (registroFormGroup) {
-  <form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
-    <mat-dialog-content>
-      <div class="flex flex-wrap -mx-2">
-        <div class="w-full md:w-1/2 px-2">
-          <mat-form-field class="flex-auto w-full">
-            <mat-label>Sucursal Origen</mat-label>
-            <mat-select formControlName="sucursal">
-              @for (item of listaSucursales; track item) {
-                <mat-option [value]="item.id">
-                  {{item.descripcion}}
-                </mat-option>
-              }
-            </mat-select>
-            @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
-              <mat-error>
-                Sucursal Origen
-              </mat-error>
+<form (ngSubmit)="onSubmit()" [formGroup]="registroFormGroup">
+  <mat-dialog-content>
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal Origen</mat-label>
+          <mat-select formControlName="sucursal">
+            @for (item of listaSucursales; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
             }
-          </mat-form-field>
-        </div>
-        <div class="w-full md:w-1/2 px-2">
-          <mat-form-field class="flex-auto w-full">
-            <mat-label>Sucursal Destino</mat-label>
-            <mat-select formControlName="sucursalDestino">
-              @for (item of listaSucursalesDestino; track item) {
-                <mat-option [value]="item.id">
-                  {{item.descripcion}}
-                </mat-option>
-              }
-            </mat-select>
-            @if (registroControl && r.sucursalDestino.errors && r.sucursalDestino.errors.required) {
-              <mat-error>
-                Sucursal Destino
-              </mat-error>
-            }
-          </mat-form-field>
-        </div>
+          </mat-select>
+          @if (registroControl && r.sucursal.errors && r.sucursal.errors.required) {
+          <mat-error>
+            Sucursal Origen
+          </mat-error>
+          }
+        </mat-form-field>
       </div>
-      <!--         <mat-form-field class="flex-auto w-full">
+      <div class="w-full md:w-1/2 px-2">
+        <mat-form-field class="flex-auto w-full">
+          <mat-label>Sucursal Destino</mat-label>
+          <mat-select formControlName="sucursalDestino">
+            @for (item of listaSucursalesDestino; track item) {
+            <mat-option [value]="item.id">
+              {{item.descripcion}}
+            </mat-option>
+            }
+          </mat-select>
+          @if (registroControl && r.sucursalDestino.errors && r.sucursalDestino.errors.required) {
+          <mat-error>
+            Sucursal Destino
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <!--         <mat-form-field class="flex-auto w-full">
       <mat-label>Tipo</mat-label>
       <mat-select formControlName="tipo">
         <mat-option *ngFor="let item of listaTipos" [value]="item.id">
@@ -57,25 +57,36 @@
       <!--             <mat-error *ngIf="registroControl && r.descripcion.errors && r.descripcion.errors.required">
       Se requieren la descripcion
     </mat-error> -->
-  </mat-form-field>
-  <div class="flex flex-wrap -mx-2">
-    <div class="w-full md:w-1/3 px-2">
+    </mat-form-field>
+
+    <mat-form-field class="flex-auto w-full">
+      <mat-label>Empresa</mat-label>
+      <mat-select formControlName="empresa">
+        @for (item of listaEmpresas; track item) {
+        <mat-option [value]="item.id">
+          {{item.id}}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/3 px-2">
+      </div>
+      <div class="w-full md:w-1/3 px-2">
+      </div>
+      <div class="w-full md:w-1/3 px-2">
+      </div>
     </div>
-    <div class="w-full md:w-1/3 px-2">
-    </div>
-    <div class="w-full md:w-1/3 px-2">
-    </div>
-  </div>
-  <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId" appendTo="body"
-    placeholder="Placa de Vehiculo">
-  </ng-select>
-  @if (registroControl && r.vehiculoId.errors && r.vehiculoId.errors.required) {
-    <span
-      class="italic text-xs text-red-600 dark:text-gray-300">
+    <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId" appendTo="body"
+      placeholder="Placa de Vehiculo">
+    </ng-select>
+    @if (registroControl && r.vehiculoId.errors && r.vehiculoId.errors.required) {
+    <span class="italic text-xs text-red-600 dark:text-gray-300">
       Se requiere Placa del Vehiculo
     </span>
-  }
-  <br>
+    }
+    <br>
   </mat-dialog-content>
   <mat-divider></mat-divider>
   <mat-dialog-actions align="end">

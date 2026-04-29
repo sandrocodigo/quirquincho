@@ -21,6 +21,13 @@
   class="bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200 p-4 rounded-lg shadow-lg flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
   <div class="flex items-center space-x-2 border-l">
     <span class="material-icons text-green-500">home</span>
+
+    @if (ingreso.tipo === 'TRASPASO') {
+    <span>
+      {{ ingreso.egresoSucursalOrigen }}
+    </span> -
+    }
+
     <span>{{ ingreso.sucursal }}</span>
   </div>
   <div class="flex items-center space-x-2 border-l">

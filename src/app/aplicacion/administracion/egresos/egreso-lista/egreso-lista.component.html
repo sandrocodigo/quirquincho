@@ -109,7 +109,8 @@
       <td mat-cell *matCellDef="let element">
         {{ element.descripcion }}
         <div class="font-semibold">{{ element.mantenimientoDescripcion }}</div>
-        <div class="font-semibold">{{ element.vehiculoInterno }} - {{ element.vehiculoPlaca }}</div>
+        <div class="font-semibold">{{ element.empresa }} : {{ element.vehiculoInterno }} - {{ element.vehiculoPlaca }}
+        </div>
       </td>
     </ng-container>
 
@@ -204,4 +205,3 @@ class="bg-gray-200 p-2 rounded-full hover:bg-gray-300 dark:bg-gray-700 dark:hove
 
   </table>
 </div>
-

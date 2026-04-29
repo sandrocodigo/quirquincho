@@ -21,6 +21,9 @@
             }
         </mat-form-field>
 
+
+
+
         <div class="flex flex-wrap -mx-2">
             <div class="w-full md:w-1/2 px-2">
 
@@ -58,6 +61,17 @@
                 Seleccione un Egreso
             </mat-error>
             }
+        </mat-form-field>
+
+        <mat-form-field class="flex-auto w-full">
+            <mat-label>Empresa</mat-label>
+            <mat-select formControlName="empresa">
+                @for (item of listaEmpresas; track item) {
+                <mat-option [value]="item.id">
+                    {{item.id}}
+                </mat-option>
+                }
+            </mat-select>
         </mat-form-field>
 
         <!--         <mat-form-field class="flex-auto w-full">

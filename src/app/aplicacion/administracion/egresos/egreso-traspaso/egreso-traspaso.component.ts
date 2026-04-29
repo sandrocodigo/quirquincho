@@ -20,6 +20,7 @@ import { sucursales } from '../../../datos/sucursales';
 
 import { NgSelectModule } from '@ng-select/ng-select';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
+import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
 
 
 @Component({
@@ -59,6 +60,8 @@ export class EgresoTraspasoComponent {
   listaSucursalesDestino: any = [];
 
   usuario: any | null = null;
+
+  listaEmpresas = [...vehiculoEmpresas, { id: 'SIN EMPRESA', descripcion: 'SIN EMPRESA' }];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -100,6 +103,8 @@ export class EgresoTraspasoComponent {
           vehiculoInterno: [null, [Validators.required]],
           vehiculoEmpresa: [null, [Validators.required]],
 
+          empresa: ['SIN EMPRESA'],
+
           subtotal: [0],
           descuento: [0],
           itbms: [0],
@@ -137,6 +142,8 @@ export class EgresoTraspasoComponent {
             tipo: [{ value: res.tipo, disabled: true }, [Validators.required]],
 
             descripcion: [res.descripcion, [Validators.required]],
+
+            empresa: [res.empresa],
 
             vehiculoId: [res.vehiculoId],
             vehiculoNumero: [res.vehiculoNumero],

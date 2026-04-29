@@ -23,6 +23,7 @@ import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { IngresoService } from '../../../servicios/ingreso.service';
 import { EgresoDetalleService } from '../../../servicios/egreso-detalle.service';
 import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.service';
+import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
 
 
 @Component({
@@ -63,6 +64,8 @@ export class IngresoTraspaso {
 
   usuario: any | null = null;
 
+  listaEmpresas = [...vehiculoEmpresas, { id: 'SIN EMPRESA', descripcion: 'SIN EMPRESA' }];
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<IngresoTraspaso>,
@@ -99,6 +102,8 @@ export class IngresoTraspaso {
           egresoSucursalDestino: [null, [Validators.required]],
 
           descripcion: ['TRASPASO ENTRE SUCURSALES'],
+
+          empresa: ['SIN EMPRESA'],
 
           vehiculoId: [null, [Validators.required]],
           vehiculoNumero: [null, [Validators.required]],
@@ -139,6 +144,7 @@ export class IngresoTraspaso {
             egresoSucursalDestino: [res.egresoSucursalDestino, [Validators.required]],
 
             descripcion: [res.descripcion, [Validators.required]],
+            empresa: [res.empresa],
 
             vehiculoId: [res.vehiculoId],
             vehiculoNumero: [res.vehiculoNumero],
@@ -210,6 +216,9 @@ export class IngresoTraspaso {
                     ingresoId: respuesta.id,
                     ingresoCodigo: ingreso.codigo,
                     ingresoDescripcion: ingreso.descripcion,
+                    ingresoTipo: ingreso.tipo,
+                    ingresoFactura: ingreso.factura || '0',
+                    ingresoEmpresa: ingreso.empresa || 'SIN EMPRESA',
 
 
                     productoId: item.productoId,
@@ -284,6 +293,7 @@ export class IngresoTraspaso {
       this.r.egresoSucursalOrigen.setValue(datoEncontrado.sucursal);
       this.r.egresoSucursalDestino.setValue(datoEncontrado.sucursalDestino);
       this.r.descripcion.setValue(datoEncontrado.descripcion);
+      this.r.empresa.setValue(datoEncontrado.empresa);
 
       this.r.vehiculoId.setValue(datoEncontrado.vehiculoId);
       this.r.vehiculoNumero.setValue(datoEncontrado.vehiculoNumero);
@@ -296,6 +306,7 @@ export class IngresoTraspaso {
       this.r.egresoSucursalOrigen.setValue('');
       this.r.egresoSucursalDestino.setValue('');
       this.r.descripcion.setValue('');
+      this.r.empresa.setValue('');
 
       this.r.vehiculoId.setValue('');
       this.r.vehiculoNumero.setValue('');

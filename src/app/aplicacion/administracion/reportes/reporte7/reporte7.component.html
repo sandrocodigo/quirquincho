@@ -219,7 +219,7 @@
   <table class="tabla-estilizada" #tabla>
     <thead>
       <tr>
-        <th colspan="10">DETALLE DE EGRESOS</th>
+        <th colspan="11">DETALLE DE EGRESOS</th>
         <th colspan="5">{{fechaHoy| date}}</th>
       </tr>
       <tr>
@@ -227,6 +227,7 @@
         <th>SUCURSAL</th>
         <th>FECHA</th>
         <th>TIPO</th>
+        <th>EMPRESA</th>
         <th>CODIGO</th>
         <th>DESCRIPCION</th>
         <th>CANTIDAD</th>
@@ -234,9 +235,9 @@
         <th style="text-align:end">P.V.</th>
         <th>SUBTOTAL</th>
         <th>SALDO</th>
-        <th>EMPRESA</th>
-        <th>INTERNO</th>
-        <th>PLACA</th>
+        <th>V.EMPRESA</th>
+        <th>V.INTERNO</th>
+        <th>V.PLACA</th>
         <th>FINALIZADO</th>
       </tr>
     </thead>
@@ -253,6 +254,7 @@
           <button (click)="corregirEgresoTipo(item)" class="text-red-400">Corregir</button>
           }
         </td>
+        <td>{{item.egresoEmpresa}}</td>
         <td style="text-align:start"> {{item.productoCodigo}} </td>
         <td style="text-align:start">{{item.productoDescripcion}}</td>
         <td style="text-align:center"> {{item.cantidad}} </td>
