@@ -17,7 +17,6 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { limites } from '../../../datos/limites';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../servicios/auth.service';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
@@ -26,6 +25,7 @@ import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConductorFormComponent } from '../conductor-form/conductor-form.component';
 import { ConductorService } from '../../../servicios/conductor.service';
+import { NgSelectComponent } from '@ng-select/ng-select';
 
 
 @Component({
@@ -49,7 +49,8 @@ import { ConductorService } from '../../../servicios/conductor.service';
     MatDialogModule,
     MatTableModule,
     MatSortModule,
-    MatMenuModule
+    MatMenuModule,
+    NgSelectComponent
   ],
 
 })
@@ -61,7 +62,6 @@ export class ConductorListaComponent {
   usuario: any | null = null;
   usuarioDatos: any;
 
-  limites = limites;
 
   // DataSource para la tabla
   dataSource = new MatTableDataSource<any>([]);
@@ -74,6 +74,7 @@ export class ConductorListaComponent {
 
   lista: any[] = [];
   listaOriginal: any[] = [];
+  listaActivos = [{ id: 'TODOS', dato: 'TODOS' }, { id: 'true', dato: 'ACTIVOS' }, { id: 'false', dato: 'PASIVOS' }];
 
   constructor(
     private fb: FormBuilder,
@@ -95,7 +96,6 @@ export class ConductorListaComponent {
 
     this.buscadorFormGroup = this.fb.group({
       activo: ['true'],
-      limite: [100],
     });
 
     this.obtenerConsulta();
@@ -116,9 +116,6 @@ export class ConductorListaComponent {
 
   establecerSuscripcionForm() {
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
       this.obtenerConsulta();
     });
   }

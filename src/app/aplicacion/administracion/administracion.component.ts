@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -22,14 +22,12 @@ import { filter } from 'rxjs';
     MatIconModule, MatButtonModule, MatDividerModule, MatSlideToggleModule, MatMenuModule,],
 })
 export class AdministracionComponent {
-  foto = 'imagenes/avatar.png';
-
-  usuario: any | null = null;
-  usuarioDato: any;
-  darkMode = false;
-  menuOpen = false;
-
-  visitas: number | null = null;
+  usuario = signal<any | null>(null);
+  usuarioDato = signal<any>(null);
+  darkMode = signal<boolean>(false);
+  menuOpen = signal<boolean>(false);
+  foto = signal<string>('imagenes/avatar.png');
+  visitas = signal<number>(0);
 
   /*   menuItems = [
       { link: 'estadisticas', icon: 'bar_chart', label: 'Estadisticas', color: 'text-blue-500' },
@@ -67,8 +65,8 @@ export class AdministracionComponent {
 
     this.authServicio.user$.subscribe((user) => {
       if (user) {
-        this.usuario = user;
-        this.foto = user.photoURL ? user.photoURL : 'imagenes/avatar.png';
+        this.usuario.set(user);
+        this.foto.set(user.photoURL ? user.photoURL : 'imagenes/avatar.png');
 
         this.usuarioService.obtenerPorId(user.email).then((respuesta: any) => {
 
@@ -78,7 +76,7 @@ export class AdministracionComponent {
 
           // console.log('SOLO PARA MENU', items);
 
-          this.usuarioDato = respuesta;
+          this.usuarioDato.set(respuesta);
           this.menuItems = this.buscarEnLaListaMuchos(respuesta.accesos, 'nav', true) || [];
           this.menuItemsTodos = respuesta.accesos || [];
 
@@ -113,7 +111,7 @@ export class AdministracionComponent {
   loadTheme() {
     const storedTheme = localStorage.getItem('theme');
     const storedColor = localStorage.getItem('colorTheme') as any;
-    this.darkMode = storedTheme ? storedTheme === 'dark' : true;
+    this.darkMode.set(storedTheme ? storedTheme === 'dark' : true);
     this.colorTheme = storedColor || 'theme-orange';
   }
 
@@ -121,19 +119,31 @@ export class AdministracionComponent {
     this.syncThemeClasses();
   }
 
-  toggleDarkMode(event: MatSlideToggleChange) {
-    this.darkMode = event.checked;
-    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+  toggleDarkMode(event?: MatSlideToggleChange) {
+    if (event) {
+      this.darkMode.set(event.checked);
+    } else {
+      this.darkMode.set(!this.darkMode());
+    }
+    localStorage.setItem('theme', this.darkMode() ? 'dark' : 'light');
     this.applyDarkMode();
   }
 
   toggleMenu() {
-    this.menuOpen = !this.menuOpen;
+    this.menuOpen.set(!this.menuOpen());
+  }
+
+  recargarPagina() {
+    window.location.reload();
+  }
+
+  cambiarPaleta(theme: any) {
+    this.setColorTheme(theme);
   }
 
   closeMenuAfterNavigation() {
     if (this.isMobileView()) {
-      this.menuOpen = false;
+      this.menuOpen.set(false);
     }
   }
 
@@ -155,7 +165,7 @@ export class AdministracionComponent {
 
     // (Tú ya sincronizas 'dark' aquí)
     const darkClass = 'dark';
-    if (this.darkMode) { body.classList.add(darkClass); host.classList.add(darkClass); }
+    if (this.darkMode()) { body.classList.add(darkClass); host.classList.add(darkClass); }
     else { body.classList.remove(darkClass); host.classList.remove(darkClass); }
   }
 

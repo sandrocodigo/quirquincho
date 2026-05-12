@@ -22,7 +22,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
 import { AuthService } from '../../../servicios/auth.service';
-import { limites } from '../../../datos/limites';
+import { sucursales } from '../../../datos/sucursales';
 
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ProgramacionService } from '../../../servicios/programacion.service';
@@ -59,7 +59,6 @@ export class OrdenListaComponent {
   buscadorControl = false;
 
   tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
-  limites = limites;
 
   filtro = false;
 
@@ -71,6 +70,8 @@ export class OrdenListaComponent {
   listaOriginal: any[] = [];
 
   listaVehiculos: any = [];
+  listaSucursales = sucursales;
+  listaActivos = [{ id: 'TODOS', dato: 'TODOS' }, { id: 'true', dato: 'ACTIVOS' }, { id: 'false', dato: 'PASIVOS' }];
 
   constructor(
     private fb: FormBuilder,
@@ -91,17 +92,24 @@ export class OrdenListaComponent {
     });
 
     this.buscadorFormGroup = this.fb.group({
+      sucursal: ['TODOS'],
       vehiculoId: ['TODOS'],
       activo: ['true'],
-      // tipo: ['TODOS'],
-      //publicado: ['TODOS'],
-      //categoria: ['TODOS'],
-      limite: [500],
     });
-    //this.obtenerConsulta();
+
     this.establecerSuscripcionForm();
 
-
+    this.authServicio.perfil$.subscribe((perfil) => {
+      if (perfil) {
+        if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
+          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal });
+          this.buscadorFormGroup.get('sucursal')?.disable();
+        } else {
+          this.buscadorFormGroup.get('sucursal')?.enable();
+        }
+        // this.obtenerConsulta();
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -120,15 +128,21 @@ export class OrdenListaComponent {
   get b(): any { return this.buscadorFormGroup.controls; }
 
   establecerSuscripcionForm() {
-
+    /*     this.b.sucursal.valueChanges.subscribe((val: any) => {
+          this.obtenerConsulta();
+        }); */
     this.b.vehiculoId.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (val !== 'TODOS') {
+        this.obtenerConsulta();
+      } else {
+        this.lista = [];
+        this.listaOriginal = [];
+      }
     });
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (this.b.vehiculoId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      }
     });
   }
 

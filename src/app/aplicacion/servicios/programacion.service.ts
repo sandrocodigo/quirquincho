@@ -161,6 +161,10 @@ export class ProgramacionService {
     let condiciones = [];
 
     // Aplicar condiciones solo si el usuario y el producto no son 'TODOS'
+    if (datos.sucursal && datos.sucursal !== 'TODOS') {
+      condiciones.push(where('sucursal', '==', datos.sucursal));
+    }
+
     if (datos.vehiculoId !== 'TODOS') {
       condiciones.push(where('vehiculoId', '==', datos.vehiculoId));
     }

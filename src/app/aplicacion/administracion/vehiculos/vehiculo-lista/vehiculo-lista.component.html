@@ -32,43 +32,18 @@
 -->
 @if (buscadorFormGroup ) {
 <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
-  <div class="flex flex-wrap -mx-2">
-    <div class="w-full md:w-1/3 px-2">
-      <mat-form-field class="flex-auto w-full">
-        <mat-label>Empresa</mat-label>
-        <mat-select formControlName="empresa">
-          <mat-option value="TODOS"> TODOS </mat-option>
-          @for (item of listaEmpresas; track item) {
-          <mat-option [value]="item.id">
-            {{item.id}}
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-full md:w-1/2 px-2">
+        <ng-select [items]="listaEmpresas" bindLabel="id" bindValue="id" formControlName="empresa" appendTo="body"
+          placeholder="Empresa">
+        </ng-select>
+      </div>
+      <div class="w-full md:w-1/2 px-2">
+        <ng-select [items]="listaActivos" bindLabel="dato" bindValue="id" formControlName="activo" appendTo="body"
+          placeholder="Estado">
+        </ng-select>
+      </div>
     </div>
-    <div class="w-full md:w-1/3 px-2">
-      <mat-form-field class="flex-auto w-full">
-        <mat-label>ACTIVO</mat-label>
-        <mat-select formControlName="activo">
-          <mat-option value="TODOS"> TODOS </mat-option>
-          <mat-option value="true"> ACTIVOS </mat-option>
-          <mat-option value="false"> PASIVOS </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="w-full md:w-1/3 px-2">
-      <mat-form-field appearance="fill" style="width:100%">
-        <mat-label>Limite</mat-label>
-        <mat-select formControlName="limite">
-          @for (item of limites; track item) {
-          <mat-option [value]="item.id">
-            {{item.descripcion}}
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </div>
 </form>
 }
 

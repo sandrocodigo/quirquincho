@@ -96,17 +96,26 @@ export class EgresoListaComponent {
       if (user) { this.usuario = user; }
     });
 
-    // const fechaGuardada = localStorage.getItem('fechaSeleccionada');
-    // this.fechaHoy = fechaGuardada ? fechaGuardada : new Date().toISOString().split('T')[0];
-
     this.buscadorFormGroup = this.fb.group({
       sucursal: ['TODOS'],
       fechaInicio: [this.fechaHoy],
       fechaFinal: [this.fechaHoy],
       finalizado: ['TODOS'],
     });
+
     this.establecerSuscripcionForm();
-    this.obtenerConsulta();
+
+    this.authServicio.perfil$.subscribe((perfil) => {
+      if (perfil) {
+        if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
+          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal });
+          this.buscadorFormGroup.get('sucursal')?.disable();
+        } else {
+          this.buscadorFormGroup.get('sucursal')?.enable();
+        }
+        this.obtenerConsulta();
+      }
+    });
   }
 
   ngOnInit() {

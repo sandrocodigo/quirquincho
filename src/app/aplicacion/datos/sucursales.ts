@@ -1,4 +1,5 @@
 export const sucursales = [
+    { id: 'TODOS', descripcion: 'TODOS' },
     { id: 'LA PAZ', descripcion: 'LA PAZ' },
     { id: 'COCHABAMBA', descripcion: 'COCHABAMBA' },
     { id: 'SANTA CRUZ', descripcion: 'SANTA CRUZ' },

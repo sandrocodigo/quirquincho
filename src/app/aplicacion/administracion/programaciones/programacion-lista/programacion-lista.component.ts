@@ -18,13 +18,12 @@ import { MatMenuModule } from '@angular/material/menu';
 
 
 
-import { ProductoService } from '../../../servicios/producto.service';
 import { RouterModule } from '@angular/router';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
 import { AuthService } from '../../../servicios/auth.service';
-import { limites } from '../../../datos/limites';
+import { sucursales } from '../../../datos/sucursales';
 import { ProductoCategoriaService } from '../../../servicios/producto-categoria.service';
 
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -64,7 +63,6 @@ export class ProgramacionListaComponent {
   buscadorControl = false;
 
   tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
-  limites = limites;
 
   filtro = false;
 
@@ -76,6 +74,8 @@ export class ProgramacionListaComponent {
   listaOriginal: any[] = [];
 
   listaVehiculos: any = [];
+  listaSucursales = sucursales;
+  listaActivos = [{ id: 'TODOS', dato: 'TODOS' }, { id: 'true', dato: 'ACTIVOS' }, { id: 'false', dato: 'PASIVOS' }];
 
   constructor(
     private fb: FormBuilder,
@@ -96,17 +96,24 @@ export class ProgramacionListaComponent {
     });
 
     this.buscadorFormGroup = this.fb.group({
+      sucursal: ['TODOS'],
       vehiculoId: ['TODOS'],
       activo: ['true'],
-      // tipo: ['TODOS'],
-      //publicado: ['TODOS'],
-      //categoria: ['TODOS'],
-      limite: [500],
     });
     // this.obtenerConsulta();
     this.establecerSuscripcionForm();
 
-
+    this.authServicio.perfil$.subscribe((perfil) => {
+      if (perfil) {
+        if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
+          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal });
+          this.buscadorFormGroup.get('sucursal')?.disable();
+        } else {
+          this.buscadorFormGroup.get('sucursal')?.enable();
+        }
+        // this.obtenerConsulta();
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -125,14 +132,21 @@ export class ProgramacionListaComponent {
   get b(): any { return this.buscadorFormGroup.controls; }
 
   establecerSuscripcionForm() {
+    /*     this.b.sucursal.valueChanges.subscribe((val: any) => {
+          this.obtenerConsulta();
+        }); */
     this.b.vehiculoId.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (val !== 'TODOS') {
+        this.obtenerConsulta();
+      } else {
+        this.lista = [];
+        this.listaOriginal = [];
+      }
     });
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (this.b.vehiculoId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      }
     });
   }
 
@@ -177,7 +191,11 @@ export class ProgramacionListaComponent {
         return item;
       });
 
-      const resultadosOrdenados = resultados.sort((a: any, b: any) => b.vehiculoNumero - a.vehiculoNumero);
+      const resultadosOrdenados = resultados.sort((a: any, b: any) => {
+        const fechaA = a.fechaInicio?.toDate ? a.fechaInicio.toDate().getTime() : new Date(a.fechaInicio).getTime();
+        const fechaB = b.fechaInicio?.toDate ? b.fechaInicio.toDate().getTime() : new Date(b.fechaInicio).getTime();
+        return fechaB - fechaA;
+      });
 
       this.lista = resultadosOrdenados;
       this.listaOriginal = [...resultadosOrdenados];

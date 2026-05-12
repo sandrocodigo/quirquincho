@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ClienteService } from '../../../servicios/cliente.service';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { ClienteFormComponent } from '../cliente-form/cliente-form.component';
 import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 
@@ -20,7 +21,6 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { limites } from '../../../datos/limites';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../servicios/auth.service';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
@@ -45,7 +45,8 @@ import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacio
     MatDividerModule,
     MatDialogModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    NgSelectComponent
   ],
 })
 export class ClienteListaComponent {
@@ -62,7 +63,8 @@ export class ClienteListaComponent {
   // ViewChild para manejar el ordenamiento
   @ViewChild(MatSort) sort!: MatSort;
 
-  limites = limites;
+  listaActivos = [{ id: 'TODOS', dato: 'TODOS' }, { id: 'true', dato: 'ACTIVOS' }, { id: 'false', dato: 'PASIVOS' }];
+
   usuario: any | null = null;
   constructor(
     private fb: FormBuilder,
@@ -83,7 +85,6 @@ export class ClienteListaComponent {
     this.buscadorFormGroup = this.fb.group({
       // cliente: ['TODOS'],
       activo: ['true'],
-      limite: [50],
     });
     this.obtenerConsulta();
     this.establecerSuscripcionForm();
@@ -102,9 +103,6 @@ export class ClienteListaComponent {
 
   establecerSuscripcionForm() {
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
       this.obtenerConsulta();
     });
   }

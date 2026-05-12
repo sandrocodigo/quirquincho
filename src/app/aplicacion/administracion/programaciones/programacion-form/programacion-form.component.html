@@ -9,11 +9,21 @@
         placeholder="Placa de Vehiculo">
       </ng-select>
       @if (registroControl && r.vehiculoId.errors && r.vehiculoId.errors.required) {
-        <span
-          class="italic text-xs text-red-600 dark:text-gray-300">
-          Se requiere Placa del Vehiculo
-        </span>
+      <span class="italic text-xs text-red-600 dark:text-gray-300">
+        Se requiere Placa del Vehiculo
+      </span>
       }
+      <br>
+      <mat-form-field class="flex-auto w-full">
+        <mat-label>Sucursal</mat-label>
+        <mat-select formControlName="sucursal">
+          @for (item of listaSucursales; track item) {
+          <mat-option [value]="item.id">
+            {{item.descripcion}}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
       <br>
         <ng-select [items]="listaMantenimientos" bindLabel="dato" bindValue="id" formControlName="mantenimientoId"
           appendTo="body" placeholder="Mantenimiento">

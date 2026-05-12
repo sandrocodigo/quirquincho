@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AdministracionComponent } from './administracion.component';
 import { EstadisticasComponent } from './estadisticas/estadisticas.component';
+import { AccesoGuard } from '../seguridad/acceso.guard';
 
 export default [
     {
@@ -41,7 +42,7 @@ export default [
 
             {
                 path: 'gestion', loadChildren: () => import('./gestion/gestion.component.route'),
-                //canActivate: [AccesoGuard]
+                canActivate: [AccesoGuard]
             },
 
             {

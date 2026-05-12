@@ -27,31 +27,19 @@
   <form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
     <div class="flex flex-wrap -mx-2">
       <div class="w-full md:w-1/3 px-2">
-        <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId"
-          appendTo="body" placeholder="Placa de Vehiculo">
+        <ng-select [items]="listaSucursales" bindLabel="descripcion" bindValue="id" formControlName="sucursal"
+          appendTo="body" placeholder="Sucursal">
         </ng-select>
       </div>
       <div class="w-full md:w-1/3 px-2">
-        <mat-form-field class="flex-auto w-full">
-          <mat-label>ACTIVO</mat-label>
-          <mat-select formControlName="activo">
-            <mat-option value="TODOS"> TODOS </mat-option>
-            <mat-option value="true"> ACTIVOS </mat-option>
-            <mat-option value="false"> PASIVOS </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <ng-select [items]="listaVehiculos" bindLabel="dato" bindValue="id" formControlName="vehiculoId" appendTo="body"
+          placeholder="Placa de Vehiculo">
+        </ng-select>
       </div>
       <div class="w-full md:w-1/3 px-2">
-        <mat-form-field appearance="fill" style="width:100%">
-          <mat-label>Limite</mat-label>
-          <mat-select formControlName="limite">
-            @for (item of limites; track item) {
-              <mat-option [value]="item.id">
-                {{item.descripcion}}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <ng-select [items]="listaActivos" bindLabel="dato" bindValue="id" formControlName="activo" appendTo="body"
+          placeholder="Estado">
+        </ng-select>
       </div>
     </div>
   </form>

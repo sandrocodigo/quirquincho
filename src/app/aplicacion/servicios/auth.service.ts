@@ -11,7 +11,9 @@ import { getAuth } from "firebase/auth";
 
 import { Injectable } from '@angular/core';
 import { Login } from '../modelos/login';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
 
 
 @Injectable({
@@ -20,8 +22,9 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
   public user$: Observable<any | null>;
+  public perfil$: Observable<any | null>;
 
-  constructor(private auth: Auth) {
+  constructor(private auth: Auth, private firestore: Firestore) {
     this.user$ = new Observable((observer) => {
       this.auth.onAuthStateChanged((user) => {
         if (user) {
@@ -31,6 +34,17 @@ export class AuthService {
         }
       });
     });
+
+    this.perfil$ = this.user$.pipe(
+      switchMap(user => {
+        if (user && user.email) {
+          const docRef = doc(this.firestore, 'usuarios', user.email);
+          return docData(docRef, { idField: 'id' });
+        } else {
+          return of(null);
+        }
+      })
+    );
   }
 
   crear({ email, password }: Login) {

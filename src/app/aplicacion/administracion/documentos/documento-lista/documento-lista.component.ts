@@ -22,7 +22,6 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
 import { AuthService } from '../../../servicios/auth.service';
-import { limites } from '../../../datos/limites';
 
 import { BreakpointObserver } from '@angular/cdk/layout';
 
@@ -60,7 +59,6 @@ export class DocumentoListaComponent {
   buscadorControl = false;
 
   tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
-  limites = limites;
 
   filtro = false;
 
@@ -72,8 +70,8 @@ export class DocumentoListaComponent {
   listaOriginal: any[] = [];
 
   listaVehiculos: any = [];
-
-  listaTipos = documentoTipos;
+  listaTipos = [{ id: 'TODOS', descripcion: 'TODOS' }, ...documentoTipos];
+  listaActivos = [{ id: 'TODOS', dato: 'TODOS' }, { id: 'true', dato: 'ACTIVOS' }, { id: 'false', dato: 'PASIVOS' }];
 
   constructor(
     private fb: FormBuilder,
@@ -97,11 +95,9 @@ export class DocumentoListaComponent {
       vehiculoId: ['TODOS'],
       activo: ['true'],
       tipo: ['TODOS'],
-      //publicado: ['TODOS'],
-      //categoria: ['TODOS'],
-      limite: [500],
     });
-    this.obtenerConsulta();
+
+    // this.obtenerConsulta();
     this.establecerSuscripcionForm();
 
 
@@ -124,16 +120,22 @@ export class DocumentoListaComponent {
 
   establecerSuscripcionForm() {
     this.b.vehiculoId.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (val !== 'TODOS') {
+        this.obtenerConsulta();
+      } else {
+        this.lista = [];
+        this.listaOriginal = [];
+      }
     });
     this.b.tipo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (this.b.vehiculoId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      }
     });
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (this.b.vehiculoId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      }
     });
   }
 

@@ -97,6 +97,14 @@ export class IngresoFormComponent {
         registroUsuario: [this.auth.obtenerUsuario.email],
         registroFecha: [this.fechaHoy]
       });
+
+      this.auth.perfil$.subscribe((perfil) => {
+        if (perfil && perfil.sucursal && perfil.sucursal !== 'TODOS') {
+          this.registroFormGroup.patchValue({ sucursal: perfil.sucursal });
+          this.registroFormGroup.get('sucursal')?.disable();
+        }
+      });
+
       this.establecerSuscripcion();
     } else {
       this.ingresoServicio.obtenerPorId(data.id).then(res => {

@@ -112,7 +112,12 @@ export class OrdenFormComponent {
             edicionUsuario: [this.usuario.email],
             edicionFecha: [this.fechaHoy]
           });
-          // this.sumarKilometros();
+          this.authServicio.perfil$.subscribe((perfil) => {
+            if (perfil && perfil.sucursal && perfil.sucursal !== 'TODOS') {
+              this.registroFormGroup.get('sucursal')?.disable();
+            }
+          });
+
           this.establecerSuscripcion();
 
         });

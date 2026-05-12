@@ -155,9 +155,14 @@ export class ProgramacionOrdenComponent {
             registroUsuario: [this.usuario.email],
             registroFecha: [this.fechaHoy]
           });
-          // this.sumarKilometros();
-          this.establecerSuscripcion();
+          this.authServicio.perfil$.subscribe((perfil) => {
+            if (perfil && perfil.sucursal && perfil.sucursal !== 'TODOS') {
+              this.registroFormGroup.patchValue({ sucursal: perfil.sucursal });
+              this.registroFormGroup.get('sucursal')?.disable();
+            }
+          });
 
+          this.establecerSuscripcion();
         });
 
 

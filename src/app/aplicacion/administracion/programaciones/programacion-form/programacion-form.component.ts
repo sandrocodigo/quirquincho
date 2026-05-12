@@ -22,6 +22,7 @@ import { mantenimientoTipos } from '../../../datos/mantenimiento-tipos';
 import { mantenimientoFrecuencias } from '../../../datos/mantenimiento-frecuencias';
 import { mantenimientoKilometrajes } from '../../../datos/mantenimiento-kilometrajes';
 import { MantenimientoService } from '../../../servicios/mantenimiento.service';
+import { sucursales } from '../../../datos/sucursales';
 
 @Component({
   selector: 'app-programacion-form',
@@ -65,6 +66,7 @@ export class ProgramacionFormComponent {
   listaFrecuencias = mantenimientoFrecuencias;
   listaKilometrajes = mantenimientoKilometrajes;
 
+  listaSucursales = sucursales;
   usuario: any | null = null;
 
   constructor(
@@ -111,6 +113,7 @@ export class ProgramacionFormComponent {
             fechaInicio: [fechaNueva, [Validators.required]],
             fechaProximo: [null, [Validators.required]],
 
+            sucursal: [null],
 
             activo: [true],
 
@@ -118,6 +121,14 @@ export class ProgramacionFormComponent {
             registroUsuario: [this.usuario.email],
             registroFecha: [this.fechaHoy]
           });
+
+          this.authServicio.perfil$.subscribe((perfil) => {
+            if (perfil && perfil.sucursal && perfil.sucursal !== 'TODOS') {
+              this.registroFormGroup.patchValue({ sucursal: perfil.sucursal });
+              this.registroFormGroup.get('sucursal')?.disable();
+            }
+          });
+
           this.establecerSuscripcion();
           // this.obtenerUltimo();
         } else {
@@ -145,6 +156,8 @@ export class ProgramacionFormComponent {
               frecuencia: [respuesta.frecuencia, [Validators.required]],
               fechaInicio: [respuesta.fechaInicio, [Validators.required]],
               fechaProximo: [respuesta.fechaProximo, [Validators.required]],
+
+              sucursal: [respuesta.sucursal, [Validators.required]],
 
               activo: [respuesta.activo],
 
@@ -286,7 +299,7 @@ export class ProgramacionFormComponent {
       } else {
         this.cargando.show();
         this.pServicio.editar(this.id, this.registroFormGroup.getRawValue()).then((respuesta: any) => {
-          this.snackbar.open('Hey!, Orden actualizado con exito...', 'OK', { duration: 10000 });
+          this.snackbar.open('Hey!, Programacion actualizado con exito...', 'OK', { duration: 10000 });
           this.dialogRef.close(true);
           this.cargando.hide();
         });

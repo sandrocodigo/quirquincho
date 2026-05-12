@@ -22,7 +22,6 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
 import { AuthService } from '../../../servicios/auth.service';
-import { limites } from '../../../datos/limites';
 
 import { BreakpointObserver } from '@angular/cdk/layout';
 
@@ -62,7 +61,6 @@ export class AsignacionListaComponent {
   buscadorControl = false;
 
   tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
-  limites = limites;
 
   filtro = false;
 
@@ -75,6 +73,7 @@ export class AsignacionListaComponent {
 
   listaVehiculos: any = [];
   listaConductores: any = [];
+  listaActivos = [{ id: 'TODOS', dato: 'TODOS' }, { id: 'true', dato: 'ACTIVOS' }, { id: 'false', dato: 'PASIVOS' }];
 
   constructor(
     private fb: FormBuilder,
@@ -99,12 +98,9 @@ export class AsignacionListaComponent {
       vehiculoId: ['TODOS'],
       conductorId: ['TODOS'],
       activo: ['true'],
-      // tipo: ['TODOS'],
-      //publicado: ['TODOS'],
-      //categoria: ['TODOS'],
-      limite: [500],
     });
-    this.obtenerConsulta();
+
+    // this.obtenerConsulta();
     this.establecerSuscripcionForm();
 
 
@@ -129,13 +125,25 @@ export class AsignacionListaComponent {
 
   establecerSuscripcionForm() {
     this.b.vehiculoId.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (val !== 'TODOS' || this.b.conductorId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      } else {
+        this.lista = [];
+        this.listaOriginal = [];
+      }
+    });
+    this.b.conductorId.valueChanges.subscribe((val: any) => {
+      if (val !== 'TODOS' || this.b.vehiculoId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      } else {
+        this.lista = [];
+        this.listaOriginal = [];
+      }
     });
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+      if (this.b.vehiculoId.value !== 'TODOS' || this.b.conductorId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      }
     });
   }
 

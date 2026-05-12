@@ -17,7 +17,6 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { limites } from '../../../datos/limites';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../servicios/auth.service';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
@@ -26,6 +25,7 @@ import { UsuarioService } from '../../../servicios/usuario.service';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
+import { NgSelectComponent } from '@ng-select/ng-select';
 
 
 @Component({
@@ -49,7 +49,8 @@ import { vehiculoEmpresas } from '../../../datos/vehiculo-empresas';
     MatDialogModule,
     MatTableModule,
     MatSortModule,
-    MatMenuModule
+    MatMenuModule,
+    NgSelectComponent
   ],
 
   // encapsulation: ViewEncapsulation.None,
@@ -62,7 +63,6 @@ export class VehiculoListaComponent {
   usuario: any | null = null;
   usuarioDatos: any;
 
-  limites = limites;
 
   // DataSource para la tabla
   dataSource = new MatTableDataSource<any>([]);
@@ -76,7 +76,8 @@ export class VehiculoListaComponent {
   lista: any[] = [];
   listaOriginal: any[] = [];
 
-  listaEmpresas = vehiculoEmpresas;
+  listaEmpresas = [{ id: 'TODOS', descripcion: 'TODOS' }, ...vehiculoEmpresas];
+  listaActivos = [{ id: 'TODOS', dato: 'TODOS' }, { id: 'true', dato: 'ACTIVOS' }, { id: 'false', dato: 'PASIVOS' }];
 
   constructor(
     private fb: FormBuilder,
@@ -100,7 +101,6 @@ export class VehiculoListaComponent {
     this.buscadorFormGroup = this.fb.group({
       empresa: ['TODOS'],
       activo: ['true'],
-      limite: [100],
     });
 
     this.obtenerConsulta();
@@ -121,9 +121,6 @@ export class VehiculoListaComponent {
 
   establecerSuscripcionForm() {
     this.b.activo.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
       this.obtenerConsulta();
     });
     this.b.empresa.valueChanges.subscribe((val: any) => {
