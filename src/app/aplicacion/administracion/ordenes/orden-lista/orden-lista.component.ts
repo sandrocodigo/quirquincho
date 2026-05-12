@@ -102,7 +102,7 @@ export class OrdenListaComponent {
     this.authServicio.perfil$.subscribe((perfil) => {
       if (perfil) {
         if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
-          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal });
+          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal }, { emitEvent: false });
           this.buscadorFormGroup.get('sucursal')?.disable();
         } else {
           this.buscadorFormGroup.get('sucursal')?.enable();
@@ -128,9 +128,11 @@ export class OrdenListaComponent {
   get b(): any { return this.buscadorFormGroup.controls; }
 
   establecerSuscripcionForm() {
-    /*     this.b.sucursal.valueChanges.subscribe((val: any) => {
-          this.obtenerConsulta();
-        }); */
+    this.b.sucursal.valueChanges.subscribe((val: any) => {
+      if (this.b.vehiculoId.value !== 'TODOS') {
+        this.obtenerConsulta();
+      }
+    });
     this.b.vehiculoId.valueChanges.subscribe((val: any) => {
       if (val !== 'TODOS') {
         this.obtenerConsulta();
