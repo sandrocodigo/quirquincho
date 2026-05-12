@@ -101,6 +101,9 @@
       <td mat-cell *matCellDef="let element" class="dark:text-white">
         {{ element.descripcion }} <br>
         <span class="text-xs">Empresa: {{element.empresa}}</span>
+        @if(element.tipo == 'COMPRA') {
+        <span class="text-xs">, Factura: {{element.factura}}</span>
+        }
       </td>
     </ng-container>
 
