@@ -225,4 +225,24 @@ export class KardexService {
     await deleteDoc(documento);
   }
 
+  // OBTENER REPORTE KARDEX
+  async obtenerReporteKardex(filtros: any): Promise<any[]> {
+    let coleccion = collection(this.firestore, `${this.url}`) as CollectionReference<any>;
+    let condiciones = [];
+
+    if (filtros.sucursal && filtros.sucursal !== 'TODOS') {
+      condiciones.push(where('sucursal', '==', filtros.sucursal));
+    }
+
+    if (filtros.producto && filtros.producto !== 'TODOS') {
+      condiciones.push(where('productoId', '==', filtros.producto));
+    }
+
+    // Orden por fecha de registro para ver la secuencia real
+    let q = query(coleccion, ...condiciones, orderBy('fechaRegistro', 'asc'));
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+  }
+
 }

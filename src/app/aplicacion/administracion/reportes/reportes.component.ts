@@ -26,7 +26,7 @@ export class ReportesComponent {
     { link: 'reporte5', icon: 'settings', label: '5: Saldo Minimo' },
     { link: 'reporte6', icon: 'settings', label: '6: Egresos de Ordenes' },
     { link: 'reporte7', icon: 'settings', label: '7: Ingresos/Egresos x Empresa' },
-    { link: 'reporte8', icon: 'settings', label: '8: Reporte' },
+    { link: 'reporte8', icon: 'sync_alt', label: '8: Conciliación Kardex' },
     { link: 'reporte9', icon: 'settings', label: '9: Reporte' },
     { link: 'reporte10', icon: 'settings', label: '10: Reporte' },
   ];

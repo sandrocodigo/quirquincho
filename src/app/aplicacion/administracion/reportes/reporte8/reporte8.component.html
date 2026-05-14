@@ -1,1 +1,172 @@
-<p>reporte8 works!</p>
+<div class="reporte-container p-6 animate-in fade-in">
+  <!-- HEADER -->
+  <div class="glass-header mb-8 p-8 rounded-3xl flex flex-wrap items-center justify-between gap-6 no-print">
+    <div class="flex flex-col">
+      <h1 class="text-4xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase tracking-tighter">
+        Conciliación 3 Columnas
+      </h1>
+      <span class="text-emerald-100/50 text-sm font-bold mt-1">Auditoría cruzada de inventario y movimientos</span>
+    </div>
+    <button mat-fab extended (click)="imprimir()" class="!bg-emerald-500 !text-emerald-950 font-black shadow-xl hover:scale-105 transition-transform">
+      <mat-icon>print</mat-icon>
+      <span>IMPRIMIR REPORTE</span>
+    </button>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="glass-card mb-8 p-8 rounded-3xl no-print">
+    <form [formGroup]="buscadorFormGroup" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-end">
+      
+      <div class="flex flex-col">
+        <label class="filter-label">Sucursal Filtro</label>
+        <mat-form-field appearance="outline" class="w-full !m-0">
+          <mat-select formControlName="sucursal" class="font-black text-white">
+            @for (sucursal of listaSucursales; track sucursal.id) {
+              <mat-option [value]="sucursal.id">{{ sucursal.descripcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="flex flex-col lg:col-span-2">
+        <label class="filter-label !text-cyan-400">Seleccionar Producto para Conciliar</label>
+        <ng-select 
+          [items]="listaProductos()" 
+          bindLabel="dato" 
+          bindValue="id" 
+          placeholder="Escribe para buscar un producto..."
+          formControlName="producto"
+          class="custom-select"
+          dropdownPosition="bottom"
+          [clearable]="false"
+          [searchable]="true"
+        >
+        </ng-select>
+      </div>
+      
+    </form>
+  </div>
+
+  <!-- 3 COLUMNS LAYOUT -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- COL 1: INGRESOS -->
+    <div class="column-container">
+      <div class="bg-emerald-500/20 p-5 rounded-t-3xl border-b-4 border-emerald-500 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-emerald-500 rounded-lg text-emerald-950">
+            <mat-icon class="!h-5 !w-5">add_shopping_cart</mat-icon>
+          </div>
+          <span class="font-black text-white uppercase tracking-tighter text-sm">1. Ingresos</span>
+        </div>
+        <span class="bg-emerald-500 text-emerald-950 px-3 py-1 rounded-md font-black font-mono text-sm">{{ totalIngresos() | number:'1.2-2' }}</span>
+      </div>
+      <div class="glass-card rounded-b-3xl h-[650px] overflow-y-auto p-3 custom-scrollbar">
+        @for (item of listaIngresos(); track item.id) {
+          <div class="item-card p-4 border-l-4 border-emerald-500/50">
+            <div class="flex justify-between text-[10px] font-black mb-2 opacity-80">
+              <div class="flex gap-2">
+                 <span class="text-emerald-400">{{ item.fecha | date:'dd/MM/yyyy' }}</span>
+                 <span class="bg-emerald-500/20 text-emerald-300 px-2 rounded">{{ item.sucursal }}</span>
+              </div>
+              <span class="bg-white/10 px-2 py-0.5 rounded text-white">{{ item.ingresoCodigo }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-white truncate max-w-[140px] uppercase">{{ item.productoDescripcion }}</span>
+              <span class="text-emerald-400 font-black font-mono text-base">+{{ item.cantidad | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <div class="h-full flex flex-col items-center justify-center opacity-20 py-20">
+             <mat-icon class="text-6xl mb-2">remove_shopping_cart</mat-icon>
+             <span class="font-black uppercase tracking-widest text-xs">Sin registros</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- COL 2: EGRESOS -->
+    <div class="column-container">
+      <div class="bg-rose-500/20 p-5 rounded-t-3xl border-b-4 border-rose-500 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-rose-500 rounded-lg text-rose-950">
+            <mat-icon class="!h-5 !w-5">local_shipping</mat-icon>
+          </div>
+          <span class="font-black text-white uppercase tracking-tighter text-sm">2. Egresos</span>
+        </div>
+        <span class="bg-rose-500 text-rose-950 px-3 py-1 rounded-md font-black font-mono text-sm">{{ totalEgresos() | number:'1.2-2' }}</span>
+      </div>
+      <div class="glass-card rounded-b-3xl h-[650px] overflow-y-auto p-3 custom-scrollbar">
+        @for (item of listaEgresos(); track item.id) {
+          <div class="item-card p-4 border-l-4 border-rose-500/50">
+            <div class="flex justify-between text-[10px] font-black mb-2 opacity-80">
+              <div class="flex gap-2">
+                 <span class="text-rose-400">{{ item.fecha | date:'dd/MM/yyyy' }}</span>
+                 <span class="bg-rose-500/20 text-rose-300 px-2 rounded">{{ item.sucursal }}</span>
+              </div>
+              <span class="bg-white/10 px-2 py-0.5 rounded text-white">{{ item.egresoCodigo }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-white truncate max-w-[140px] uppercase">{{ item.productoDescripcion }}</span>
+              <span class="text-rose-400 font-black font-mono text-base">-{{ item.cantidad | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <div class="h-full flex flex-col items-center justify-center opacity-20 py-20">
+             <mat-icon class="text-6xl mb-2">local_shipping</mat-icon>
+             <span class="font-black uppercase tracking-widest text-xs">Sin registros</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- COL 3: KARDEX -->
+    <div class="column-container">
+      <div class="bg-cyan-500/20 p-5 rounded-t-3xl border-b-4 border-cyan-500 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-cyan-500 rounded-lg text-cyan-950">
+            <mat-icon class="!h-5 !w-5">account_balance</mat-icon>
+          </div>
+          <span class="font-black text-white uppercase tracking-tighter text-sm">3. Kardex</span>
+        </div>
+        <span class="bg-cyan-500 text-cyan-950 px-3 py-1 rounded-md font-black text-xs">AUDIT</span>
+      </div>
+      <div class="glass-card rounded-b-3xl h-[650px] overflow-y-auto p-3 custom-scrollbar">
+        @for (item of listaKardex(); track item.id) {
+          <div class="item-card p-4 border-l-4" [ngClass]="item.tipo === 'INGRESO' ? 'border-emerald-500/50' : 'border-rose-500/50'">
+            <div class="flex justify-between text-[9px] font-black mb-2 italic">
+              <div class="flex gap-2 items-center">
+                <span class="text-slate-300">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                <span class="bg-cyan-500/20 text-cyan-300 px-2 rounded not-italic uppercase">{{ item.sucursal }}</span>
+              </div>
+              <span class="text-white bg-white/10 px-2 rounded">#{{ item.codigo }}</span>
+            </div>
+            <div class="flex justify-between items-start">
+              <div class="flex flex-col gap-1">
+                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded w-fit" 
+                      [ngClass]="item.tipo === 'INGRESO' ? 'bg-emerald-500 text-emerald-950' : 'bg-rose-500 text-rose-950'">
+                  {{ item.tipo }}
+                </span>
+                <span class="text-[10px] text-slate-300 font-bold leading-tight max-w-[110px]">{{ item.motivo }}</span>
+              </div>
+              <div class="flex flex-col items-end">
+                <span [ngClass]="item.tipo === 'INGRESO' ? 'text-emerald-400' : 'text-rose-400'" class="font-black font-mono text-base">
+                  {{ item.tipo === 'INGRESO' ? '+' : '-' }}{{ item.cantidad | number:'1.2-2' }}
+                </span>
+                <div class="mt-2 bg-white/10 px-3 py-1 rounded-lg border border-white/10 shadow-lg">
+                   <span class="text-[11px] font-black text-cyan-300 font-mono">SALDO: {{ item.cantidadParcial | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="h-full flex flex-col items-center justify-center opacity-20 py-20">
+             <mat-icon class="text-6xl mb-2">history_edu</mat-icon>
+             <span class="font-black uppercase tracking-widest text-xs">Sin registros</span>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

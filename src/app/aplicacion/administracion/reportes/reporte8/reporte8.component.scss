@@ -1,0 +1,73 @@
+.reporte-container {
+  @apply min-h-screen text-slate-100 pb-12; // Using Tailwind @apply
+
+  .glass-header {
+    @apply bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 shadow-2xl;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+    z-index: 10;
+  }
+
+  .glass-card {
+    @apply bg-slate-800/80 backdrop-blur-lg border border-white/10 shadow-xl;
+  }
+
+  .column-container {
+    @apply flex flex-col h-full relative z-0;
+  }
+
+  .item-card {
+    @apply bg-white/5 rounded-xl mb-2 border border-white/5 transition-all duration-300;
+    &:hover {
+      @apply bg-white/10 border-white/20 scale-[1.02] shadow-lg;
+    }
+  }
+
+  // FIX: Explicitly forcing dark theme for ng-select with HIGH contrast
+  ::ng-deep .custom-select {
+    z-index: 1000;
+
+    .ng-select-container {
+      @apply bg-slate-900 border-2 border-emerald-500/50 rounded-xl min-h-[56px] shadow-lg !important;
+      
+      .ng-value-label { @apply text-white font-bold text-base !important; }
+      .ng-placeholder { @apply text-slate-400 font-medium !important; }
+      .ng-arrow-wrapper .ng-arrow { border-color: #10b981 transparent transparent !important; }
+    }
+
+    .ng-dropdown-panel {
+      @apply bg-slate-900 border-2 border-emerald-500 rounded-xl shadow-2xl overflow-hidden !important;
+      margin-top: 8px !important;
+
+      .ng-dropdown-panel-items {
+        .ng-option {
+          @apply bg-slate-900 text-slate-100 p-4 border-b border-white/5 !important;
+          
+          &.ng-option-marked {
+            @apply bg-emerald-600 text-white !important;
+          }
+
+          &.ng-option-selected {
+            @apply bg-emerald-800 text-white font-black !important;
+          }
+
+          .ng-option-label {
+             @apply text-inherit !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Ensure labels are visible
+  .filter-label {
+    @apply text-xs font-black uppercase tracking-widest text-emerald-400 mb-2 block;
+  }
+}
+
+// Global-ish fix just in case it's appended to body
+::ng-deep .ng-dropdown-panel.custom-select-panel {
+    @apply bg-slate-900 border-2 border-emerald-500 rounded-xl shadow-2xl !important;
+    .ng-option {
+        @apply text-slate-100 !important;
+    }
+}
