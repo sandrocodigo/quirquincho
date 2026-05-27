@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   Firestore,
@@ -19,9 +19,11 @@ import {
   startAfter,
   QueryDocumentSnapshot,
   DocumentData,
-  getCountFromServer
+  getCountFromServer,
+  serverTimestamp
 } from '@angular/fire/firestore';
 import { Producto } from '../modelos/producto';
+import { TituloService } from './titulo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,28 +32,87 @@ export class ProductoService {
 
   private url = 'productos';
 
+  private tituloServicio = inject(TituloService);
+
   constructor(private firestore: Firestore) { }
+
 
   // CREAR
   async crear(datos: any) {
     if (datos.hasOwnProperty('precioServicio')) { datos.precioServicio = parseFloat(datos.precioServicio); }
-    if (datos.hasOwnProperty('minimo')) { datos.minimo = parseFloat(datos.minimo); }
-    const docRef = await addDoc(collection(this.firestore, `${this.url}`), datos);
+    if (datos.codigo) { datos.codigo = String(datos.codigo).toUpperCase(); }
+    if (datos.descripcion) { datos.descripcion = String(datos.descripcion).toUpperCase(); }
+
+    const searchTokens = this.generarSearchTokens(datos);
+    const tituloLink = this.generarLink(datos.codigo, datos.descripcion);
+
+    const payload = {
+      ...datos,
+      searchTokens,
+      tituloLink,
+      registroFecha: serverTimestamp(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(collection(this.firestore, `${this.url}`), payload);
     return docRef;
   }
 
   // EDITAR
   async editar(ID: any, datos: any) {
     if (datos.hasOwnProperty('precioServicio')) { datos.precioServicio = parseFloat(datos.precioServicio); }
-
     if (datos.hasOwnProperty('pc')) { datos.pc = parseFloat(datos.pc); }
     if (datos.hasOwnProperty('pv')) { datos.pv = parseFloat(datos.pv); }
     if (datos.hasOwnProperty('cantidadTotal')) { datos.cantidadTotal = parseFloat(datos.cantidadTotal); }
 
-    if (datos.hasOwnProperty('minimo')) { datos.minimo = parseFloat(datos.minimo); }
+    if (datos.codigo) { datos.codigo = String(datos.codigo).toUpperCase(); }
+    if (datos.descripcion) { datos.descripcion = String(datos.descripcion).toUpperCase(); }
+
+    // Solo calculamos campos derivados si se proveen los campos base
+    const payload: any = {
+      ...datos,
+      updatedAt: serverTimestamp(),
+    };
+
+    if (datos.codigo || datos.descripcion || datos.categoria) {
+      payload.searchTokens = this.generarSearchTokens(datos);
+      payload.tituloLink = this.generarLink(datos.codigo, datos.descripcion);
+    }
 
     const documento = doc(this.firestore, `${this.url}`, ID);
-    await updateDoc(documento, datos);
+    await updateDoc(documento, payload);
+  }
+
+  private generarLink(codigo: string, descripcion: string): string {
+    const cod = this.tituloServicio.convertir(codigo || '');
+    const desc = this.tituloServicio.convertir(descripcion || '');
+    return `${cod}-${desc}`.substring(0, 50);
+  }
+
+
+  private generarSearchTokens(datos: any): string[] {
+    const { codigo, descripcion, categoria, fabricante, detalle } = datos;
+    if (!codigo && !descripcion && !categoria && !fabricante && !detalle) return [];
+
+    // Limpiar HTML básico de la descripción y detalle (Quill)
+    const descSinHtml = (descripcion || '').replace(/<[^>]*>/g, ' ');
+    const detalleSinHtml = (detalle || '').replace(/<[^>]*>/g, ' ');
+
+    // Combinar y normalizar a minúsculas
+    const combined = `${codigo || ''} ${descSinHtml} ${categoria || ''} ${fabricante || ''} ${detalleSinHtml}`.toLowerCase();
+
+    // Normalizar: quitar acentos y caracteres especiales
+    const normalized = combined
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Quita acentos (diacríticos)
+      .replace(/[^a-z0-9 ]/g, ' ');    // Deja solo alfa-numéricos y espacios
+
+    // Dividir en palabras y filtrar las de menos de 2 caracteres
+    const words = normalized.split(/\s+/).filter(word => word.length >= 2);
+
+    // Retornar solo palabras únicas (Tokens)
+    return Array.from(new Set(words));
   }
 
   // OBTENER POR ID
@@ -95,6 +156,34 @@ export class ProductoService {
     });
   }
 
+  async obtenerTodosActivos(): Promise<any[]> {
+    let q = query(
+      collection(this.firestore, `${this.url}`) as CollectionReference<any>,
+      where('activo', '==', true)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+  }
+
+  async migrarProductosTokensYLinks(): Promise<number> {
+    const snap = await getDocs(collection(this.firestore, `${this.url}`));
+    let count = 0;
+    for (const d of snap.docs) {
+      const data = d.data();
+      const id = d.id;
+      const searchTokens = this.generarSearchTokens(data);
+      const tituloLink = this.generarLink(data['codigo'], data['descripcion']);
+      const documento = doc(this.firestore, `${this.url}`, id);
+      await updateDoc(documento, {
+        searchTokens,
+        tituloLink,
+        updatedAt: serverTimestamp()
+      });
+      count++;
+    }
+    return count;
+  }
+
   // OBTENER TODOS EN TIEMPO REAL
   obtenerTodosTR() {
     return collectionData<any>(
@@ -117,6 +206,10 @@ export class ProductoService {
       condiciones.push(where('categoria', '==', datos.categoria));
     }
 
+    if (datos?.fabricante && datos.fabricante !== 'TODOS') {
+      condiciones.push(where('fabricante', '==', datos.fabricante));
+    }
+
     if (datos?.tipo && datos.tipo !== 'TODOS') {
       condiciones.push(where('tipo', '==', datos.tipo));
     }
@@ -124,6 +217,15 @@ export class ProductoService {
     if (datos?.publicado && datos.publicado !== 'TODOS') {
       const publicadoBoolean = datos.publicado === 'true' || datos.publicado === true;
       condiciones.push(where('publicado', '==', publicadoBoolean));
+    }
+
+    const texto = (datos?.texto ?? '').trim().toLowerCase();
+    if (texto.length >= 2) {
+      const token = texto
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .split(/\s+/)[0];
+      condiciones.push(where('searchTokens', 'array-contains', token));
     }
 
     return condiciones;

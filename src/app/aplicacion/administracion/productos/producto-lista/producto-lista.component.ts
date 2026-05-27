@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -22,15 +22,17 @@ import { ProductoFormComponent } from '../producto-form/producto-form.component'
 import { ProductoFotosComponent } from '../producto-fotos/producto-fotos.component';
 import { ProductoResumenComponent } from '../producto-resumen/producto-resumen.component';
 import { ProductoService } from '../../../servicios/producto.service';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
 import { AuthService } from '../../../servicios/auth.service';
 import { ProductoCategoriaService } from '../../../servicios/producto-categoria.service';
+import { ProductoFabricanteService } from '../../../servicios/producto-fabricante.service';
 
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-producto-lista',
@@ -57,7 +59,7 @@ import { DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
     MatMenuModule
   ],
 })
-export class ProductoListaComponent {
+export class ProductoListaComponent implements OnInit, AfterViewInit, OnDestroy {
   buscadorFormGroup: FormGroup;
   buscadorControl = false;
 
@@ -67,6 +69,10 @@ export class ProductoListaComponent {
   usuario: any | null = null;
 
   listaCategorias: any;
+  listaFabricantes: any[] = [];
+
+  private formSub?: Subscription;
+  private querySub?: Subscription;
 
   // DataSource para la tabla
   dataSource = new MatTableDataSource<any>([]);
@@ -96,8 +102,11 @@ export class ProductoListaComponent {
     private productoServicio: ProductoService,
     private authServicio: AuthService,
     private pcServicio: ProductoCategoriaService,
+    private pfServicio: ProductoFabricanteService,
     private titleService: Title,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private route: ActivatedRoute,
+    private router: Router
 
   ) {
 
@@ -106,15 +115,13 @@ export class ProductoListaComponent {
     });
 
     this.buscadorFormGroup = this.fb.group({
-
+      texto: [''],
       activo: ['true'],
       tipo: ['TODOS'],
       publicado: ['TODOS'],
       categoria: ['TODOS'],
-      limite: [this.pageSize],
+      fabricante: ['TODOS']
     });
-    // this.obtenerConsulta();
-    this.establecerSuscripcionForm();
   }
 
   ngOnInit(): void {
@@ -122,11 +129,77 @@ export class ProductoListaComponent {
 
     this.breakpointObserver.observe(['(max-width: 768px)']).subscribe(result => {
       this.filtro = !result.matches;
-      // console.log('Filtro:', this.filtro); // `true` si la pantalla es menor o igual a 768px
     });
 
     this.obtenerCategorias();
-    this.obtenerConsulta();
+    this.obtenerFabricantes();
+
+    // 1. URL -> Form -> Data
+    this.querySub = this.route.queryParams.subscribe(params => {
+      this.buscadorFormGroup.patchValue({
+        texto: params['texto'] || '',
+        activo: params['activo'] || 'true',
+        tipo: params['tipo'] || 'TODOS',
+        publicado: params['publicado'] || 'TODOS',
+        categoria: params['categoria'] || 'TODOS',
+        fabricante: params['fabricante'] || 'TODOS'
+      }, { emitEvent: false });
+
+      this.resetYBuscar();
+    });
+
+    // 2. Form (SELECTS) -> URL
+    this.formSub = this.buscadorFormGroup.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged((a, b) => {
+          const { texto: aT, ...aRest } = a;
+          const { texto: bT, ...bRest } = b;
+          return JSON.stringify(aRest) === JSON.stringify(bRest);
+        })
+      )
+      .subscribe(() => {
+        this.actualizarURL();
+      });
+  }
+
+  actualizarURL() {
+    const v = this.buscadorFormGroup.getRawValue();
+    const queryParams: any = {};
+
+    if (v.texto) queryParams.texto = v.texto;
+    if (v.activo !== 'true') queryParams.activo = v.activo;
+    if (v.tipo !== 'TODOS') queryParams.tipo = v.tipo;
+    if (v.publicado !== 'TODOS') queryParams.publicado = v.publicado;
+    if (v.categoria !== 'TODOS') queryParams.categoria = v.categoria;
+    if (v.fabricante !== 'TODOS') queryParams.fabricante = v.fabricante;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      replaceUrl: true
+    });
+  }
+
+  onSearch() {
+    this.actualizarURL();
+  }
+
+  limpiarFiltros() {
+    this.buscadorFormGroup.patchValue({
+      texto: '',
+      activo: 'true',
+      tipo: 'TODOS',
+      publicado: 'TODOS',
+      categoria: 'TODOS',
+      fabricante: 'TODOS'
+    });
+    this.actualizarURL();
+  }
+
+  ngOnDestroy() {
+    this.formSub?.unsubscribe();
+    this.querySub?.unsubscribe();
   }
 
   ngAfterViewInit() {
@@ -136,39 +209,38 @@ export class ProductoListaComponent {
     }
   }
 
-  get b(): any { return this.buscadorFormGroup.controls; }
-
-  establecerSuscripcionForm() {
-    this.b.categoria.valueChanges.subscribe((val: any) => {
-      this.onFiltersChanged();
-    });
-    this.b.tipo.valueChanges.subscribe((val: any) => {
-      this.onFiltersChanged();
-    });
-    this.b.activo.valueChanges.subscribe((val: any) => {
-      this.onFiltersChanged();
-    });
-    this.b.publicado.valueChanges.subscribe((val: any) => {
-      this.onFiltersChanged();
-    });
-    this.b.limite.valueChanges.subscribe((val: any) => {
-      const parsed = Number(val);
-      if (!parsed || parsed <= 0) {
-        return;
-      }
-      this.onPageSizeSelect(parsed);
-    });
-  }
-
   // OBTENER CATEGORIAS
   obtenerCategorias() {
     this.pcServicio.obtenerTodos().then((data: any) => {
       this.listaCategorias = data;
-    })
+    });
+  }
+
+  obtenerFabricantes() {
+    this.pfServicio.obtenerTodos().then((data: any) => {
+      this.listaFabricantes = data;
+    });
   }
 
   obtenerConsulta(): void {
     this.loadPage(0, this.pageSize, true);
+  }
+
+  async migrarProductos() {
+    this.cargando.show();
+    try {
+      const activos = await this.productoServicio.obtenerTodosActivos();
+      console.log('Productos activos listados antes de migrar:', activos);
+      
+      const cantidad = await this.productoServicio.migrarProductosTokensYLinks();
+      this.snackbar.open(`Migración exitosa. ${cantidad} productos actualizados.`, 'OK', { duration: 5000 });
+      this.resetYBuscar();
+    } catch (error) {
+      console.error('Error migrando productos:', error);
+      this.snackbar.open('Error al migrar los productos.', 'OK', { duration: 5000 });
+    } finally {
+      this.cargando.hide();
+    }
   }
 
   nuevo() {
@@ -295,30 +367,19 @@ export class ProductoListaComponent {
 
   async onPageChange(event: PageEvent) {
     if (event.pageSize !== this.pageSize) {
-      this.onPageSizeSelect(event.pageSize);
+      this.pageSize = event.pageSize;
+      this.resetYBuscar();
       return;
     }
     await this.loadPage(event.pageIndex, event.pageSize);
   }
 
-  private async onPageSizeSelect(size: number) {
-    this.pageSize = size;
-    if (this.paginator) {
-      this.paginator.firstPage();
-    } else {
-      this.currentPageIndex = 0;
-    }
-    this.b.limite.setValue(size, { emitEvent: false });
-    await this.loadPage(0, this.pageSize, true);
-  }
-
-  private async onFiltersChanged() {
-    await this.loadPage(0, this.pageSize, true);
+  private resetYBuscar() {
+    this.loadPage(0, this.pageSize, true);
   }
 
   private obtenerFiltrosLimpiados() {
-    const { limite, ...resto } = this.buscadorFormGroup.getRawValue();
-    return resto;
+    return this.buscadorFormGroup.getRawValue();
   }
 
   private async loadPage(pageIndex: number, pageSize: number, resetAnchors = false) {

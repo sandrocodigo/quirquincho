@@ -1,4 +1,4 @@
-<div class="flex items-center justify-between py-4">
+<div class="flex flex-col md:flex-row items-center justify-between py-4 gap-4">
   <div>
     <h1
       class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
@@ -6,34 +6,49 @@
     </h1>
     <p class="text-sm text-gray-500 dark:text-gray-300">Gestion de Repuestos, Insumos</p>
   </div>
-  <div class="ml-auto">
 
-    <button (click)="filtros()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Filtros" type="button">
+  <div class="flex-1 max-w-md w-full md:mx-4">
+    <form [formGroup]="buscadorFormGroup" (ngSubmit)="onSearch()">
+      <div class="relative">
+        <input matInput formControlName="texto" placeholder="Buscar por nombre, código o detalle..."
+          class="w-full bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-full px-5 py-2.5 pr-10 text-sm focus:border-green-500 outline-none shadow-sm dark:text-white">
+        <button type="submit"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-500 transition-colors">
+          <mat-icon class="scale-90">search</mat-icon>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="flex items-center ml-auto gap-2">
+    <button (click)="filtros()" color="primary" mat-mini-fab matTooltip="Filtros avanzados" type="button">
       <mat-icon>{{ filtro ? 'filter_list_off' : 'filter_list' }}</mat-icon>
     </button>
 
-    <button (click)="obtenerConsulta()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Actualizar"
-      type="button">
+    <button (click)="obtenerConsulta()" color="primary" mat-mini-fab matTooltip="Actualizar" type="button">
       <mat-icon>update</mat-icon>
     </button>
 
-    <button (click)="nuevo()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
+    <!--     <button (click)="migrarProductos()" color="accent" mat-mini-fab matTooltip="Migrar searchTokens y tituloLink" type="button">
+      <mat-icon>settings_backup_restore</mat-icon>
+    </button> -->
+
+    <button (click)="nuevo()" color="warn" mat-mini-fab matTooltip="Adicionar" type="button">
       <mat-icon>add</mat-icon>
     </button>
-
   </div>
 </div>
 
 
 @if (buscadorFormGroup && filtro) {
-<form [formGroup]="buscadorFormGroup" (ngSubmit)="obtenerConsulta()">
+<form [formGroup]="buscadorFormGroup" class="mb-4">
   <div class="flex flex-wrap -mx-2">
-    <div class="w-full md:w-1/5 px-2">
-      <mat-form-field class="flex-auto w-full">
+    <div class="w-full sm:w-1/2 md:w-1/5 px-2">
+      <mat-form-field class="w-full">
         <mat-label>Categoria</mat-label>
         <mat-select formControlName="categoria">
           <mat-option value="TODOS"> TODOS </mat-option>
-          @for (item of listaCategorias; track item) {
+          @for (item of listaCategorias; track item.id) {
           <mat-option [value]="item.descripcion">
             {{ item.descripcion }}
           </mat-option>
@@ -41,8 +56,21 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="w-full md:w-1/5 px-2">
-      <mat-form-field class="flex-auto w-full">
+    <div class="w-full sm:w-1/2 md:w-1/5 px-2">
+      <mat-form-field class="w-full">
+        <mat-label>Fabricante</mat-label>
+        <mat-select formControlName="fabricante">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          @for (item of listaFabricantes; track item.id) {
+          <mat-option [value]="item.descripcion">
+            {{ item.descripcion }}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="w-full sm:w-1/2 md:w-1/5 px-2">
+      <mat-form-field class="w-full">
         <mat-label>TIPO</mat-label>
         <mat-select formControlName="tipo">
           <mat-option value="TODOS"> TODOS </mat-option>
@@ -54,8 +82,8 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="w-full md:w-1/5 px-2">
-      <mat-form-field class="flex-auto w-full">
+    <div class="w-full sm:w-1/2 md:w-1/5 px-2">
+      <mat-form-field class="w-full">
         <mat-label>ACTIVO</mat-label>
         <mat-select formControlName="activo">
           <mat-option value="TODOS"> TODOS </mat-option>
@@ -64,18 +92,13 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="w-full md:w-1/5 px-2">
-      <!-- Espacio reservado para otros filtros -->
-    </div>
-    <div class="w-full md:w-1/5 px-2">
-      <mat-form-field appearance="fill" style="width:100%">
-        <mat-label>Ítems por página</mat-label>
-        <mat-select formControlName="limite">
-          @for (opt of pageSizeOptions; track opt) {
-          <mat-option [value]="opt">
-            {{ opt }}
-          </mat-option>
-          }
+    <div class="w-full sm:w-1/2 md:w-1/5 px-2">
+      <mat-form-field class="w-full">
+        <mat-label>Visibilidad</mat-label>
+        <mat-select formControlName="publicado">
+          <mat-option value="TODOS"> TODOS </mat-option>
+          <mat-option value="true"> Publicados </mat-option>
+          <mat-option value="false"> Borradores </mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -83,7 +106,7 @@
 </form>
 }
 
-<div class="bg-transparent flex px-1 h-20 items-center">
+<!-- <div class="bg-transparent flex px-1 h-20 items-center">
   <div class="flex-auto flex m-0">
     <div
       class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-4 flex items-center w-full mr-2">
@@ -93,7 +116,7 @@
         placeholder="Buscar en la página actual...">
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="mat-elevation-z2 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
   <table mat-table [dataSource]="dataSource" matSort class="min-w-full text-sm dark:bg-slate-800 dark:text-white">
@@ -106,7 +129,8 @@
             class="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded">
             <mat-icon class="text-gray-500 dark:text-gray-400">photo_camera</mat-icon>
           </div>
-          <img [src]="element.fotosUrl && element.fotosUrl.length > 0 ? element.fotosUrl[0].url : 'imagenes/sinfoto.png'"
+          <img
+            [src]="element.fotosUrl && element.fotosUrl.length > 0 ? element.fotosUrl[0].url : 'imagenes/sinfoto.png'"
             alt="Imagen del producto" class="w-full h-full object-cover rounded cursor-pointer" (click)="fotos(element)"
             (load)="element.loading = false" (error)="element.loading = false" [class.hidden]="element.loading" />
         </div>
@@ -118,8 +142,7 @@
       <td mat-cell *matCellDef="let element">
         <a [routerLink]="'detalle/' + element.id"
           class="inline-flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-300">
-          <span class="text-xs px-2 py-1 rounded-full text-white"
-            [ngClass]="{
+          <span class="text-xs px-2 py-1 rounded-full text-white" [ngClass]="{
               'bg-slate-500': element.tipo === 'PRODUCTO',
               'bg-yellow-500': element.tipo === 'SERVICIO',
               'bg-green-500': element.tipo === 'INSUMO'
