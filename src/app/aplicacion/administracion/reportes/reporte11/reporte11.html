@@ -1,0 +1,118 @@
+<div class="flex items-center justify-between pb-4">
+  <div>
+    <h1
+      class="text-3xl font-semibold bg-gradient-to-r from-green-800 via-green-500 to-green-300 inline-block text-transparent bg-clip-text">
+      11. Inventario con Imágenes
+    </h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Inventario físico con fotografías de los productos</p>
+  </div>
+  <div class="ml-auto flex gap-2">
+    <button [disabled]="!sucursal() || !tipo()" (click)="imprimir()" class="ml-1 mr-1" color="primary" mat-mini-fab matTooltip="Imprimir Inventario" type="button">
+      <mat-icon>print</mat-icon>
+    </button>
+    <button [disabled]="!sucursal() || !tipo()" (click)="exportarJson()" class="ml-1 mr-1" color="warn" mat-mini-fab matTooltip="Exportar a Excel" type="button">
+      <mat-icon>table_rows</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div class="flex flex-wrap gap-4 mb-4">
+  <div class="w-full md:w-1/4">
+    <mat-form-field class="w-full">
+      <mat-label>Sucursal</mat-label>
+      <mat-select [ngModel]="sucursal()" (ngModelChange)="sucursal.set($event)">
+        <mat-option value="">-- Seleccionar Sucursal --</mat-option>
+        @for (item of listaSucursales; track item.id) {
+          <mat-option [value]="item.id">
+            {{ item.descripcion }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
+  <div class="w-full md:w-1/4">
+    <mat-form-field class="w-full">
+      <mat-label>TIPO</mat-label>
+      <mat-select [ngModel]="tipo()" (ngModelChange)="tipo.set($event)">
+        <mat-option value="">-- Seleccionar Tipo --</mat-option>
+        @for (item of tipos; track item) {
+          <mat-option [value]="item">
+            {{ item }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="w-full md:w-1/4">
+    <mat-form-field class="w-full">
+      <mat-label>Saldo Cantidad</mat-label>
+      <mat-select [ngModel]="saldoFiltro()" (ngModelChange)="saldoFiltro.set($event)">
+        @for (opcion of saldoOpciones; track opcion.value) {
+          <mat-option [value]="opcion.value">
+            {{ opcion.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+
+@if (!sucursal() || !tipo()) {
+  <div class="p-8 text-center text-gray-500 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+    <mat-icon class="scale-150 mb-2 text-gray-400">storefront</mat-icon>
+    <h3 class="font-semibold text-lg text-gray-700 dark:text-slate-200">Seleccione Sucursal y Tipo</h3>
+    <p class="text-sm">Por favor, seleccione tanto una sucursal como un tipo de producto en la barra superior para cargar los datos del inventario.</p>
+  </div>
+} @else {
+  <div class="table-container mat-elevation-z2 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+    <table class="tabla-estilizada w-full" #tabla>
+      <thead>
+        <tr>
+          <th colspan="3">INVENTARIO FISICO CON IMAGENES</th>
+          <th>{{ fechaHoy | date:'short' }}</th>
+          <th colspan="2" style="font-size: 0.75rem; line-height: 1.2;">
+            SUCURSAL: {{ sucursal() }}<br>
+            TIPO: {{ tipo() }}<br>
+            SALDO: {{ saldoFiltro() }}
+          </th>
+        </tr>
+        <tr>
+          <th class="w-20">FOTO</th>
+          <th>CODIGO</th>
+          <th>DESCRIPCION</th>
+          <th>SALDO TOTAL</th>
+          <th class="w-32">CANTIDAD FISICO</th>
+          <th class="w-24">P.V.</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of lista(); track item.id) {
+          <tr>
+            <td class="text-center p-1">
+              <div class="w-16 h-16 flex items-center justify-center overflow-hidden rounded border border-gray-300 dark:border-gray-600 bg-white">
+                <img
+                  [src]="item.fotosUrl && item.fotosUrl.length > 0 ? item.fotosUrl[0].url : 'imagenes/sinfoto.png'"
+                  alt="Foto"
+                  class="img-reporte max-w-full max-h-full object-cover"
+                />
+              </div>
+            </td>
+            <td class="font-semibold text-start px-2">{{ item.codigo }}</td>
+            <td class="text-start px-2">{{ item.descripcion }}</td>
+            <td class="text-start px-2 font-medium">{{ item.cantidadSaldoTotal }}</td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center py-6 text-gray-500 dark:text-gray-300">
+              No se encontraron productos en el inventario para los filtros seleccionados.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

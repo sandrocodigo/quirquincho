@@ -89,6 +89,7 @@ ng g c --standalone aplicacion/administracion/personal/personal-jornada
 ng g c --standalone aplicacion/administracion/personal/personal-pago
 
 ng g c --standalone aplicacion/administracion/reportes/reporte6
+ng g c --standalone aplicacion/administracion/reportes/reporte11
 
 ng g c --standalone aplicacion/sistema/alerta
 

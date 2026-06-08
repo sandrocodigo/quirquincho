@@ -29,5 +29,6 @@ export class ReportesComponent {
     { link: 'reporte8', icon: 'sync_alt', label: '8: Conciliación Kardex' },
     { link: 'reporte9', icon: 'settings', label: '9: Reporte' },
     { link: 'reporte10', icon: 'settings', label: '10: Reporte' },
+    { link: 'reporte11', icon: 'inventory', label: '11: Inventario Físico/Imagen' },
   ];
 }

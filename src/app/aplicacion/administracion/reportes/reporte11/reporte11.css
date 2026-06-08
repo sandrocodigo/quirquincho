@@ -1,0 +1,65 @@
+.tabla-estilizada {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 5px 0;
+  font-size: 0.875rem;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  border: 1px solid #999999;
+}
+
+/* Encabezado de la tabla */
+.tabla-estilizada thead {
+  background-color: #11cc0b;
+  color: #fff;
+  text-align: left;
+}
+
+.tabla-estilizada th {
+  padding: 8px 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 1px solid #999999;
+}
+
+/* Cuerpo de la tabla */
+.tabla-estilizada td {
+  padding: 8px 12px;
+  color: #000000;
+  border: 1px solid #999999;
+  vertical-align: middle;
+  background-color: #ffffff; /* No zebra, todos blancos */
+}
+
+/* Filas al pasar el ratón */
+.tabla-estilizada tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+  .tabla-estilizada {
+    border-color: #475569;
+  }
+  .tabla-estilizada th {
+    border-color: #475569;
+  }
+  .tabla-estilizada td {
+    color: #f1f5f9;
+    border-color: #475569;
+    background-color: #1e293b;
+  }
+  .tabla-estilizada tbody tr:hover {
+    background-color: #334155;
+  }
+}
+
+.img-reporte {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  margin: auto;
+}
