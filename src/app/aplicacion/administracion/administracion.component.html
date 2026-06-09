@@ -60,7 +60,7 @@
     <!-- Mobile/Global Navigation (Bottom Bar) -->
     <!-- Elegante, moderno y siempre visible para fácil acceso -->
     <nav
-        class="fixed bottom-4 left-4 right-4 h-[72px] bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl flex justify-around items-center z-[100] border border-black/5 dark:border-white/10 rounded-3xl px-3 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-colors duration-500">
+        class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md h-[72px] bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl flex justify-around items-center z-[100] border border-black/5 dark:border-white/10 rounded-3xl px-3 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-colors duration-500">
         @for (item of menuItems.slice(0, 4); track item.link) {
         <a [routerLink]="item.link" routerLinkActive="active"
             class="flex flex-col items-center text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-300 gap-1 mt-1">

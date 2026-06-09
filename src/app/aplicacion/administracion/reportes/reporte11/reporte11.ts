@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 import { ProductoService } from '../../../servicios/producto.service';
+import { ProductoCategoriaService } from '../../../servicios/producto-categoria.service';
 import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 import { ExcelService } from '../../../servicios/excel.service';
 import { Title } from '@angular/platform-browser';
@@ -39,9 +40,11 @@ export class Reporte11 implements OnInit {
   tipo = signal<string>(''); // Obligatorio seleccionar
   publicado = signal<string>('TODOS');
   saldoFiltro = signal<string>('TODOS'); // TODOS, MAYOR_A_0, IGUAL_A_0, MENOR_A_0
+  categoriaFiltro = signal<string>('TODOS');
 
   lista = signal<any[]>([]);
   listaExportacion = signal<any[]>([]);
+  listaCategorias = signal<any[]>([]);
 
   fechaHoyTexto = new Date().toISOString().split('T')[0];
   fechaHoy = new Date();
@@ -60,6 +63,7 @@ export class Reporte11 implements OnInit {
 
   private cargando = inject(SpinnerService);
   private productoServicio = inject(ProductoService);
+  private categoriaServicio = inject(ProductoCategoriaService);
   private titleService = inject(Title);
   private excelServicio = inject(ExcelService);
 
@@ -71,6 +75,7 @@ export class Reporte11 implements OnInit {
       const tip = this.tipo();
       const pub = this.publicado();
       const sal = this.saldoFiltro();
+      const cat = this.categoriaFiltro();
       
       if (suc && tip) {
         this.obtenerConsulta();
@@ -83,6 +88,9 @@ export class Reporte11 implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('Reporte 11 - Inventario con Imágenes');
+    this.categoriaServicio.obtenerTodos().then((res) => {
+      this.listaCategorias.set(res || []);
+    });
   }
 
   obtenerConsulta(): void {
@@ -96,8 +104,15 @@ export class Reporte11 implements OnInit {
     this.productoServicio.obtenerConsultaConSaldoReporte(queryParams).then((respuesta: any) => {
       console.log('CONSULTA CON SALDO (REPORT 11): ', respuesta);
       
-      // Aplicar filtro de Saldo en el cliente
       let filtrada = respuesta || [];
+
+      // Aplicar filtro de Categoría en el cliente
+      const catFiltro = this.categoriaFiltro();
+      if (catFiltro !== 'TODOS') {
+        filtrada = filtrada.filter((item: any) => item?.categoria === catFiltro);
+      }
+
+      // Aplicar filtro de Saldo en el cliente
       const filtro = this.saldoFiltro();
       if (filtro === 'MAYOR_A_0') {
         filtrada = filtrada.filter((item: any) => Number(item?.cantidadSaldoTotal ?? 0) > 0);
@@ -146,7 +161,7 @@ export class Reporte11 implements OnInit {
         popupWin.document.write(`
           <html>
             <head>
-              <title>InventarioFisicoImagenes-${this.sucursal()}-${this.tipo()}-${this.saldoFiltro()}-${this.fechaHoyTexto}</title>
+              <title>InventarioFisicoImagenes-${this.sucursal()}-${this.tipo()}-${this.categoriaFiltro()}-${this.saldoFiltro()}-${this.fechaHoyTexto}</title>
               <style>
                 .no-imprimir {
                   display: none;
@@ -245,12 +260,12 @@ export class Reporte11 implements OnInit {
   }
 
   exportarJsonAExcel(): void {
-    const filename = `Inventario-${this.sucursal()}-${this.tipo()}-${this.saldoFiltro()}-`;
+    const filename = `Inventario-${this.sucursal()}-${this.tipo()}-${this.categoriaFiltro()}-${this.saldoFiltro()}-`;
     this.excelServicio.exportarAExcel(this.listaExportacion(), filename);
   }
 
   exportarJson(): void {
-    const filename = `Inventario-${this.sucursal()}-${this.tipo()}-${this.saldoFiltro()}-`;
+    const filename = `Inventario-${this.sucursal()}-${this.tipo()}-${this.categoriaFiltro()}-${this.saldoFiltro()}-`;
     this.excelServicio.exportarAExcel(this.listaExportacion(), filename);
   }
 }
