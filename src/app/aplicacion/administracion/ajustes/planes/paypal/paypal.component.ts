@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, inject, DestroyRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SpinnerService } from '../../../../sistema/spinner/spinner.service';
@@ -14,10 +14,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
 import { PlanService } from '../../../../servicios/plan.service';
 import { AuthService } from '../../../../servicios/auth.service';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-paypal',
@@ -37,12 +38,20 @@ import { AuthService } from '../../../../servicios/auth.service';
     MatButtonModule,
     MatSelectModule,
     MatSlideToggleModule,
-
     NgxPayPalModule
-
   ],
 })
-export class PaypalComponent {
+export class PaypalComponent implements OnInit {
+  public data = inject<any>(MAT_DIALOG_DATA);
+  private dialogRef = inject(MatDialogRef<PaypalComponent>);
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
+  private planServicio = inject(PlanService);
+  private snackbar = inject(MatSnackBar);
+  public dialog = inject(MatDialog);
+  private cargando = inject(SpinnerService);
+  private destroyRef = inject(DestroyRef);
+
   registroFormGroup!: FormGroup;
   registroControl = false;
   fechaHoy = new Date();
@@ -55,64 +64,24 @@ export class PaypalComponent {
   public payPalConfig?: IPayPalConfig;
   showSuccess = false;
 
-  purchaseItems;
-
+  purchaseItems: any[] = [];
   total!: string;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<PaypalComponent>,
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private planServicio: PlanService,
-    private snackbar: MatSnackBar,
-    private dialog: MatDialog,
-    private cargando: SpinnerService,
-  ) {
-    this.id = data.id;
-    this.plan = data.objeto;
-    console.log('DATA: ', data.objeto);
+  usuario = toSignal(this.auth.user$, { initialValue: null });
+
+  ngOnInit() {
+    this.id = this.data.id;
+    this.plan = this.data.objeto;
+    console.log('DATA: ', this.data.objeto);
 
     this.purchaseItems = [
-      { name: data.objeto.descripcion, quantity: 1, price: data.objeto.monto },
-      // { name: 'Smartphone Dual Camera', quantity: 2, price: 5 },
-      // { name: 'Black Colour Smartphone', quantity: 1, price: 10 }
+      { name: `${this.plan.descripcion} (Incl. Comisiones PayPal)`, quantity: 1, price: 40.00 },
     ];
 
     this.obtenerTotal();
     this.initConfig();
-
-
-    /*     if (data.nuevo) { }
-        else {
-          // FORM EDITAR
-          this.cargando.show();
-          this.resumenServicio.obtenerPorId(this.id).then((respuesta: any) => {
-    
-            this.registro = respuesta;
-            this.registroFormGroup = this.fb.group({
-              descripcion: [respuesta.descripcion, [Validators.required]],
-              descontado: [respuesta.descontado],
-    
-              edicionUsuario: [this.auth.obtenerUsuario.email],
-              edicionFecha: [this.fechaHoy]
-            });
-    
-            // this.establecerSuscripcion();
-            // this.obtenerVehiculos();
-            this.cargando.hide();
-            // this.focus();
-          });
-        } */
-
   }
 
-  // INICIAR
-  ngOnInit() {
-
-  }
-
-  // FOCUS
   focus(): void {
     setTimeout(() => {
       const input = 'precio';
@@ -124,28 +93,21 @@ export class PaypalComponent {
     }, 100);
   }
 
-  // FORM
   get r(): any { return this.registroFormGroup.controls; }
 
-  establecerSuscripcion() {
-    this.r.empresa.valueChanges.subscribe((val: any) => {
-      //this.obtenerVehiculos();
-    });
-  }
+  establecerSuscripcion() {}
 
   obtenerTotal(): void {
-    this.total = this.purchaseItems.map(x => x.quantity * x.price).reduce((a, b) => a + b, 0).toString();
+    const totalNum = this.purchaseItems.map(x => x.quantity * x.price).reduce((a, b) => a + b, 0);
+    this.total = totalNum.toFixed(2);
   }
 
-  // https://enngage.github.io/ngx-paypal/
   private initConfig(): void {
-    // this.total = this.purchaseItems.map(x => x.quantity * x.price).reduce((a, b) => a + b, 0).toString();
     const currency = 'USD';
 
     this.payPalConfig = {
       currency: currency,
       clientId: 'AZ9cUSAPryyR7KSDuecyPsq-YXtHFNjvZdYlJVtgQl-kj-87urViPwGPiZZUq_dGQoCS8AKG2rog9HPl', // PRODUCCION
-      // clientId: 'AciFqYI3TLWV_6EySNITjh2rzelgS5rHp970ApIE9sg1YiSlCcyhKoMwiT3UX3k4rTHg1KxyMqGu4v_l', // DESARROLLO
 
       createOrderOnClient: (data) => <ICreateOrderRequest>{
         intent: 'CAPTURE',
@@ -161,16 +123,15 @@ export class PaypalComponent {
                 }
               }
             },
-            items: this.purchaseItems.map(x => <ITransactionItem>
-              {
-                name: x.name,
-                quantity: x.quantity.toString(),
-                category: 'DIGITAL_GOODS',
-                unit_amount: {
-                  currency_code: currency,
-                  value: x.price.toString(),
-                },
-              })
+            items: this.purchaseItems.map(x => <ITransactionItem>{
+              name: x.name,
+              quantity: x.quantity.toString(),
+              category: 'DIGITAL_GOODS',
+              unit_amount: {
+                currency_code: currency,
+                value: x.price.toFixed(2),
+              },
+            })
           }
         ]
       },
@@ -195,17 +156,16 @@ export class PaypalComponent {
           pagadoFechaHora: this.fechaHoy,
           respuesta: data
         }).then(res => {
-          this.snackbar.open('Pagado con exito, muchas gracias...', 'OK', { duration: 3000 });
+          this.snackbar.open('Pagado con éxito. Por favor, comuníquese con el administrador para confirmar el pago.', 'OK', { duration: 10000 });
           this.dialogRef.close(true);
         });
-
       },
       onCancel: (data, actions) => {
         console.log('OnCancel', data, actions);
       },
       onError: err => {
         console.log('OnError', err);
-        this.snackbar.open('Ocurro un error al hacer la transaccion', 'OK', { duration: 10000 });
+        this.snackbar.open('Ocurrió un error al hacer la transacción', 'OK', { duration: 10000 });
       },
       onClick: (data, actions) => {
         console.log('onClick', data, actions);
@@ -213,36 +173,22 @@ export class PaypalComponent {
     };
   }
 
-
-  // REGISTRAR
   onSubmit(): void {
     this.registroControl = true;
     if (this.registroFormGroup.invalid) {
-      this.snackbar.open('Se requerie datos...', 'OK', {
+      this.snackbar.open('Se requieren datos...', 'OK', {
         duration: 3000
       });
       return;
     } else {
-      if (this.data.nuevo) {
-        this.cargando.show();
-        this.planServicio.crear(this.registroFormGroup.getRawValue()).then((respuesta: any) => {
-          this.snackbar.open('Hey!, Vehiculo creado con exito...', 'OK', {
-            duration: 10000
-          });
-          this.dialogRef.close(true);
-          this.cargando.hide();
+      this.cargando.show();
+      this.planServicio.editar(this.id, this.registroFormGroup.getRawValue()).then((respuesta: any) => {
+        this.snackbar.open('Actualizado con éxito...', 'OK', {
+          duration: 10000
         });
-      } else {
-        this.cargando.show();
-        this.planServicio.editar(this.id, this.registroFormGroup.getRawValue()).then((respuesta: any) => {
-          this.snackbar.open('Hey!, actualizado con exito...', 'OK', {
-            duration: 10000
-          });
-          this.dialogRef.close(true);
-          this.cargando.hide();
-        });
-      }
-
+        this.dialogRef.close(true);
+        this.cargando.hide();
+      });
     }
   }
 }

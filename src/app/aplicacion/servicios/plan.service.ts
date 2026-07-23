@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   Firestore, collection, addDoc, doc, getDoc, updateDoc, onSnapshot, deleteDoc, collectionData, orderBy, query, CollectionReference, where, limit, getDocs, startAt, endAt,
@@ -11,6 +11,7 @@ import { Plan } from '../modelos/plan';
 export class PlanService {
 
   private url = 'planes';
+  bloqueadoPorFaltaPago = signal<boolean>(false);
 
   constructor(private firestore: Firestore) { }
 
@@ -133,6 +134,12 @@ export class PlanService {
       const fechaLimite = new Date(registro.fechaLimite);
       return fechaLimite <= hoy;
     });
+
+    if (registrosPendientes.length >= 2) {
+      this.bloqueadoPorFaltaPago.set(true);
+    } else {
+      this.bloqueadoPorFaltaPago.set(false);
+    }
 
     return registrosPendientes;
   }

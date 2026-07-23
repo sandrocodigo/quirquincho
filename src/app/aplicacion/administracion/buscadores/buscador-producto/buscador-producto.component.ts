@@ -1,9 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, DestroyRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Title } from '@angular/platform-browser';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-// MATERIAL
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -12,11 +10,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { ProductoService } from '../../../servicios/producto.service';
-import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../servicios/auth.service';
-
 import { ProductoBarraComponent } from '../../productos/producto-barra/producto-barra.component';
 import { ProductoResumenComponent } from '../../productos/producto-resumen/producto-resumen.component';
 import { ProductoFotosComponent } from '../../productos/producto-fotos/producto-fotos.component';
@@ -24,6 +21,7 @@ import { IngresoDetalleService } from '../../../servicios/ingreso-detalle.servic
 import { CalculoService } from '../../../servicios/calculo.service';
 import { ProductoImprimirComponent } from '../../productos/producto-imprimir/producto-imprimir.component';
 import { SpinnerService } from '../../../sistema/spinner/spinner.service';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-buscador-producto',
@@ -44,99 +42,125 @@ import { SpinnerService } from '../../../sistema/spinner/spinner.service';
     MatMenuModule,
     NgSelectModule
   ],
-
 })
-export class BuscadorProductoComponent {
+export class BuscadorProductoComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  public dialog = inject(MatDialog);
+  private snackbar = inject(MatSnackBar);
+  private cargando = inject(SpinnerService);
+  private productoServicio = inject(ProductoService);
+  private authServicio = inject(AuthService);
+  private titleService = inject(Title);
+  private calculoServicio = inject(CalculoService);
+  private ingresoDetalleServicio = inject(IngresoDetalleService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
-  buscadorFormGroup: FormGroup;
+  buscadorFormGroup = this.fb.group({
+    codigoBarra: [null as string | null],
+  });
+
+  productoFormGroup = this.fb.group({
+    productoId: [null as string | null],
+  });
+
   buscadorControl = false;
-
-  productoFormGroup: FormGroup;
   productoControl = false;
+  tipos = ['PRODUCTO', 'SERVICIO', 'INSUMO'];
 
-  usuario: any | null = null;
+  usuario = toSignal(this.authServicio.user$, { initialValue: null });
+  listaCategorias: any;
 
-
-  listaProductos: any = [];
-  listaIngresos: any = [];
+  listaProductos = signal<any[]>([]);
+  listaIngresos = signal<any[]>([]);
 
   private imagenesCargadas = new Map<string, boolean>();
   estadoCargaImagenes = new Map<string, boolean>();
 
-  producto: any;
+  producto = signal<any>(null);
 
-  totales: any;
+  totales = computed<any>(() => {
+    const ingresos = this.listaIngresos();
+    return this.calculoServicio.sumarPorColumnas(ingresos);
+  });
 
-  precioVenta = 0;
+  precioVenta = computed(() => {
+    const ingresos = this.listaIngresos();
+    if (!ingresos || ingresos.length === 0) {
+      return 0;
+    }
+    const suma = ingresos.reduce((total: any, ingreso: any) => total + (ingreso.pv || 0), 0);
+    const promedio = suma / ingresos.length;
+    return parseFloat(promedio.toFixed(2));
+  });
 
   @ViewChild('productoSelect', { static: false }) productoSelect!: NgSelectComponent;
 
-  constructor(
-    private fb: FormBuilder,
-    public dialog: MatDialog,
-    private snackbar: MatSnackBar,
-    private cargando: SpinnerService,
-    private productoServicio: ProductoService,
-    private authServicio: AuthService,
-    private titleService: Title,
-    private calculoServicio: CalculoService,
-    private ingresoDetalleServicio: IngresoDetalleService,
-
-  ) {
-
-    this.authServicio.user$.subscribe((user) => {
-      if (user) { this.usuario = user; }
-    });
-
-    this.buscadorFormGroup = this.fb.group({
-      codigoBarra: [null],
-    });
-
-    this.productoFormGroup = this.fb.group({
-      productoId: [null],
-    });
-
-    //this.establecerSuscripcionForm
-    this.establecerSuscripcionProducto();
-
+  constructor() {
+    const params = this.route.snapshot.queryParams;
+    if (params['productoId']) {
+      this.productoFormGroup.patchValue({ productoId: params['productoId'] }, { emitEvent: false });
+    }
+    if (params['codigoBarra']) {
+      this.buscadorFormGroup.patchValue({ codigoBarra: params['codigoBarra'] }, { emitEvent: false });
+    }
   }
 
   ngOnInit(): void {
     this.titleService.setTitle('Buscar Producto');
     this.cargarProductos();
+
+    this.productoFormGroup.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => {
+        const idProducto = val.productoId;
+        if (idProducto) {
+          this.obtenerDatosProducto(idProducto);
+        } else {
+          this.producto.set(null);
+          this.listaIngresos.set([]);
+        }
+        this.actualizarParametrosUrl();
+      });
   }
 
   get b(): any { return this.buscadorFormGroup.controls; }
   get p(): any { return this.productoFormGroup.controls; }
 
-  establecerSuscripcionProducto() {
-    this.p.productoId.valueChanges.subscribe((val: any) => {
-      if (this.p.productoId.value) {
-        const idProducto = this.p.productoId.value;
-        this.obtenerDatosProducto(idProducto);
-      }
+  actualizarParametrosUrl(): void {
+    const prodId = this.productoFormGroup.get('productoId')?.value;
+    const barcode = this.buscadorFormGroup.get('codigoBarra')?.value;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        productoId: prodId || null,
+        codigoBarra: barcode || null
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
     });
   }
 
-  cargarProductos() {
+  cargarProductos(): void {
     try {
       const raw = localStorage.getItem('listaProductos');
       if (raw) {
         const lista = JSON.parse(raw);
         if (Array.isArray(lista)) {
-          this.listaProductos = lista;
+          this.listaProductos.set(lista);
           this.tryFocusNgSelect();
-          return; // listo: cargado desde cache
+          this.procesarUrlInicial();
+          return;
         }
       }
     } catch (e) {
       console.warn('No se pudo leer listaProductos del localStorage:', e);
     }
-    // si no hay cache válido, traer del servidor
     this.obtenerProductos();
   }
 
-  obtenerProductos() {
+  obtenerProductos(): void {
     console.log('CARGANDO PRODUCTOS DESDE SERVIDOR...');
     this.cargando.show('Cargando productos desde el Servidor...');
     this.productoServicio.obtenerConsulta({
@@ -146,7 +170,6 @@ export class BuscadorProductoComponent {
       categoria: 'TODOS',
       limite: 1000
     }).then((respuesta: any[]) => {
-
       const productoLista = (respuesta || [])
         .sort((a, b) => (a?.descripcion || '').localeCompare(b?.descripcion || ''))
         .map(producto => ({
@@ -154,7 +177,7 @@ export class BuscadorProductoComponent {
           dato: `${producto.codigo} - ${producto.descripcion}`
         }));
 
-      this.listaProductos = productoLista; // <- asigna a la lista del componente
+      this.listaProductos.set(productoLista);
 
       try {
         localStorage.setItem('listaProductos', JSON.stringify(productoLista));
@@ -162,42 +185,57 @@ export class BuscadorProductoComponent {
         console.warn('No se pudo guardar listaProductos en localStorage:', e);
       }
 
-      // this.focusSeleccinar();
       this.tryFocusNgSelect();
+      this.procesarUrlInicial();
       this.cargando.hide();
     }).catch(error => {
       console.error('Error al obtener productos:', error);
     });
   }
 
-  obtenerDatosProducto(idProducto: any) {
-    const productoEncontrado = this.listaProductos.find((producto: any) => producto.id === idProducto);
-    this.producto = productoEncontrado;
-    console.log('PRODUCTO ENCONTRADO: ', productoEncontrado);
-    if (productoEncontrado) {
-      this.obtenerIngresos(idProducto)
+  private procesarUrlInicial() {
+    const params = this.route.snapshot.queryParams;
+    if (params['productoId']) {
+      const idProducto = params['productoId'];
+      this.productoFormGroup.patchValue({ productoId: idProducto }, { emitEvent: false });
+      this.obtenerDatosProducto(idProducto);
+    } else if (params['codigoBarra']) {
+      this.buscadorFormGroup.patchValue({ codigoBarra: params['codigoBarra'] }, { emitEvent: false });
+      this.buscarConCodigoDeBarra();
     }
   }
 
-  onSeleccionar() {
-
+  obtenerDatosProducto(idProducto: any): void {
+    const productoEncontrado = this.listaProductos().find((producto: any) => producto.id === idProducto);
+    this.producto.set(productoEncontrado);
+    console.log('PRODUCTO ENCONTRADO: ', productoEncontrado);
+    if (productoEncontrado) {
+      this.obtenerIngresos(idProducto);
+    }
   }
+
+  onSeleccionar(): void {}
 
   buscarConCodigoDeBarra(): void {
     if (this.b.codigoBarra.value) {
       const barraBuscar = this.b.codigoBarra.value;
-      const productoEncontrado = this.listaProductos.find((producto: any) => producto.codigoBarra === barraBuscar);
+      const productoEncontrado = this.listaProductos().find((producto: any) => producto.codigoBarra === barraBuscar);
       console.log('PRODUCTO BARRA: ', productoEncontrado);
 
       if (productoEncontrado) {
-        this.producto = productoEncontrado;
-        this.obtenerIngresos(this.producto.id);
+        this.producto.set(productoEncontrado);
+        this.obtenerIngresos(productoEncontrado.id);
+
+        this.productoFormGroup.patchValue({ productoId: productoEncontrado.id }, { emitEvent: false });
+        this.actualizarParametrosUrl();
+
         this.b.codigoBarra.setValue('');
       } else {
-        this.producto = null;
-        this.listaIngresos = [];
+        this.producto.set(null);
+        this.listaIngresos.set([]);
         this.snackbar.open('NO SE ENCUENTRA', 'OK', { duration: 10000 });
         this.b.codigoBarra.setValue('');
+        this.actualizarParametrosUrl();
       }
     }
   }
@@ -206,16 +244,12 @@ export class BuscadorProductoComponent {
     this.cargando.show();
     this.ingresoDetalleServicio.obtenerPorProductoParaVender(productoID).then((respuesta: any) => {
       console.log('INGRESOS DE PRODUCTOS: ', respuesta);
-      this.totales = this.calculoServicio.sumarPorColumnas(respuesta);
-
-      console.log('TOTALES: ', this.totales)
-      this.listaIngresos = respuesta;
-      this.precioVenta = this.calcularPrecioPromedioPv();
+      this.listaIngresos.set(respuesta);
       this.cargando.hide();
     });
   }
 
-  fotos(fila: any) {
+  fotos(fila: any): void {
     const dialogRef = this.dialog.open(ProductoFotosComponent, {
       width: '600px',
       data: {
@@ -225,14 +259,10 @@ export class BuscadorProductoComponent {
       },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // this.obtenerConsulta();
-      }
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
-  resumen(sucursal: any, fila: any) {
+  resumen(sucursal: any, fila: any): void {
     const dialogRef = this.dialog.open(ProductoResumenComponent, {
       width: '800px',
       data: {
@@ -243,74 +273,47 @@ export class BuscadorProductoComponent {
       },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        //this.obtenerConsulta();
-      }
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
-  barra() {
+  barra(): void {
     const dialogRef = this.dialog.open(ProductoBarraComponent, {
       width: '600px',
       data: {
         nuevo: false,
-        id: this.producto.id,
-        objeto: this.producto
+        id: this.producto()?.id,
+        objeto: this.producto()
       },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        //this.obtenerConsulta();
-      }
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
-  imagenCargada(element: any) {
+  imagenCargada(element: any): void {
     element.loading = false;
     if (element.id) {
       this.imagenesCargadas.set(element.id, true);
     }
   }
 
-  imprimir() {
+  imprimir(): void {
     const dialogRef = this.dialog.open(ProductoImprimirComponent, {
       width: '600px',
       data: {
         nuevo: false,
-        id: this.producto.id,
-        objeto: this.producto
+        id: this.producto()?.id,
+        objeto: this.producto()
       },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        //this.obtenerConsulta();
-      }
-    });
-  }
-
-  calcularPrecioPromedioPv(): number {
-    if (!this.listaIngresos || this.listaIngresos.length === 0) {
-      return 0;
-    }
-    const suma = this.listaIngresos.reduce((total: any, ingreso: any) => total + (ingreso.pv || 0), 0);
-    const promedio = suma / this.listaIngresos.length;
-    return parseFloat(promedio.toFixed(2)); // redondea a 2 decimales
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
   private tryFocusNgSelect(): void {
-    // Espera al siguiente tick para que el input interno de ng-select exista,
-    // especialmente si usas appendTo="body"
     setTimeout(() => {
       if (this.productoSelect) {
-        this.productoSelect.focus(); // mueve el foco al input de búsqueda
-        // opcional: abrir el dropdown
-        // this.productoSelect.open();
+        this.productoSelect.focus();
       }
     }, 0);
   }
-
-
 }

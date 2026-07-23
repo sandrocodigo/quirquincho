@@ -1,4 +1,4 @@
-<div class="admin-container bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+<div class="admin-container bg-slate-50 dark:bg-slate-950 transition-colors duration-500" [class.bloqueado-pagos]="bloqueadoPorFaltaPago()">
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col h-full overflow-hidden">
@@ -48,6 +48,21 @@
                 </button>
             </div>
         </header>
+
+        <!-- Alerta de Suspensión Temporal por falta de Pago -->
+        @if (bloqueadoPorFaltaPago()) {
+          <div class="mx-4 sm:mx-6 mt-4 p-4 rounded-2xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md transition-all">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-rose-500 shrink-0 animate-bounce">warning</mat-icon>
+              <div class="text-xs sm:text-sm font-medium">
+                <span class="font-bold">Servicios limitados temporalmente:</span> Su cuenta cuenta con 2 o más facturas vencidas. Por favor, regularice sus cuotas para continuar habilitando todas las opciones de creación de registros.
+              </div>
+            </div>
+            <a routerLink="/administracion/ajustes/planes" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs rounded-xl transition-colors shadow-sm w-full sm:w-auto text-center shrink-0">
+              Ver planes de pago
+            </a>
+          </div>
+        }
 
         <!-- Dynamic Content -->
         <main class="main-content flex-1 p-4 pb-36">

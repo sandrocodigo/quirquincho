@@ -1,8 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, DestroyRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 
 // ANGULAR MATERIAL
@@ -16,7 +16,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-
 import { IngresoFormComponent } from '../ingreso-form/ingreso-form.component';
 import { IngresoService } from '../../../servicios/ingreso.service';
 import { ConfirmacionComponent } from '../../../sistema/confirmacion/confirmacion.component';
@@ -27,7 +26,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { AuthService } from '../../../servicios/auth.service';
 import { sucursales } from '../../../datos/sucursales';
 import { IngresoTraspaso } from '../ingreso-traspaso/ingreso-traspaso';
-
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-ingreso-lista',
@@ -56,97 +56,132 @@ import { IngresoTraspaso } from '../ingreso-traspaso/ingreso-traspaso';
     MatMenuModule
   ],
 })
-export class IngresoListaComponent {
-  buscadorFormGroup: FormGroup;
+export class IngresoListaComponent implements OnInit, AfterViewInit {
+  private fb = inject(FormBuilder);
+  private titleService = inject(Title);
+  private cargando = inject(SpinnerService);
+  private ingresoServicio = inject(IngresoService);
+  private snackbar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private authServicio = inject(AuthService);
+  public router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+
+  fechaHoy = new Date().toISOString().split('T')[0];
+  hoy = new Date();
+  primerDiaDelMes = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
+  fechaInicial = this.primerDiaDelMes.toISOString().split('T')[0];
+
+  buscadorFormGroup = this.fb.group({
+    sucursal: ['TODOS'],
+    fechaInicio: [this.fechaInicial],
+    fechaFinal: [this.fechaHoy],
+    finalizado: ['TODOS'],
+  });
+
   buscadorControl = false;
   lista: any;
 
-  fechaHoy = new Date().toISOString().split('T')[0];
-  // Obtener la fecha actual
-  hoy = new Date();
-  // Crear una nueva fecha con el primer día del mes actual
-  primerDiaDelMes = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
-  // Formatear la fecha al formato "YYYY-MM-DD"
-  fechaInicial = this.primerDiaDelMes.toISOString().split('T')[0];
-
-  // DataSource para la tabla
   dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = ['codigo', 'sucursal', 'tipo', 'descripcion', 'total', 'opciones'];
   @ViewChild(MatSort) sort!: MatSort;
 
-  usuario: any | null = null;
+  usuario = toSignal(this.authServicio.user$, { initialValue: null });
   listaSucursales = sucursales;
 
-  constructor(
-    private fb: FormBuilder,
-    private titleService: Title,
-    private cargando: SpinnerService,
-    private ingresoServicio: IngresoService,
-    private snackbar: MatSnackBar,
-    private dialog: MatDialog,
-    private authServicio: AuthService,
-    public router: Router,
-  ) {
+  private profileSucursal: string | null = null;
+  private ultimoFiltroConsulta: { sucursal: string, fechaInicio: string, fechaFinal: string, finalizado: string } | null = null;
 
-    this.authServicio.user$.subscribe((user) => {
-      if (user) { this.usuario = user; }
-    });
-
-    this.buscadorFormGroup = this.fb.group({
-      sucursal: ['TODOS'],
-      fechaInicio: [this.fechaInicial],
-      fechaFinal: [this.fechaHoy],
-      finalizado: ['TODOS'],
-    });
-
-    this.establecerSuscripcionForm();
-
-    this.authServicio.perfil$.subscribe((perfil) => {
-      if (perfil) {
-        if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
-          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal });
-          this.buscadorFormGroup.get('sucursal')?.disable();
-        } else {
-          this.buscadorFormGroup.get('sucursal')?.enable();
-        }
-        this.obtenerConsulta();
-      }
-    });
+  constructor() {
+    const params = this.route.snapshot.queryParams;
+    this.buscadorFormGroup.patchValue({
+      sucursal: params['sucursal'] || 'TODOS',
+      fechaInicio: params['fechaInicio'] || this.fechaInicial,
+      fechaFinal: params['fechaFinal'] || this.fechaHoy,
+      finalizado: params['finalizado'] || 'TODOS'
+    }, { emitEvent: false });
   }
 
   ngOnInit() {
     this.titleService.setTitle('Ingresos de Productos');
-    // this.establecerSuscripcion();
-    // this.buscarPorFechaYTurno();
+
+    combineLatest([
+      this.authServicio.perfil$,
+      this.route.queryParams
+    ]).pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([perfil, params]) => {
+        if (!perfil) return;
+
+        if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
+          this.profileSucursal = perfil.sucursal;
+          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal }, { emitEvent: false });
+          this.buscadorFormGroup.get('sucursal')?.disable();
+        } else {
+          this.profileSucursal = null;
+          this.buscadorFormGroup.get('sucursal')?.enable();
+        }
+
+        const sucursalVal = this.profileSucursal || params['sucursal'] || 'TODOS';
+        const fechaInicioVal = params['fechaInicio'] || this.fechaInicial;
+        const fechaFinalVal = params['fechaFinal'] || this.fechaHoy;
+        const finalizadoVal = params['finalizado'] || 'TODOS';
+
+        this.buscadorFormGroup.patchValue({
+          sucursal: sucursalVal,
+          fechaInicio: fechaInicioVal,
+          fechaFinal: fechaFinalVal,
+          finalizado: finalizadoVal
+        }, { emitEvent: false });
+
+        const newFiltro = {
+          sucursal: sucursalVal,
+          fechaInicio: fechaInicioVal,
+          fechaFinal: fechaFinalVal,
+          finalizado: finalizadoVal
+        };
+
+        const hasChanged = !this.ultimoFiltroConsulta ||
+          this.ultimoFiltroConsulta.sucursal !== newFiltro.sucursal ||
+          this.ultimoFiltroConsulta.fechaInicio !== newFiltro.fechaInicio ||
+          this.ultimoFiltroConsulta.fechaFinal !== newFiltro.fechaFinal ||
+          this.ultimoFiltroConsulta.finalizado !== newFiltro.finalizado;
+
+        if (hasChanged) {
+          this.ultimoFiltroConsulta = newFiltro;
+          this.obtenerConsulta();
+        }
+      });
+
+    this.buscadorFormGroup.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.actualizarParametrosUrl();
+      });
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
-  // FORM
-  get b(): any { return this.buscadorFormGroup.controls; }
-
-  establecerSuscripcionForm() {
-    this.b.sucursal.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.finalizado.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.fechaInicio.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.fechaFinal.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+  actualizarParametrosUrl(): void {
+    const filtros = this.buscadorFormGroup.getRawValue();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        sucursal: filtros.sucursal === 'TODOS' ? null : filtros.sucursal,
+        fechaInicio: filtros.fechaInicio === this.fechaInicial ? null : filtros.fechaInicio,
+        fechaFinal: filtros.fechaFinal === this.fechaHoy ? null : filtros.fechaFinal,
+        finalizado: filtros.finalizado === 'TODOS' ? null : filtros.finalizado
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
     });
   }
 
-  // OBTENER CONSULAR
   obtenerConsulta() {
     this.cargando.show();
     this.ingresoServicio.obtenerConsulta(this.buscadorFormGroup.getRawValue()).then(res => {
-      // console.log('LISTA DE INGRESOS', res);
       const resultadosOrdenados = res.sort((a: any, b: any) => b.codigo - a.codigo);
       this.dataSource.data = resultadosOrdenados;
       this.cargando.hide();
@@ -166,7 +201,6 @@ export class IngresoListaComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.router.navigate(['/administracion/ingresos/detalle/' + result.id]);
-        //this.obtenerConsulta();
       }
     });
   }
@@ -211,7 +245,6 @@ export class IngresoListaComponent {
     });
   }
 
-
   eliminar(fila: any) {
     const dialogRef = this.dialog.open(ConfirmacionComponent, {
       width: '400px',
@@ -224,7 +257,7 @@ export class IngresoListaComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.cargando.show();
-        this.ingresoServicio.editar(fila.id, { activo: false, usuarioElimina: this.usuario.email }).then(result => {
+        this.ingresoServicio.editar(fila.id, { activo: false, usuarioElimina: this.usuario()?.email }).then(result => {
           this.cargando.hide();
           this.snackbar.open('Eliminado...', 'OK', { duration: 10000 });
           this.obtenerConsulta();
@@ -245,9 +278,7 @@ export class IngresoListaComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // console.log('RESULTADO: ',result.id);
         this.router.navigate(['/administracion/ingresos/detalle/' + result.id]);
-        // this.obtenerConsulta();
       }
     });
   }
@@ -269,6 +300,4 @@ export class IngresoListaComponent {
       }
     });
   }
-
-
 }

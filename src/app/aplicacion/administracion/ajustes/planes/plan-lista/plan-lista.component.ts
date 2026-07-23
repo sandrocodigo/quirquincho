@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SpinnerService } from '../../../../sistema/spinner/spinner.service';
 
 // MATERIAL
@@ -20,6 +20,7 @@ import { AuthService } from '../../../../servicios/auth.service';
 import { ConfirmacionComponent } from '../../../../sistema/confirmacion/confirmacion.component';
 import { UsuarioService } from '../../../../servicios/usuario.service';
 import { MatTooltip } from '@angular/material/tooltip';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-plan-lista',
@@ -42,10 +43,18 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatTooltip
   ],
 })
-export class PlanListaComponent {
+export class PlanListaComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  public dialog = inject(MatDialog);
+  private snackbar = inject(MatSnackBar);
+  private cargando = inject(SpinnerService);
+  private planServicio = inject(PlanService);
+  private authServicio = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
+  private destroyRef = inject(DestroyRef);
 
-  displayedColumns: string[] = ['gestion', 'mes', 'monto', 'fechaLimite', 'descripcion', 'pagado', 'opciones'];
-  dataSource: any;
+  displayedColumns: string[] = ['gestion', 'mes', 'monto', 'fechaLimite', 'descripcion', 'pagado', 'vencido', 'opciones'];
+  dataSource = new MatTableDataSource<any>([]);
   ingreso: any;
   lista: any;
 
@@ -53,52 +62,27 @@ export class PlanListaComponent {
 
   fecha = new Date().toISOString().split('T')[0];
 
-  usuario: any | null = null;
-  usuarioDatos: any;
-  // private suscripcionLista!: Subscription
+  usuario = toSignal(this.authServicio.user$, { initialValue: null });
+  usuarioDatos = signal<any>(null);
 
-  constructor(
-    private fb: FormBuilder,
-    public dialog: MatDialog,
-    private snackbar: MatSnackBar,
-    private cargando: SpinnerService,
-    private planServicio: PlanService,
-    private authServicio: AuthService,
-    private usuarioServicio: UsuarioService
-  ) {
-    this.authServicio.user$.subscribe((user) => {
-      this.usuario = user;
-      console.log('USUARIO ID: ', this.usuario.email);
-
-      this.usuarioServicio.obtenerPorId(this.usuario.email).then(res => {
-        this.usuarioDatos = res;
-        console.log('USUARIO DATOS: ', this.usuarioDatos);
-      })
-
-    });
+  constructor() {
+    this.authServicio.user$
+      .pipe(takeUntilDestroyed())
+      .subscribe((user) => {
+        if (user?.email) {
+          console.log('USUARIO ID: ', user.email);
+          this.usuarioService.obtenerPorId(user.email).then(res => {
+            this.usuarioDatos.set(res);
+            console.log('USUARIO DATOS: ', res);
+          });
+        }
+      });
   }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      //this.buscar();
-      this.verificarPago();
-      this.obtener();
-    }, 0);
+    this.verificarPago();
+    this.obtener();
   }
-
-  /*  
-buscar(): void {
-    this.cargando.show();
-    this.suscripcionLista = this.planServicio.obtenerTodosTR().subscribe((respuesta: any) => {
-      // console.log('PLANES: ', JSON.stringify(respuesta, null, 2));
-
-      // console.log('PLANES: ', JSON.stringify(respuesta, null, 2));
-
-      this.dataSource = new MatTableDataSource(respuesta);
-      this.lista = respuesta;
-      this.cargando.hide();
-    });
-  } */
 
   verificarPago() {
     this.planServicio.verificarPagosPendientes().then((res) => {
@@ -110,13 +94,10 @@ buscar(): void {
   obtener() {
     this.cargando.show();
     this.planServicio.obtenerTodos().then((respuesta: any) => {
-      // console.log('PLANES: ', JSON.stringify(respuesta, null, 2));
-
-      // console.log('PLANES: ', JSON.stringify(respuesta, null, 2));
-
-      this.dataSource = new MatTableDataSource(respuesta);
+      this.dataSource.data = respuesta || [];
       this.lista = respuesta;
       this.cargando.hide();
+      this.verificarPago();
     });
   }
 
@@ -154,26 +135,6 @@ buscar(): void {
     });
   }
 
-
-  /* 
-    nuevo() {
-      const dialogRef = this.dialog.open(UsuarioFormComponent, {
-        width: '600px',
-        data: {
-          nuevo: true,
-          id: null,
-          objeto: null
-        },
-        disableClose: true
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.buscar();
-        }
-      });
-    }
-  */
-
   paypal(fila: any) {
     const dialogRef = this.dialog.open(PaypalComponent, {
       width: '600px',
@@ -186,7 +147,7 @@ buscar(): void {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-this.obtener();
+        this.obtener();
       }
     });
   }
@@ -203,7 +164,7 @@ this.obtener();
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-this.obtener();
+        this.obtener();
       }
     });
   }
@@ -225,20 +186,19 @@ this.obtener();
           this.snackbar.open('Eliminado...', 'OK', {
             duration: 10000
           });
+          this.obtener();
         })
       }
     });
   }
 
   async crearPlanes() {
-    // Fecha de inicio y fin
-    const fechaInicio = new Date(2023, 0, 1); // 1 de enero de 2023
-    const fechaFinal = new Date(2024, 11, 31); // 31 de diciembre de 2024
+    const fechaInicio = new Date(2023, 0, 1);
+    const fechaFinal = new Date(2024, 11, 31);
 
     let fechaActual = new Date(fechaInicio);
 
     while (fechaActual <= fechaFinal) {
-      // Crear un nuevo plan para el mes actual
       const datosPlan = {
         gestion: fechaActual.getFullYear(),
         mes: fechaActual.getMonth() + 1,
@@ -246,18 +206,13 @@ this.obtener();
         fechaFinal: new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 0).toISOString(),
         fechaLimite: new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 10).toISOString(),
         pagado: false,
-        monto: 25.00, // Establecer un monto predeterminado o calcular según sea necesario
-        usuarioId: 'usuarioEjemplo', // Cambiar según sea necesario
-        notas: `Plan para ${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()}`,
+        monto: 25.00,
+        usuarioId: 'usuarioEjemplo',
+        notes: `Plan para ${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()}`,
         estado: 'pendiente'
       };
 
-      // Llamar a la función de creación del servicio
-      await this.planServicio.crear(datosPlan).then(() => {
-
-      });
-
-      // Avanzar al próximo mes
+      await this.planServicio.crear(datosPlan);
       fechaActual.setMonth(fechaActual.getMonth() + 1);
     }
   }
@@ -270,17 +225,15 @@ this.obtener();
       fechaFinal: '2024-10-31',
       fechaLimite: '2024-10-31',
       pagado: false,
-      monto: 50.00, // Establecer un monto predeterminado o calcular según sea necesario
-      usuarioId: 'usuarioEjemplo', // Cambiar según sea necesario
+      monto: 50.00,
+      usuarioId: 'usuarioEjemplo',
       notas: `Gestion de creditos`,
       estado: 'pendiente',
     };
 
-    // Llamar a la función de creación del servicio
     this.cargando.show();
     this.planServicio.crear(datosPlan).then(() => {
       this.cargando.hide();
-
     });
   }
 
@@ -291,8 +244,48 @@ this.obtener();
 
   cambiarMonto(fila: any) {
     this.planServicio.editar(fila.id, { pagado: false, pagadoFechaHora: null, }).then(() => {
-
+      this.obtener();
     })
+  }
+
+  esVencido(fila: any): boolean {
+    if (fila.pagado) {
+      return false;
+    }
+    let limite: Date;
+    if (fila.fechaLimite) {
+      if (typeof fila.fechaLimite.toDate === 'function') {
+        limite = fila.fechaLimite.toDate();
+      } else {
+        limite = new Date(fila.fechaLimite);
+      }
+    } else {
+      return false;
+    }
+    const hoy = new Date();
+    limite.setHours(0, 0, 0, 0);
+    hoy.setHours(0, 0, 0, 0);
+    return hoy > limite;
+  }
+
+  esFuturo(fila: any): boolean {
+    if (fila.pagado) {
+      return false;
+    }
+    const hoy = new Date();
+    const gestionPlan = fila.gestion || 0;
+    const mesPlan = fila.mes || 0;
+    
+    const gestionActual = hoy.getFullYear();
+    const mesActual = hoy.getMonth() + 1; // 1-indexed
+    
+    if (gestionPlan > gestionActual) {
+      return true;
+    }
+    if (gestionPlan === gestionActual && mesPlan > mesActual) {
+      return true;
+    }
+    return false;
   }
 
   aprobar(fila: any) {
@@ -311,17 +304,13 @@ this.obtener();
           {
             pagado: true,
             pagadoFechaHora: new Date(),
-            usuarioAprobador: this.usuario.email
+            usuarioAprobador: this.usuario()?.email
           }).then(() => {
             this.cargando.hide();
             this.snackbar.open('Pago Aprobado...', 'OK', { duration: 10000 });
+            this.obtener();
           })
-          this.obtener();
       }
     });
   }
-
-/*   ngOnDestroy() {
-    this.suscripcionLista.unsubscribe();
-  } */
 }

@@ -1,7 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, DestroyRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SpinnerService } from '../../../sistema/spinner/spinner.service';
 
 // ANGULAR MATERIAL
@@ -14,7 +14,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-
 
 import { EgresoFormComponent } from '../egreso-form/egreso-form.component';
 import { EgresoService } from '../../../servicios/egreso.service';
@@ -29,11 +28,11 @@ import { AuthService } from '../../../servicios/auth.service';
 import { FacturaService } from '../../../servicios/factura.service';
 import { sucursales } from '../../../datos/sucursales';
 import { EgresoTraspasoComponent } from '../egreso-traspaso/egreso-traspaso.component';
-
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-egreso-lista',
-
   templateUrl: './egreso-lista.component.html',
   styleUrls: ['./egreso-lista.component.scss'],
   standalone: true,
@@ -58,101 +57,136 @@ import { EgresoTraspasoComponent } from '../egreso-traspaso/egreso-traspaso.comp
     MatMenuModule
   ],
 })
-export class EgresoListaComponent {
-  buscadorFormGroup: FormGroup;
-  buscadorControl = false;
-  lista: any;
+export class EgresoListaComponent implements OnInit, AfterViewInit {
+  private fb = inject(FormBuilder);
+  public router = inject(Router);
+  private cargando = inject(SpinnerService);
+  private egresoServicio = inject(EgresoService);
+  private facturaServicio = inject(FacturaService);
+  private snackbar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private titleService = inject(Title);
+  private authServicio = inject(AuthService);
+  private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   fechaHoy = new Date().toISOString().split('T')[0];
-
-  // Obtener la fecha actual
   hoy = new Date();
-  // Crear una nueva fecha con el primer día del mes actual
   primerDiaDelMes = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
-  // Formatear la fecha al formato "YYYY-MM-DD"
   fechaInicial = this.primerDiaDelMes.toISOString().split('T')[0];
+
+  buscadorFormGroup = this.fb.group({
+    sucursal: ['TODOS'],
+    fechaInicio: [this.fechaHoy],
+    fechaFinal: [this.fechaHoy],
+    finalizado: ['TODOS'],
+  });
+
+  buscadorControl = false;
+  lista: any;
 
   dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = ['codigo', 'sucursal', 'tipo', 'descripcion', 'total', 'opciones'];
   @ViewChild(MatSort) sort!: MatSort;
 
-  usuario: any | null = null;
-
+  usuario = toSignal(this.authServicio.user$, { initialValue: null });
   listaSucursales = sucursales;
 
-  constructor(
-    private fb: FormBuilder,
-    public router: Router,
-    private cargando: SpinnerService,
-    private egresoServicio: EgresoService,
-    private facturaServicio: FacturaService,
-    private snackbar: MatSnackBar,
-    private dialog: MatDialog,
-    private titleService: Title,
-    private authServicio: AuthService,
-  ) {
+  private profileSucursal: string | null = null;
+  private ultimoFiltroConsulta: { sucursal: string, fechaInicio: string, fechaFinal: string, finalizado: string } | null = null;
 
-    this.authServicio.user$.subscribe((user) => {
-      if (user) { this.usuario = user; }
-    });
-
-    this.buscadorFormGroup = this.fb.group({
-      sucursal: ['TODOS'],
-      fechaInicio: [this.fechaHoy],
-      fechaFinal: [this.fechaHoy],
-      finalizado: ['TODOS'],
-    });
-
-    this.establecerSuscripcionForm();
-
-    this.authServicio.perfil$.subscribe((perfil) => {
-      if (perfil) {
-        if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
-          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal });
-          this.buscadorFormGroup.get('sucursal')?.disable();
-        } else {
-          this.buscadorFormGroup.get('sucursal')?.enable();
-        }
-        this.obtenerConsulta();
-      }
-    });
+  constructor() {
+    const params = this.route.snapshot.queryParams;
+    this.buscadorFormGroup.patchValue({
+      sucursal: params['sucursal'] || 'TODOS',
+      fechaInicio: params['fechaInicio'] || this.fechaHoy,
+      fechaFinal: params['fechaFinal'] || this.fechaHoy,
+      finalizado: params['finalizado'] || 'TODOS'
+    }, { emitEvent: false });
   }
 
   ngOnInit() {
     this.titleService.setTitle('Egresos');
+
+    combineLatest([
+      this.authServicio.perfil$,
+      this.route.queryParams
+    ]).pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([perfil, params]) => {
+        if (!perfil) return;
+
+        if (perfil.sucursal && perfil.sucursal !== 'TODOS') {
+          this.profileSucursal = perfil.sucursal;
+          this.buscadorFormGroup.patchValue({ sucursal: perfil.sucursal }, { emitEvent: false });
+          this.buscadorFormGroup.get('sucursal')?.disable();
+        } else {
+          this.profileSucursal = null;
+          this.buscadorFormGroup.get('sucursal')?.enable();
+        }
+
+        const sucursalVal = this.profileSucursal || params['sucursal'] || 'TODOS';
+        const fechaInicioVal = params['fechaInicio'] || this.fechaHoy;
+        const fechaFinalVal = params['fechaFinal'] || this.fechaHoy;
+        const finalizadoVal = params['finalizado'] || 'TODOS';
+
+        this.buscadorFormGroup.patchValue({
+          sucursal: sucursalVal,
+          fechaInicio: fechaInicioVal,
+          fechaFinal: fechaFinalVal,
+          finalizado: finalizadoVal
+        }, { emitEvent: false });
+
+        const newFiltro = {
+          sucursal: sucursalVal,
+          fechaInicio: fechaInicioVal,
+          fechaFinal: fechaFinalVal,
+          finalizado: finalizadoVal
+        };
+
+        const hasChanged = !this.ultimoFiltroConsulta ||
+          this.ultimoFiltroConsulta.sucursal !== newFiltro.sucursal ||
+          this.ultimoFiltroConsulta.fechaInicio !== newFiltro.fechaInicio ||
+          this.ultimoFiltroConsulta.fechaFinal !== newFiltro.fechaFinal ||
+          this.ultimoFiltroConsulta.finalizado !== newFiltro.finalizado;
+
+        if (hasChanged) {
+          this.ultimoFiltroConsulta = newFiltro;
+          this.obtenerConsulta();
+        }
+      });
+
+    this.buscadorFormGroup.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.actualizarParametrosUrl();
+      });
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
-  // FORM
-  get b(): any { return this.buscadorFormGroup.controls; }
-
-  establecerSuscripcionForm() {
-    this.b.sucursal.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.finalizado.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.fechaInicio.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
-    });
-    this.b.fechaFinal.valueChanges.subscribe((val: any) => {
-      this.obtenerConsulta();
+  actualizarParametrosUrl(): void {
+    const filtros = this.buscadorFormGroup.getRawValue();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        sucursal: filtros.sucursal === 'TODOS' ? null : filtros.sucursal,
+        fechaInicio: filtros.fechaInicio === this.fechaHoy ? null : filtros.fechaInicio,
+        fechaFinal: filtros.fechaFinal === this.fechaHoy ? null : filtros.fechaFinal,
+        finalizado: filtros.finalizado === 'TODOS' ? null : filtros.finalizado
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
     });
   }
 
-  // OBTENER CONSULAR
   obtenerConsulta() {
     this.cargando.show();
     this.egresoServicio.obtenerConsulta(this.buscadorFormGroup.getRawValue()).then(res => {
       console.log('LISTA DE EGRESOS', res);
-
       const resultadosOrdenados = res.sort((a: any, b: any) => b.codigo - a.codigo);
       this.dataSource.data = resultadosOrdenados;
-
       this.lista = res;
       this.cargando.hide();
     });
@@ -170,9 +204,7 @@ export class EgresoListaComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // console.log('RESULTADO: ',result.id);
         this.router.navigate(['/administracion/egresos/detalle/' + result.id]);
-        // this.obtenerConsulta();
       }
     });
   }
@@ -207,9 +239,7 @@ export class EgresoListaComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // console.log('RESULTADO: ',result.id);
         this.router.navigate(['/administracion/egresos/detalle/' + result.id]);
-        // this.obtenerConsulta();
       }
     });
   }
@@ -277,7 +307,6 @@ export class EgresoListaComponent {
     });
   }
 
-
   facturar(fila: any) {
     const dialogRef = this.dialog.open(ConfirmacionComponent, {
       width: '400px',
@@ -295,10 +324,8 @@ export class EgresoListaComponent {
           this.snackbar.open('Facturado...', 'OK', {
             duration: 10000
           });
-          //this.obtenerConsulta();
         })
       }
     });
   }
-
 }

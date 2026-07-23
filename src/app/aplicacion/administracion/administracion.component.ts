@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { UsuarioService } from '../servicios/usuario.service';
 import { filter } from 'rxjs';
+import { PlanService } from '../servicios/plan.service';
 
 
 @Component({
@@ -22,26 +23,15 @@ import { filter } from 'rxjs';
     MatIconModule, MatButtonModule, MatDividerModule, MatSlideToggleModule, MatMenuModule,],
 })
 export class AdministracionComponent {
+  private planServicio = inject(PlanService);
+  bloqueadoPorFaltaPago = this.planServicio.bloqueadoPorFaltaPago;
+
   usuario = signal<any | null>(null);
   usuarioDato = signal<any>(null);
   darkMode = signal<boolean>(false);
   menuOpen = signal<boolean>(false);
   foto = signal<string>('imagenes/avatar.png');
   visitas = signal<number>(0);
-
-  /*   menuItems = [
-      { link: 'estadisticas', icon: 'bar_chart', label: 'Estadisticas', color: 'text-blue-500' },
-      { link: '/administracion/productos', icon: 'solar_power', label: 'Productos', color: 'text-blue-500' },
-      { link: 'clientes', icon: 'people', label: 'Clientes', color: 'text-blue-500' },
-      { link: 'proveedores', icon: 'engineering', label: 'Proveedores', color: 'text-blue-500' },
-      // { link: 'cotizaciones', icon: 'file_open', label: 'Cotizaciones', color: 'text-blue-700' },
-      { link: 'ingresos', icon: 'add_box', label: 'Ingresos', color: 'text-blue-500' },
-      { link: 'egresos', icon: 'indeterminate_check_box', label: 'Egresos', color: 'text-blue-500' },
-      { link: 'caja', icon: 'currency_exchange', label: 'Caja', color: 'text-blue-500' },
-      // { link: 'proyectos', icon: 'home_work', label: 'Proyectos', color: 'text-blue-700' },
-      { link: 'reportes', icon: 'summarize', label: 'Reportes', color: 'text-blue-500' },
-      { link: 'archivos', icon: 'folder', label: 'Archivos', color: 'text-blue-500' }
-    ]; */
 
 
   menuItems: any = [];
@@ -69,31 +59,40 @@ export class AdministracionComponent {
         this.foto.set(user.photoURL ? user.photoURL : 'imagenes/avatar.png');
 
         this.usuarioService.obtenerPorId(user.email).then((respuesta: any) => {
-
-          // console.log('USUARIO ACCESOS', respuesta.accesos);
-
-          // const items = this.buscarEnLaListaMuchos(respuesta.accesos, 'nav', true) || [];
-
-          // console.log('SOLO PARA MENU', items);
-
           this.usuarioDato.set(respuesta);
           this.menuItems = this.buscarEnLaListaMuchos(respuesta.accesos, 'nav', true) || [];
           this.menuItemsTodos = respuesta.accesos || [];
-
         });
-        // console.log('USUARIO: ', this.usuario);
-        // console.log('USUARIO FOTO: ', this.foto);
       }
     });
 
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe(() => this.closeMenuAfterNavigation());
+      .subscribe(() => {
+        this.closeMenuAfterNavigation();
+        this.verificarRedireccion();
+      });
   }
 
   ngOnInit(): void {
     this.loadTheme();
     this.applyDarkMode();
+    this.verificarEstadoPago();
+  }
+
+  verificarEstadoPago() {
+    this.planServicio.verificarPagosPendientes().then(() => {
+      this.verificarRedireccion();
+    });
+  }
+
+  verificarRedireccion() {
+    if (this.bloqueadoPorFaltaPago()) {
+      const url = this.router.url;
+      if (!url.includes('/administracion/ajustes/planes')) {
+        this.router.navigate(['/administracion/ajustes/planes']);
+      }
+    }
   }
 
   salir() {

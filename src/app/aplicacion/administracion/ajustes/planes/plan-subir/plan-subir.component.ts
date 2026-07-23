@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SpinnerService } from '../../../../sistema/spinner/spinner.service';
@@ -13,12 +13,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-
-
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from '@angular/fire/storage';
 import { AuthService } from '../../../../servicios/auth.service';
 import { PlanService } from '../../../../servicios/plan.service';
-
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-plan-subir',
@@ -40,67 +38,49 @@ import { PlanService } from '../../../../servicios/plan.service';
     MatSlideToggleModule
   ],
 })
-export class PlanSubirComponent {
+export class PlanSubirComponent implements OnInit {
+  public data = inject<any>(MAT_DIALOG_DATA);
+  private dialogRef = inject(MatDialogRef<PlanSubirComponent>);
+  private fb = inject(FormBuilder);
+  private snackbar = inject(MatSnackBar);
+  public dialog = inject(MatDialog);
+  private cargando = inject(SpinnerService);
+  private planServicio = inject(PlanService);
+  public authServicio = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
+
   registroFormGroup!: FormGroup;
   registroControl = false;
   fechaHoy = new Date();
 
-  usuario: any | null = null;
+  usuario = toSignal(this.authServicio.user$, { initialValue: null });
   selectedFile: File | null = null;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<PlanSubirComponent>,
-    private fb: FormBuilder,
-    private snackbar: MatSnackBar,
-    private dialog: MatDialog,
-    private cargando: SpinnerService,
-    private planServicio: PlanService,
-    public authServicio: AuthService,
-  ) {
-
-    this.authServicio.user$.subscribe((user) => {
-      this.usuario = user;
-
-      // FORM EDITAR
-      this.cargando.show();
-      this.planServicio.obtenerPorId(data.objeto.id).then((respuesta: any) => {
-        console.log('PLAN: ', respuesta);
-        this.registroFormGroup = this.fb.group({
-
-          comprobante: [respuesta.comprobante],
-          comprobanteDescripcion: [respuesta.comprobanteDescripcion, [Validators.required]],
-
-          usuarioSubido: [this.usuario.email],
-          fechaSubido: [this.fechaHoy]
-        });
-        this.establecerSuscripcion();
-        this.cargando.hide();
-      });
-
-    });
-  }
-
-  // INICIAR
   ngOnInit() {
-
+    this.authServicio.user$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        if (user?.email) {
+          this.cargando.show();
+          this.planServicio.obtenerPorId(this.data.objeto.id).then((respuesta: any) => {
+            console.log('PLAN: ', respuesta);
+            this.registroFormGroup = this.fb.group({
+              comprobante: [respuesta.comprobante],
+              comprobanteDescripcion: [respuesta.comprobanteDescripcion, [Validators.required]],
+              usuarioSubido: [user.email],
+              fechaSubido: [this.fechaHoy]
+            });
+            this.establecerSuscripcion();
+            this.cargando.hide();
+          });
+        }
+      });
   }
 
-  // FORM
   get r(): any { return this.registroFormGroup.controls; }
 
-  establecerSuscripcion() {
-    /*     this.r.gestion.valueChanges.subscribe((val: any) => {
-          this.cargarFechas();
-        });
-        this.r.mes.valueChanges.subscribe((val: any) => {
-          console.log(val);
-          this.cargarFechas();
-        }); */
+  establecerSuscripcion() {}
 
-  }
-
-  // Manejo del archivo seleccionado
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -118,9 +98,8 @@ export class PlanSubirComponent {
     } else {
       this.cargando.show();
 
-      // Subir archivo a Firebase Storage
       const storage = getStorage();
-      const filePath = `comprobantes/${this.selectedFile.name}`; // Ruta del archivo en Firebase Storage
+      const filePath = `comprobantes/${this.selectedFile.name}`;
       const storageRef = ref(storage, filePath);
       const uploadTask = uploadBytesResumable(storageRef, this.selectedFile);
 
@@ -135,17 +114,14 @@ export class PlanSubirComponent {
           this.cargando.hide();
         },
         () => {
-          // Obtener la URL del archivo subido
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            // Actualizar el campo 'comprobante' con la URL del archivo subido
             const updatedData = {
               ...this.registroFormGroup.getRawValue(),
               comprobante: downloadURL
             };
 
-            // Actualizar el registro en Firestore
             this.planServicio.editar(this.data.objeto.id, updatedData).then(() => {
-              this.snackbar.open('Comprobante subido y registro actualizado con éxito...', 'OK', { duration: 10000 });
+              this.snackbar.open('Comprobante subido con éxito. Por favor, comuníquese con el administrador para confirmar el pago.', 'OK', { duration: 10000 });
               this.dialogRef.close(true);
               this.cargando.hide();
             }).catch(error => {

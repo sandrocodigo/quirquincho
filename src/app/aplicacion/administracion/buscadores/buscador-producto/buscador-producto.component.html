@@ -30,7 +30,7 @@
   <div class="w-full md:w-2/3 px-2">
     @if (productoFormGroup) {
     <form (ngSubmit)="onSeleccionar()" [formGroup]="productoFormGroup">
-      <ng-select class="mt-1 text-slate-900" [items]="listaProductos" bindLabel="dato" bindValue="id"
+      <ng-select class="mt-1 text-slate-900" [items]="listaProductos()" bindLabel="dato" bindValue="id"
         formControlName="productoId" appendTo="body" placeholder="Código o descripción" [searchable]="true"
         [clearable]="true" [virtualScroll]="true" #productoSelect>
         <ng-template ng-option-tmp let-item="item">
@@ -52,7 +52,7 @@
 
 <div class="flex flex-wrap -mx-2">
   <div class="w-full md:w-1/2 px-2">
-    @if (producto) {
+    @if (producto()) {
     <div
       class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6 space-y-4 transition-colors duration-300">
       <!-- Código -->
@@ -60,7 +60,7 @@
         <span class="material-icons text-blue-500">qr_code</span>
         <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Código:</span>
         <span class="text-gray-900 dark:text-gray-100 font-medium">
-          {{ producto.codigo }}
+          {{ producto()?.codigo }}
         </span>
       </div>
 
@@ -69,7 +69,7 @@
         <span class="material-icons text-green-500">description</span>
         <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Descripción:</span>
         <span class="text-gray-900 dark:text-gray-100 font-medium">
-          {{ producto.descripcion }}
+          {{ producto()?.descripcion }}
         </span>
       </div>
 
@@ -79,7 +79,7 @@
         <div class="flex flex-col">
           <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Imágenes:</span>
           <div class="flex space-x-2 mt-1">
-            @for (foto of producto.fotosUrl; track foto) {
+            @for (foto of producto()?.fotosUrl; track foto) {
             <img [src]="foto.url" alt="imagen del producto"
               class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm" />
             }
@@ -92,7 +92,7 @@
         <span class="material-icons text-yellow-500">category</span>
         <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Categoría:</span>
         <span class="text-gray-900 dark:text-gray-100 font-medium">
-          {{ producto.categoria }}
+          {{ producto()?.categoria }}
         </span>
       </div>
 
@@ -101,7 +101,7 @@
         <span class="material-icons text-indigo-500">factory</span>
         <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Fabricante:</span>
         <span class="text-gray-900 dark:text-gray-100 font-medium">
-          {{ producto.fabricante }}
+          {{ producto()?.fabricante }}
         </span>
       </div>
 
@@ -110,7 +110,7 @@
         <span class="material-icons text-purple-500">barcode</span>
         <span class="font-semibold text-sm text-gray-700 dark:text-gray-300">Código de barra:</span>
         <span class="text-gray-900 dark:text-gray-100 font-medium">
-          {{ producto.codigoBarra }}
+          {{ producto()?.codigoBarra }}
         </span>
       </div>
     </div>
@@ -120,13 +120,13 @@
     <div class="max-w-3xl mx-auto mt-6">
 
       <!-- Total saldo -->
-      @if (totales) {
+      @if (totales()) {
       <div class="bg-gray-100 dark:bg-gray-800 mt-4 p-4 rounded-lg shadow-inner text-right">
         <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 mr-2">
           Total de saldo:
         </span>
         <span class="font-bold text-blue-700 dark:text-blue-400 text-3xl">
-          {{ totales.cantidadSaldo }}
+          {{ totales()?.['cantidadSaldo'] }}
         </span>
       </div>
       }
@@ -137,7 +137,7 @@
           Precio Venta:
         </span>
         <span class="font-bold text-green-700 dark:text-green-400 text-3xl">
-          Bs. {{ precioVenta | number: '1.2-2' }}
+          Bs. {{ precioVenta() | number: '1.2-2' }}
         </span>
       </div>
 
@@ -148,7 +148,7 @@
       </h2>
 
       <!-- Lista de ingresos -->
-      @for (ingreso of listaIngresos; track $index) {
+      @for (ingreso of listaIngresos(); track $index) {
       <div
         class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-2 mb-2 border border-gray-200 dark:border-gray-700 flex items-center space-x-4">
         <!-- Detalles -->
@@ -187,15 +187,14 @@
   </div>
 </div>
 
-@if (producto) {
+@if (producto()) {
 <br>
-<button (click)="resumen('LA PAZ',producto)" mat-button type="button" color="primary">Kardex LA PAZ</button>
-<button (click)="resumen('COCHABAMBA',producto)" mat-button type="button" color="primary">Kardex COCHABAMBA</button>
-<button (click)="resumen('SANTA CRUZ',producto)" mat-button type="button" color="primary">Kardex SANTA CRUZ</button>
+<button (click)="resumen('LA PAZ', producto())" mat-button type="button" color="primary">Kardex LA PAZ</button>
+<button (click)="resumen('COCHABAMBA', producto())" mat-button type="button" color="primary">Kardex COCHABAMBA</button>
+<button (click)="resumen('SANTA CRUZ', producto())" mat-button type="button" color="primary">Kardex SANTA CRUZ</button>
 
 
-
-<a matButton="elevated" [routerLink]="'/administracion/productos/detalle/'+ producto.id" target="_blank">Mas
+<a matButton="elevated" [routerLink]="'/administracion/productos/detalle/'+ producto().id" target="_blank">Mas
   detalle...</a>
 
 

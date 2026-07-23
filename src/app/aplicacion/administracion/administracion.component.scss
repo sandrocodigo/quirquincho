@@ -58,3 +58,20 @@ a.active {
 .glass-effect {
     @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-white/10;
 }
+
+/* Ocultar botones de crear y añadir cuando hay falta de pago */
+:host-context(.bloqueado-pagos) {
+  ::ng-deep {
+    button[matTooltip="Adicionar"],
+    button[matTooltip="Adicionar Matriz"],
+    button[matTooltip="Generar"],
+    button[matTooltip="Traspaso"],
+    button[matTooltip="Nuevo"],
+    button[matTooltip="Registrar"],
+    button[matTooltip="Agregar"],
+    button[matTooltip="Crear"],
+    button[matTooltip="Nuevo Traspaso"] {
+      display: none !important;
+    }
+  }
+}
