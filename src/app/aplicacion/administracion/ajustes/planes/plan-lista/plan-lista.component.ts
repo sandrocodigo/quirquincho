@@ -2,6 +2,8 @@ import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SpinnerService } from '../../../../sistema/spinner/spinner.service';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // MATERIAL
 import { MatButtonModule } from '@angular/material/button';
@@ -275,10 +277,10 @@ export class PlanListaComponent implements OnInit {
     const hoy = new Date();
     const gestionPlan = fila.gestion || 0;
     const mesPlan = fila.mes || 0;
-    
+
     const gestionActual = hoy.getFullYear();
     const mesActual = hoy.getMonth() + 1; // 1-indexed
-    
+
     if (gestionPlan > gestionActual) {
       return true;
     }
@@ -312,5 +314,165 @@ export class PlanListaComponent implements OnInit {
           })
       }
     });
+  }
+
+  getNombreMes(mesNum: number): string {
+    const mesesNombres = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return mesesNombres[mesNum - 1] || 'N/A';
+  }
+
+  formatearFecha(fechaInput: any): string {
+    if (!fechaInput) return 'N/A';
+    try {
+      let fecha: Date;
+      if (typeof fechaInput.toDate === 'function') {
+        fecha = fechaInput.toDate();
+      } else {
+        fecha = new Date(fechaInput);
+      }
+      const yyyy = fecha.getFullYear();
+      const mm = String(fecha.getMonth() + 1).padStart(2, '0');
+      const dd = String(fecha.getDate()).padStart(2, '0');
+      const hh = String(fecha.getHours()).padStart(2, '0');
+      const min = String(fecha.getMinutes()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+    } catch (e) {
+      return String(fechaInput);
+    }
+  }
+
+  descargarRecibo(fila: any) {
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'letter'
+    });
+
+    // Barra decorativa superior
+    doc.setFillColor(30, 41, 59); // Slate-800
+    doc.rect(0, 0, 216, 12, 'F');
+
+    // Título de la empresa
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(30, 41, 59);
+    doc.text('MiAppPRO', 20, 30);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(100, 116, 139);
+    doc.text('Software & Ciberseguridad', 20, 36);
+
+    // Título del documento
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(30, 41, 59);
+    doc.text('RECIBO DE PAGO', 196, 30, { align: 'right' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`ID Plan: ${fila.id || 'N/A'}`, 196, 36, { align: 'right' });
+
+    // Línea divisoria
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.5);
+    doc.line(20, 42, 196, 42);
+
+    // Caja de información del cliente
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(71, 85, 105);
+    doc.text('INFORMACIÓN DEL CLIENTE', 20, 52);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(30, 41, 59);
+    doc.text('Cliente: Grupo Empresarial Quirquincho', 20, 58);
+    doc.text(`Responsable: Arnold Salazar`, 20, 63);
+
+    // Caja de información del pago
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(71, 85, 105);
+    doc.text('DETALLES DEL RECIBO', 120, 52);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(30, 41, 59);
+    doc.text(`Fecha Emisión: ${new Date().toLocaleDateString()}`, 120, 58);
+    doc.text(`Fecha Pago: ${this.formatearFecha(fila.pagadoFechaHora)}`, 120, 63);
+
+    // Badge "PAGADO"
+    doc.setFillColor(16, 185, 129); // Emerald 500
+    doc.roundedRect(120, 68, 35, 6, 1, 1, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.text('ESTADO: PAGADO', 137.5, 72, { align: 'center' });
+
+    // Tabla de ítems con jspdf-autotable
+    autoTable(doc, {
+      startY: 85,
+      theme: 'striped',
+      headStyles: { fillColor: [30, 41, 59], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
+      bodyStyles: { fontSize: 9 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      head: [['Concepto / Descripción', 'Gestión', 'Mes', 'Total']],
+      body: [
+        [
+          fila.descripcion || 'Desarrollo y Mantenimiento de Sistema',
+          fila.gestion?.toString() || 'N/A',
+          this.getNombreMes(fila.mes),
+          `Bs. ${fila.monto ? fila.monto.toFixed(2) : '0.00'}`
+        ]
+      ],
+      columnStyles: {
+        0: { cellWidth: 100 },
+        1: { cellWidth: 25, halign: 'center' },
+        2: { cellWidth: 25, halign: 'center' },
+        3: { cellWidth: 26, halign: 'right' }
+      },
+      margin: { left: 20, right: 20 }
+    });
+
+    // Fila de Total
+    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(30, 41, 59);
+    doc.text(`Total Pagado: Bs. ${fila.monto ? fila.monto.toFixed(2) : '0.00'}`, 196, finalY, { align: 'right' });
+
+    // Notas y validaciones
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text('Nota: Este comprobante es un documento oficial digital de conformidad de pago.', 20, finalY + 20);
+
+    if (fila.usuarioAprobador) {
+      doc.text(`Pago verificado y aprobado por administración de MiAppPRO`, 20, finalY + 25);
+    } else if (fila.respuesta && fila.respuesta.id) {
+      doc.text(`Transacción PayPal ID: ${fila.respuesta.id}`, 20, finalY + 25);
+    }
+
+    // Línea de firma / sello
+    const firmaY = finalY + 45;
+    doc.setDrawColor(203, 213, 225);
+    doc.setLineWidth(0.5);
+    doc.line(130, firmaY, 186, firmaY);
+    doc.text('Firma / Sello Autorizado', 158, firmaY + 5, { align: 'center' });
+
+    // Footer
+    doc.setDrawColor(241, 245, 249);
+    doc.line(20, 262, 196, 262);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text('MiAppPRO - Comprobante de Pago Electrónico', 108, 268, { align: 'center' });
+
+    // Guardar PDF
+    doc.save(`Recibo_Pago_${fila.gestion}_${fila.mes}.pdf`);
   }
 }

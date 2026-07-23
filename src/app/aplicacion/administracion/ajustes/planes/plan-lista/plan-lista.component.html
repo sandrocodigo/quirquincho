@@ -196,9 +196,17 @@
 
               @if (element.pagado && element.comprobante) {
               <a target="_blank" [href]="element.comprobante" [download]="element.descripcion"
-                class="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+                class="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center"
+                matTooltip="Descargar Comprobante de Transferencia">
                 <mat-icon>download</mat-icon>
               </a>
+              }
+
+              @if (element.pagado) {
+              <button mat-icon-button type="button" class="text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800"
+                (click)="descargarRecibo(element)" matTooltip="Descargar Recibo de Pago (PDF)">
+                <mat-icon>picture_as_pdf</mat-icon>
+              </button>
               }
 
               @if (!element.pagado && usuario() && usuarioDatos() && usuarioDatos()?.adminSuper) {
