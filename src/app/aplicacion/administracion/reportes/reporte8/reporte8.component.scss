@@ -1,3 +1,5 @@
+@reference "../../../../../styles.css";
+
 .reporte-container {
   @apply min-h-screen text-slate-100 pb-12; // Using Tailwind @apply
 
@@ -27,31 +29,45 @@
     z-index: 1000;
 
     .ng-select-container {
-      @apply bg-slate-900 border-2 border-emerald-500/50 rounded-xl min-h-[56px] shadow-lg !important;
+      background-color: #0f172a !important;
+      border: 2px solid rgba(16, 185, 129, 0.5) !important;
+      border-radius: 0.75rem !important;
+      min-height: 56px !important;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
       
-      .ng-value-label { @apply text-white font-bold text-base !important; }
-      .ng-placeholder { @apply text-slate-400 font-medium !important; }
+      .ng-value-label { color: white !important; font-weight: bold !important; font-size: 1rem !important; }
+      .ng-placeholder { color: #94a3b8 !important; font-weight: 500 !important; }
       .ng-arrow-wrapper .ng-arrow { border-color: #10b981 transparent transparent !important; }
     }
 
     .ng-dropdown-panel {
-      @apply bg-slate-900 border-2 border-emerald-500 rounded-xl shadow-2xl overflow-hidden !important;
+      background-color: #0f172a !important;
+      border: 2px solid #10b981 !important;
+      border-radius: 0.75rem !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+      overflow: hidden !important;
       margin-top: 8px !important;
 
       .ng-dropdown-panel-items {
         .ng-option {
-          @apply bg-slate-900 text-slate-100 p-4 border-b border-white/5 !important;
+          background-color: #0f172a !important;
+          color: #f1f5f9 !important;
+          padding: 1rem !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
           
           &.ng-option-marked {
-            @apply bg-emerald-600 text-white !important;
+            background-color: #059669 !important;
+            color: white !important;
           }
 
           &.ng-option-selected {
-            @apply bg-emerald-800 text-white font-black !important;
+            background-color: #065f46 !important;
+            color: white !important;
+            font-weight: 900 !important;
           }
 
           .ng-option-label {
-             @apply text-inherit !important;
+             color: inherit !important;
           }
         }
       }
@@ -66,8 +82,11 @@
 
 // Global-ish fix just in case it's appended to body
 ::ng-deep .ng-dropdown-panel.custom-select-panel {
-    @apply bg-slate-900 border-2 border-emerald-500 rounded-xl shadow-2xl !important;
+    background-color: #0f172a !important;
+    border: 2px solid #10b981 !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
     .ng-option {
-        @apply text-slate-100 !important;
+        color: #f1f5f9 !important;
     }
 }

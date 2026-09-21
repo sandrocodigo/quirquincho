@@ -9,18 +9,20 @@ export const tiposProducto: any[] = [
 
 
 export const tiposEgresos: any[] = [
-/*     { id: 'MANTENIMIENTO', descripcion: 'MANTENIMIENTO', }, */
+    /*     { id: 'MANTENIMIENTO', descripcion: 'MANTENIMIENTO', }, */
     { id: 'VENTA', descripcion: 'VENTA', },
     { id: 'AJUSTE', descripcion: 'AJUSTE', },
     { id: 'DEVOLUCION', descripcion: 'DEVOLUCION', },
-   // { id: 'TRASPASO', descripcion: 'TRASPASO', },
+    // { id: 'TRASPASO', descripcion: 'TRASPASO', },
+    { id: 'GALPON', descripcion: 'GALPON', },
     { id: 'OTRO', descripcion: 'OTRO', },
-   
+
 ];
 
 export const tiposIngresos: any[] = [
     { id: 'COMPRA', descripcion: 'COMPRA', },
     { id: 'AJUSTE', descripcion: 'AJUSTE', },
     { id: 'DEVOLUCION', descripcion: 'DEVOLUCION', },
+    { id: 'GALPON', descripcion: 'GALPON', },
     { id: 'OTRO', descripcion: 'OTRO', },
 ];

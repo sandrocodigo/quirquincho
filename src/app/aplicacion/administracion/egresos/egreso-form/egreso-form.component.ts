@@ -111,6 +111,7 @@ export class EgresoFormComponent {
           clienteRUC: [0],
 
           // codigo: [null, [Validators.required]],
+          galpon: [null],
           descripcion: [descripcionNuevo],
 
           subtotal: [0],
@@ -169,6 +170,7 @@ export class EgresoFormComponent {
             clienteEmail: [res.clienteEmail],
             clienteRUC: [res.clienteRUC],
 
+            galpon: [res.galpon],
             descripcion: [res.descripcion, [Validators.required]],
 
             porcentajeDescuento: [res.porcentajeDescuento],

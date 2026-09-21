@@ -308,13 +308,22 @@
                 egreso.mantenimientoTipo }}</span>
             </div>
             <div class="flex justify-between text-xs">
-              <span class="text-gray-500">Vehículo:</span>
+              <span class="text-gray-500">Vehículo Placa:</span>
               <span class="text-[10px] font-black px-2 py-0.5 rounded-md" [ngClass]="{
                       'text-orange-700 bg-orange-100': egreso.vehiculoEmpresa == 'QUIRQUINCHO',
                       'text-blue-700 bg-blue-100': egreso.vehiculoEmpresa == 'URKUPIÑA',
                       'text-green-700 bg-green-100': egreso.vehiculoEmpresa == 'PUMA',
                       'text-purple-700 bg-purple-100': egreso.vehiculoEmpresa == 'PULLMAN'
                     }">{{ egreso.vehiculoPlaca }}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Vehículo Interno:</span>
+              <span class="text-[10px] font-black px-2 py-0.5 rounded-md" [ngClass]="{
+                      'text-orange-700 bg-orange-100': egreso.vehiculoEmpresa == 'QUIRQUINCHO',
+                      'text-blue-700 bg-blue-100': egreso.vehiculoEmpresa == 'URKUPIÑA',
+                      'text-green-700 bg-green-100': egreso.vehiculoEmpresa == 'PUMA',
+                      'text-purple-700 bg-purple-100': egreso.vehiculoEmpresa == 'PULLMAN'
+                    }">{{ egreso.vehiculoInterno }}</span>
             </div>
           </div>
           }

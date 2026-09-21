@@ -1,176 +1,196 @@
-<div class="admin-container bg-slate-50 dark:bg-slate-950 transition-colors duration-500" [class.bloqueado-pagos]="bloqueadoPorFaltaPago()">
+<div class="admin-container bg-slate-50 dark:bg-slate-950 transition-colors duration-500 min-h-screen" [class.bloqueado-pagos]="bloqueadoPorFaltaPago()">
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+        <!-- Background glow effects -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/20 dark:bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/4 right-0 w-80 h-80 bg-lime-400/20 dark:bg-lime-400/10 rounded-full blur-[100px] pointer-events-none"></div>
 
         <!-- Header -->
         <header
-            class="h-20 px-4 sm:px-6 flex items-center justify-between z-40 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-black/5 dark:border-white/5">
-            <div class="flex items-center gap-4">
-                <h1
-                    class="text-xl sm:text-2xl font-black bg-gradient-to-r from-lime-400 to-emerald-500 bg-clip-text text-transparent">
-                    QUIRQUINCHO
-                </h1>
+            class="h-20 px-4 sm:px-8 flex items-center justify-between z-40 bg-white/40 dark:bg-slate-950/40 backdrop-blur-xl border-b border-white/50 dark:border-white/5 shadow-sm">
+            <div class="flex items-center gap-4 sm:gap-6">
+                <div class="flex items-center gap-3">
+                    <!-- Logo / Title -->
+                    <div class="flex flex-col">
+                        <h1 class="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-600 to-lime-500 bg-clip-text text-transparent drop-shadow-sm leading-none">
+                            QUIRQUINCHO
+                        </h1>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black bg-gradient-to-r from-emerald-500 to-lime-400 text-white shadow-md tracking-wider">
+                                V 2.0
+                            </span>
+                            <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 tracking-widest uppercase">
+                                Admin Portal
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block mx-2"></div>
+
                 <!-- Live Counter -->
                 <div
-                    class="hidden sm:flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10">
-                    <div class="w-2 h-2 rounded-full bg-lime-400 animate-pulse shadow-[0_0_8px_#adff2f]"></div>
-                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                        Live: {{ visitas() || 0 }}
+                    class="hidden md:flex items-center gap-2 px-4 py-1.5 bg-white/60 dark:bg-white/5 rounded-2xl border border-white/60 dark:border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.02)] backdrop-blur-md transition-all hover:bg-white/80 dark:hover:bg-white/10">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                    <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">
+                        En línea: <span class="text-emerald-600 dark:text-emerald-400 font-black">{{ visitas() || 0 }}</span>
                     </span>
                 </div>
 
                 <!-- User Branch -->
                 <div
-                    class="hidden sm:flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10">
-                    <mat-icon class="text-lime-400 text-sm">location_on</mat-icon>
-                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                        {{ usuarioDato()?.sucursal || 'TODAS' }}
+                    class="hidden md:flex items-center gap-2 px-4 py-1.5 bg-white/60 dark:bg-white/5 rounded-2xl border border-white/60 dark:border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.02)] backdrop-blur-md transition-all hover:bg-white/80 dark:hover:bg-white/10">
+                    <mat-icon class="text-emerald-500 text-sm drop-shadow-[0_0_4px_rgba(16,185,129,0.4)]">location_on</mat-icon>
+                    <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">
+                        {{ usuarioDato()?.sucursal || 'TODAS LAS SUCURSALES' }}
                     </span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 sm:gap-4">
+            <div class="flex items-center gap-3 sm:gap-5">
                 <!-- Theme Toggle -->
-                <button (click)="toggleDarkMode()" class="theme-toggle" title="Cambiar Tema">
-                    <mat-icon class="transition-all duration-500"
-                        [ngClass]="darkMode() ? 'text-yellow-400 rotate-[360deg]' : 'text-slate-900 rotate-0'">
+                <button (click)="toggleDarkMode()" class="p-2.5 rounded-2xl bg-white/60 dark:bg-white/5 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-white/90 dark:hover:bg-white/10 hover:shadow-emerald-500/20 group" title="Cambiar Tema">
+                    <mat-icon class="transition-all duration-500 group-hover:rotate-[360deg]"
+                        [ngClass]="darkMode() ? 'text-amber-400' : 'text-slate-700'">
                         {{ darkMode() ? 'light_mode' : 'dark_mode' }}
                     </mat-icon>
                 </button>
 
                 <!-- User Menu -->
                 <button type="button" [matMenuTriggerFor]="userMenu"
-                    class="flex items-center gap-2 p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 transition-colors border border-black/5 dark:border-white/10">
-                    <img class="w-8 h-8 rounded-full shadow-md object-cover" [src]="foto()"
-                        [alt]="usuario()?.displayName">
-                    <mat-icon class="text-slate-500 dark:text-slate-400 hidden sm:block">expand_more</mat-icon>
+                    class="flex items-center gap-2 p-1.5 pr-3 rounded-full bg-white/60 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10 transition-all border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md hover:shadow-emerald-500/20">
+                    <div class="relative">
+                        <img class="w-9 h-9 rounded-full shadow-md object-cover border-2 border-emerald-500/30" [src]="foto()"
+                            [alt]="usuario()?.displayName">
+                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+                    </div>
+                    <div class="hidden lg:flex flex-col items-start mr-1">
+                        <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase leading-tight">Administrador</span>
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-200 leading-tight truncate max-w-[120px]">{{ usuario()?.displayName || 'Usuario' }}</span>
+                    </div>
+                    <mat-icon class="text-slate-400 dark:text-slate-500 hidden sm:block transition-transform">expand_more</mat-icon>
                 </button>
             </div>
         </header>
 
         <!-- Alerta de Suspensión Temporal por falta de Pago -->
         @if (bloqueadoPorFaltaPago()) {
-          <div class="mx-4 sm:mx-6 mt-4 p-4 rounded-2xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md transition-all">
-            <div class="flex items-center gap-3">
-              <mat-icon class="text-rose-500 shrink-0 animate-bounce">warning</mat-icon>
-              <div class="text-xs sm:text-sm font-medium">
-                <span class="font-bold">Servicios limitados temporalmente:</span> Su cuenta cuenta con 2 o más facturas vencidas. Por favor, regularice sus cuotas para continuar habilitando todas las opciones de creación de registros.
-              </div>
+          <div class="mx-4 sm:mx-8 mt-6 p-1 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 shadow-lg shadow-rose-500/20 animate-fade-in relative overflow-hidden group">
+            <div class="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors"></div>
+            <div class="relative bg-white dark:bg-slate-900 rounded-xl px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                  <div class="p-2.5 bg-rose-100 dark:bg-rose-500/20 rounded-full shrink-0">
+                      <mat-icon class="text-rose-500 dark:text-rose-400 animate-bounce">warning</mat-icon>
+                  </div>
+                  <div class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <span class="font-black text-rose-600 dark:text-rose-400 text-base block mb-0.5">Servicios limitados temporalmente</span>
+                    Su cuenta tiene 2 o más facturas vencidas. Regularice sus cuotas para habilitar la creación de registros.
+                  </div>
+                </div>
+                <a routerLink="/administracion/ajustes/planes" class="px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-rose-500/40 w-full sm:w-auto text-center shrink-0 border border-rose-400/50">
+                  Regularizar ahora
+                </a>
             </div>
-            <a routerLink="/administracion/ajustes/planes" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs rounded-xl transition-colors shadow-sm w-full sm:w-auto text-center shrink-0">
-              Ver planes de pago
-            </a>
           </div>
         }
 
         <!-- Dynamic Content -->
-        <main class="main-content flex-1 p-4 pb-36">
-            <div class="animate-fade-in h-full">
+        <main class="main-content flex-1 p-4 sm:p-6 lg:p-8 pb-36 z-10 relative">
+            <div class="animate-fade-in h-full bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm rounded-3xl border border-white/50 dark:border-white/5 shadow-sm p-4 lg:p-6">
                 <router-outlet></router-outlet>
             </div>
         </main>
     </div>
 
     <!-- Mobile/Global Navigation (Bottom Bar) -->
-    <!-- Elegante, moderno y siempre visible para fácil acceso -->
+    <!-- Elegante dock flotante -->
     <nav
-        class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md h-[72px] bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl flex justify-around items-center z-[100] border border-black/5 dark:border-white/10 rounded-3xl px-3 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-colors duration-500">
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-2xl h-[76px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl flex justify-around items-center z-[100] border border-white/60 dark:border-white/10 rounded-[2rem] px-4 shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-colors duration-500">
+        
+        <!-- Decoration line -->
+        <div class="absolute -top-px left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-50"></div>
+
         @for (item of menuItems.slice(0, 4); track item.link) {
         <a [routerLink]="item.link" routerLinkActive="active"
-            class="flex flex-col items-center text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-300 gap-1 mt-1">
-            <mat-icon class="text-[26px] w-[26px] h-[26px]" [ngClass]="item.color">{{ item.icon }}</mat-icon>
-            <span>{{ item.label }}</span>
+            class="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl text-[10px] font-bold text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-300 gap-0.5 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 relative">
+            <div class="absolute inset-0 bg-emerald-500/0 rounded-2xl group-[.active]:bg-emerald-50 dark:group-[.active]:bg-emerald-500/10 transition-colors"></div>
+            <mat-icon class="text-[24px] w-[24px] h-[24px] z-10 transition-transform duration-300 group-hover:-translate-y-0.5 group-[.active]:text-emerald-500" [ngClass]="item.color">{{ item.icon }}</mat-icon>
+            <span class="z-10 tracking-wide transition-colors text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-[.active]:text-emerald-600 dark:group-[.active]:text-emerald-400">{{ item.label }}</span>
         </a>
         }
         <button type="button" [matMenuTriggerFor]="mobileMoreMenu"
-            class="flex flex-col items-center text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-300 gap-1 mt-1">
-            <mat-icon class="text-slate-400 text-[26px] w-[26px] h-[26px]">more_horiz</mat-icon>
-            <span>Más</span>
+            class="group flex flex-col items-center justify-center w-16 h-16 rounded-2xl text-[10px] font-bold text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all duration-300 gap-0.5 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 relative">
+            <mat-icon class="text-[24px] w-[24px] h-[24px] z-10 transition-transform duration-300 group-hover:-translate-y-0.5 text-slate-400 group-hover:text-emerald-500">more_horiz</mat-icon>
+            <span class="z-10 tracking-wide transition-colors text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Más</span>
         </button>
     </nav>
 
     <!-- Menus -->
-    <mat-menu #userMenu="matMenu" class="glass-menu min-w-[220px]">
-        <div class="px-4 py-3 border-b border-black/5 dark:border-white/10 flex flex-col gap-1">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Sesión iniciada</p>
-            <p class="text-sm font-medium pr-4">{{ usuario()?.email }}</p>
+    <mat-menu #userMenu="matMenu" class="glass-menu min-w-[260px] rounded-2xl">
+        <div class="px-5 py-4 border-b border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col gap-1.5">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <p class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Sesión activa</p>
+            </div>
+            <p class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{{ usuario()?.email }}</p>
         </div>
 
-        <button mat-menu-item (click)="toggleDarkMode()">
-            <mat-icon [ngClass]="darkMode() ? 'text-amber-400' : 'text-slate-500'">{{ darkMode() ? 'light_mode' :
-                'dark_mode' }}</mat-icon>
-            <span>Cambiar a Tema {{ darkMode() ? 'Claro' : 'Oscuro' }}</span>
-        </button>
+        <div class="p-2">
+            <button mat-menu-item (click)="toggleDarkMode()" class="rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                <mat-icon [ngClass]="darkMode() ? 'text-amber-400' : 'text-slate-600'">{{ darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+                <span class="font-medium">Tema {{ darkMode() ? 'Claro' : 'Oscuro' }}</span>
+            </button>
 
-        <button mat-menu-item [matMenuTriggerFor]="paletteMenu">
-            <mat-icon class="text-indigo-400">palette</mat-icon>
-            <span>Paleta de Colores</span>
-        </button>
+            <button mat-menu-item [matMenuTriggerFor]="paletteMenu" class="rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                <mat-icon class="text-emerald-500">palette</mat-icon>
+                <span class="font-medium">Paleta de Colores</span>
+            </button>
 
-        <mat-divider></mat-divider>
+            <mat-divider class="my-2"></mat-divider>
 
-        <!--         <button mat-menu-item [routerLink]="'ajustes'">
-            <mat-icon>settings</mat-icon>
-            <span>Ajustes</span>
-        </button> -->
-        <button mat-menu-item (click)="recargarPagina()">
-            <mat-icon>refresh</mat-icon>
-            <span>Recargar</span>
-        </button>
-        <mat-divider></mat-divider>
-        <button mat-menu-item (click)="salir()">
-            <mat-icon class="text-rose-500">logout</mat-icon>
-            <span class="text-rose-500 font-bold">Cerrar Sesión</span>
-        </button>
+            <button mat-menu-item (click)="recargarPagina()" class="rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                <mat-icon class="text-slate-500">refresh</mat-icon>
+                <span class="font-medium">Recargar Sistema</span>
+            </button>
+            
+            <mat-divider class="my-2"></mat-divider>
+            
+            <button mat-menu-item (click)="salir()" class="rounded-xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors">
+                <mat-icon class="text-rose-500">logout</mat-icon>
+                <span class="text-rose-600 dark:text-rose-400 font-bold">Cerrar Sesión</span>
+            </button>
+        </div>
     </mat-menu>
 
     <!-- Menu Paleta -->
-    <mat-menu #paletteMenu="matMenu" class="glass-menu">
-        <button mat-menu-item (click)="cambiarPaleta('theme-chartreuse')">
-            <mat-icon class="text-lime-500">circle</mat-icon> Lime (Por Defecto)
+    <mat-menu #paletteMenu="matMenu" class="glass-menu rounded-2xl p-2">
+        <button mat-menu-item (click)="cambiarPaleta('theme-chartreuse')" class="rounded-xl">
+            <mat-icon class="text-lime-500">circle</mat-icon> <span class="font-medium">Verde Lime (Default)</span>
         </button>
-        <button mat-menu-item (click)="cambiarPaleta('theme-cyan')">
-            <mat-icon class="text-cyan-500">circle</mat-icon> Cyan Radiante
+        <button mat-menu-item (click)="cambiarPaleta('theme-cyan')" class="rounded-xl">
+            <mat-icon class="text-cyan-500">circle</mat-icon> <span class="font-medium">Cyan Radiante</span>
         </button>
-        <button mat-menu-item (click)="cambiarPaleta('theme-rose')">
-            <mat-icon class="text-rose-500">circle</mat-icon> Rose Carmesí
+        <button mat-menu-item (click)="cambiarPaleta('theme-rose')" class="rounded-xl">
+            <mat-icon class="text-rose-500">circle</mat-icon> <span class="font-medium">Rose Carmesí</span>
         </button>
-        <button mat-menu-item (click)="cambiarPaleta('theme-orange')">
-            <mat-icon class="text-amber-500">circle</mat-icon> Orange Solar
+        <button mat-menu-item (click)="cambiarPaleta('theme-orange')" class="rounded-xl">
+            <mat-icon class="text-amber-500">circle</mat-icon> <span class="font-medium">Orange Solar</span>
         </button>
     </mat-menu>
 
     <!-- Menu Más (Todos los Accesos + Opciones de Usuario) -->
-    <mat-menu #mobileMoreMenu="matMenu" class="glass-menu">
-        <!-- Navegación Todos los Accesos -->
+    <mat-menu #mobileMoreMenu="matMenu" class="glass-menu rounded-2xl p-2 min-w-[200px]">
+        <div class="px-4 py-2 mb-2 border-b border-black/5 dark:border-white/5">
+            <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Todos los accesos</span>
+        </div>
         @for (item of menuItemsTodos; track item.link) {
-        <button mat-menu-item [routerLink]="item.link">
+        <button mat-menu-item [routerLink]="item.link" class="rounded-xl mb-1">
             <mat-icon [class]="item.color">{{ item.icon }}</mat-icon>
-            <span>{{ item.label }}</span>
+            <span class="font-medium">{{ item.label }}</span>
         </button>
         }
-
-        <!--         <mat-divider></mat-divider> -->
-
-        <!-- Opciones de Usuario -->
-        <!--         <button mat-menu-item [routerLink]="'ajustes'">
-            <mat-icon>settings</mat-icon>
-            <span>Ajustes</span>
-        </button>
-        <button mat-menu-item (click)="recargarPagina()">
-            <mat-icon>refresh</mat-icon>
-            <span>Recargar</span>
-        </button> -->
-        <!--         <button mat-menu-item [matMenuTriggerFor]="paletteMenu">
-            <mat-icon class="text-indigo-400">palette</mat-icon>
-            <span>Paleta de Colores</span>
-        </button>
-        <mat-divider></mat-divider>
-        <button mat-menu-item (click)="salir()">
-            <mat-icon class="text-rose-500">logout</mat-icon>
-            <span class="text-rose-500 font-bold">Cerrar Sesión</span>
-        </button> -->
     </mat-menu>
 
 </div>
